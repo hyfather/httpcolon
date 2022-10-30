@@ -29,7 +29,8 @@ export default function HomePage() {
                     let buffer: SetStateAction<object[]> = [];
                     let dd = new Map(Object.entries(data.resp));
                     dd.forEach(function(value, key) {
-                        buffer?.push(<tr><td>{key}</td><td>{value}</td></tr>);
+                        // @ts-ignore
+                        buffer.push(<tr><td>{key}</td><td>{value}</td></tr>);
                     });
                     setRows(buffer);
                     setLoading(false);
@@ -63,12 +64,12 @@ export default function HomePage() {
                     <Table>
                         <thead>
                         <tr>
-                            <th>Header</th>
+                            <th>Response Header</th>
                             <th>Value</th>
                         </tr>
                         </thead>
                         <tbody>
-                       {rows}
+                          {rows}
                         </tbody>
                     </Table>
                     {console.log(response)}

@@ -15,14 +15,6 @@ export default function HomePage() {
     const [opened, setOpened] = useState(false);
     const [rows, setRows] = useState([]);
 
-    //const rows = [];
-
-    const fetchData = async (val) => {
-        const responseJson = await fetch(`/api/v1/fetch?url=${encodeURIComponent(val)}`);
-        const data = await responseJson.json();
-        return data;
-    };
-
     const handleChange = (val: string) => {
         window.clearTimeout(timeoutRef.current);
         setValue(val);

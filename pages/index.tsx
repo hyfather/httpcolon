@@ -16,7 +16,7 @@ export default function HomePage() {
     const [opened, setOpened] = useState(false);
     const [rows, setRows] = useState<object[]>([]);
 
-    function isValidHttpUrl(string) {
+    function isValidHttpUrl({string}: { string: any }) {
         let url;
         try {
             url = new URL(string);
@@ -31,7 +31,7 @@ export default function HomePage() {
         setValue(val);
         setData([]);
 
-        if (isValidHttpUrl(val)) {
+        if (isValidHttpUrl({string: val})) {
             fetch(`/api/v1/fetch?url=${encodeURIComponent(val)}`)
                 .then(response => response.json())
                 .then(data => {

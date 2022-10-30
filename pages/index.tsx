@@ -1,7 +1,7 @@
 import { Welcome } from '../components/Welcome/Welcome';
 import { useState, useRef } from 'react';
 
-import { AppShell, Navbar, Header, Autocomplete, Loader } from '@mantine/core';
+import { AppShell, Navbar, Header, Autocomplete, Loader, Button, Collapse, Table } from '@mantine/core';
 
 import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
 
@@ -11,6 +11,17 @@ export default function HomePage() {
     const [value, setValue] = useState('');
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState<string[]>([]);
+    const [response, setResponse] = useState<string[]>([]);
+    const [opened, setOpened] = useState(false);
+    const [rows, setRows] = useState([]);
+
+    //const rows = [];
+
+    const fetchData = async (val) => {
+        const responseJson = await fetch(`/api/v1/fetch?url=${encodeURIComponent(val)}`);
+        const data = await responseJson.json();
+        return data;
+    };
 
     const handleChange = (val: string) => {
         window.clearTimeout(timeoutRef.current);
@@ -18,17 +29,30 @@ export default function HomePage() {
         setData([]);
 
         if (val.trim().length !== 0) {
-            fetch(val)
+            fetch(`/api/v1/fetch?url=${encodeURIComponent(val)}`)
                 .then(response => response.json())
-                .then(data => setData(data));
-            setLoading(false);
+                .then(data => {
+                    setResponse(data);
+                    let buffer = [];
+                    for (let key in data.resp) {
+                        if (data.resp.hasOwnProperty(key)) {
+                            const row = <tr>
+                                <td>{key}</td>
+                                <td>{data.resp[key]}</td>
+                            </tr>;
+                            buffer.push(row);
+                        }
+                    }
+                    console.log(buffer);
+                    setRows(buffer);
+                    setLoading(false);
+                });
         } else {
             setLoading(true);
         }
     };
 
-
-  return (
+    return (
     <>
         <AppShell
             padding="md"
@@ -45,12 +69,25 @@ export default function HomePage() {
                 onChange={handleChange}
                 rightSection={loading ? <Loader size={16} /> : null}
                 label="URL"
-                placeholder="https://www.google.com/"
+                placeholder="https://blog.httpcolon.dev/"
             />
-            <div>
-                hi
-                {data}
-            </div>
+            {!loading &&
+                <div>
+                    <Table>
+                        <thead>
+                        <tr>
+                            <th>Header</th>
+                            <th>Value</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {rows}
+                        </tbody>
+                    </Table>
+                    {console.log(response)}
+                    {console.log(rows)}
+                </div>
+            }
         </AppShell>
     </>
   );

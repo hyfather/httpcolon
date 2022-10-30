@@ -1,9 +1,9 @@
 import { Welcome } from '../components/Welcome/Welcome';
-import { useState, useRef } from 'react';
+import { useState, useRef, SetStateAction} from 'react';
 
-import { AppShell, Navbar, Header, Autocomplete, Loader, Button, Collapse, Table } from '@mantine/core';
+import {AppShell, Navbar, Header, Autocomplete, Loader, Button, Collapse, Table} from '@mantine/core';
 
-import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
+import {ColorSchemeToggle} from '../components/ColorSchemeToggle/ColorSchemeToggle';
 
 export default function HomePage() {
 
@@ -13,7 +13,7 @@ export default function HomePage() {
     const [data, setData] = useState<string[]>([]);
     const [response, setResponse] = useState<string[]>([]);
     const [opened, setOpened] = useState(false);
-    const [rows, setRows] = useState([]);
+    const [rows, setRows] = useState<object[]>([]);
 
     const handleChange = (val: string) => {
         window.clearTimeout(timeoutRef.current);
@@ -25,17 +25,12 @@ export default function HomePage() {
                 .then(response => response.json())
                 .then(data => {
                     setResponse(data);
-                    let buffer = [];
-                    for (let key in data.resp) {
-                        if (data.resp.hasOwnProperty(key)) {
-                            const row = <tr>
-                                <td>{key}</td>
-                                <td>{data.resp[key]}</td>
-                            </tr>;
-                            buffer.push(row);
-                        }
-                    }
-                    console.log(buffer);
+                    console.log(data);
+                    let buffer: SetStateAction<object[]> = [];
+                    let dd = new Map(Object.entries(data.resp));
+                    dd.forEach(function(value, key) {
+                        buffer?.push(<tr><td>{key}</td><td>{value}</td></tr>);
+                    });
                     setRows(buffer);
                     setLoading(false);
                 });
@@ -73,12 +68,13 @@ export default function HomePage() {
                         </tr>
                         </thead>
                         <tbody>
-                        {rows}
+                       {rows}
                         </tbody>
                     </Table>
                     {console.log(response)}
                     {console.log(rows)}
                 </div>
+
             }
         </AppShell>
     </>

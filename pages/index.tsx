@@ -67,7 +67,6 @@ export default function HomePage() {
                     <NativeSelect
                         data={['GET', 'POST', 'PUT', 'DELETE']}
                         value={methodValue}
-                        onChange={handleChange}
                         placeholder="GET"
                     />
                 </Grid.Col>

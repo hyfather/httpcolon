@@ -1,5 +1,7 @@
 import { Welcome } from '../components/Welcome/Welcome';
 import { useState, useRef, SetStateAction} from 'react';
+import { useRouter } from 'next/router'
+import GitHubButton from 'react-github-btn'
 
 import {
     AppShell,
@@ -20,6 +22,7 @@ import {
     createStyles, SegmentedControl,
     Center,
     useMantineColorScheme,
+    Image,
 } from '@mantine/core';
 
 import {ColorSchemeToggle} from '../components/ColorSchemeToggle/ColorSchemeToggle';
@@ -115,8 +118,15 @@ export function NavbarSimple() {
         <Navbar height={700} width={{ sm: 300 }} p="md">
             <Navbar.Section grow>
                 <Group className={classes.header} position="apart">
-                    <Text>HTTP COLON</Text>
-                    <Code sx={{ fontWeight: 700 }}>Beta</Code>
+                    <Center>
+                        <Image
+                            width={250}
+                            height={80}
+                            src="/httpcolon.png"
+                            fit="contain"
+                        />
+                    </Center>
+                    {/*<Code sx={{ fontWeight: 700 }}>Beta</Code>*/}
                 </Group>
                 {links}
             </Navbar.Section>
@@ -148,15 +158,15 @@ export function NavbarSimple() {
                         ]}
                     />
                 </Group>
+                <Center>
+                    {/*<GitHubButton href="https://github.com/hyfather/httpcolon" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" aria-label="Star hyfather/httpcolon on GitHub"></GitHubButton>*/}
+                </Center>
             </Navbar.Section>
         </Navbar>
     );
 }
 
-
-
-export default function HomePage() {
-
+export default function HomePage(props) {
     const baseURL = 'https://httpcolon.dev/'
     const timeoutRef = useRef<number>(-1);
     const [value, setValue] = useState('');
@@ -167,6 +177,30 @@ export default function HomePage() {
     const [opened, setOpened] = useState(false);
     const [rows, setRows] = useState<object[]>([]);
     const [copyURL, setCopyURL] = useState<string>(baseURL);
+    const [slugLoader, setSlugLoader] = useState<number>(0);
+
+    const router = useRouter()
+    const slug = router.query["slug"];
+
+    if (slug !== "" && slugLoader == 0) {
+        fetch("/api/v1/" + slug )
+            .then(response => response.json())
+            .then(data => {
+                console.log("slug fetch: " + data.destination);
+                setValue(data.destination);
+                setResponse(data);
+                let buffer: SetStateAction<object[]> = [];
+                let dd = new Map(Object.entries(data.headers));
+                dd.forEach(function(value, key) {
+                    // @ts-ignore
+                    buffer.push(<tr key={key}><td>{key}</td><td>{value}</td></tr>);
+                });
+                setCopyURL( baseURL + data.id);
+                // window.history.pushState(data.id, val, '/' + data.id);
+                setRows(buffer);
+                setSlugLoader(1)
+            })
+    }
 
     function isValidHttpUrl({string}: { string: any }) {
         let url;
@@ -189,7 +223,7 @@ export default function HomePage() {
     setData([]);
 
     if (isValidHttpUrl({string: val})) {
-        fetch(`/api/v1/fetch?url=${encodeURIComponent(val)}`)
+        fetch(`/api/v1/create?url=${encodeURIComponent(val)}`)
             .then(response => response.json())
             .then(data => {
                 setResponse(data);

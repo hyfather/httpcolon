@@ -64,15 +64,18 @@ export default function HomePage() {
     return (
     <>
         <AppShell
-            padding="md"
-            navbar={<Navbar width={{ base: 300 }} height={500} p="xs">HTTP COLON</Navbar>}
-            header={<CopyButton value={copyURL}>
+            padding="lg"
+            navbar={<Navbar width={{ base: 300 }} height={500} p="xs">
+                        HTTP COLON
+                    </Navbar>}
+            header={<Header height={60} p="xs">
+            <CopyButton value={copyURL}>
                 {({ copied, copy }) => (
                     <Button variant="subtle" color={copied ? 'blue' : 'black'} onClick={copy}>
                         {copied ? 'URL Copied' : copyURL}
                     </Button>
                 )}
-            </CopyButton>
+            </CopyButton></Header>
             }
             styles={(theme) => ({
                 main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },

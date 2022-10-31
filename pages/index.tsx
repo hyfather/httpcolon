@@ -1,9 +1,159 @@
 import { Welcome } from '../components/Welcome/Welcome';
 import { useState, useRef, SetStateAction} from 'react';
 
-import {AppShell, Navbar, Header, Autocomplete, Loader, Button, Collapse, Table, Grid, NativeSelect, CopyButton} from '@mantine/core';
+import {
+    AppShell,
+    Navbar,
+    Header,
+    Autocomplete,
+    Loader,
+    Button,
+    Collapse,
+    Table,
+    Grid,
+    NativeSelect,
+    CopyButton,
+    Group,
+    Code,
+    Text,
+    Box,
+    createStyles, SegmentedControl,
+    Center,
+    useMantineColorScheme,
+} from '@mantine/core';
 
 import {ColorSchemeToggle} from '../components/ColorSchemeToggle/ColorSchemeToggle';
+import {IconFingerprint, IconLogout, IconMoon, IconSettings, IconSun, IconSwitchHorizontal} from '@tabler/icons';
+
+
+const useStyles = createStyles((theme, _params, getRef) => {
+    const icon = getRef('icon');
+    return {
+        header: {
+            paddingBottom: theme.spacing.md,
+            marginBottom: theme.spacing.md * 1.5,
+            borderBottom: `1px solid ${
+                theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2]
+            }`,
+        },
+
+        footer: {
+            paddingTop: theme.spacing.md,
+            marginTop: theme.spacing.md,
+            borderTop: `1px solid ${
+                theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2]
+            }`,
+        },
+
+        link: {
+            ...theme.fn.focusStyles(),
+            display: 'flex',
+            alignItems: 'center',
+            textDecoration: 'none',
+            fontSize: theme.fontSizes.sm,
+            color: theme.colorScheme === 'dark' ? theme.colors.dark[1] : theme.colors.gray[7],
+            padding: `${theme.spacing.xs}px ${theme.spacing.sm}px`,
+            borderRadius: theme.radius.sm,
+            fontWeight: 500,
+
+            '&:hover': {
+                backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+                color: theme.colorScheme === 'dark' ? theme.white : theme.black,
+
+                [`& .${icon}`]: {
+                    color: theme.colorScheme === 'dark' ? theme.white : theme.black,
+                },
+            },
+        },
+
+        linkIcon: {
+            ref: icon,
+            color: theme.colorScheme === 'dark' ? theme.colors.dark[2] : theme.colors.gray[6],
+            marginRight: theme.spacing.sm,
+        },
+
+        linkActive: {
+            '&, &:hover': {
+                backgroundColor: theme.fn.variant({ variant: 'light', color: theme.primaryColor })
+                    .background,
+                color: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).color,
+                [`& .${icon}`]: {
+                    color: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).color,
+                },
+            },
+        },
+    };
+});
+
+const data = [
+    { link: '', label: 'History', icon: IconFingerprint },
+    { link: '', label: 'Settings', icon: IconSettings },
+];
+
+export function NavbarSimple() {
+    const { classes, cx } = useStyles();
+    const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+
+    const [active, setActive] = useState('Billing');
+
+    const links = data.map((item) => (
+        <a
+            className={cx(classes.link, { [classes.linkActive]: item.label === active })}
+            href={item.link}
+            key={item.label}
+            onClick={(event) => {
+                event.preventDefault();
+                setActive(item.label);
+            }}
+        >
+            <item.icon className={classes.linkIcon} stroke={1.5} />
+            <span>{item.label}</span>
+        </a>
+    ));
+
+    return (
+        <Navbar height={700} width={{ sm: 300 }} p="md">
+            <Navbar.Section grow>
+                <Group className={classes.header} position="apart">
+                    <Text>HTTP COLON</Text>
+                    <Code sx={{ fontWeight: 700 }}>Beta</Code>
+                </Group>
+                {links}
+            </Navbar.Section>
+
+            <Navbar.Section className={classes.footer}>
+                <Group position="center" my="xl">
+                    <SegmentedControl
+                        value={colorScheme}
+                        onChange={(value: 'light' | 'dark') => toggleColorScheme(value)}
+                        data={[
+                            {
+                                value: 'light',
+                                label: (
+                                    <Center>
+                                        <IconSun size={16} stroke={1.5} />
+                                        <Box ml={10}>Light</Box>
+                                    </Center>
+                                ),
+                            },
+                            {
+                                value: 'dark',
+                                label: (
+                                    <Center>
+                                        <IconMoon size={16} stroke={1.5} />
+                                        <Box ml={10}>Dark</Box>
+                                    </Center>
+                                ),
+                            },
+                        ]}
+                    />
+                </Group>
+            </Navbar.Section>
+        </Navbar>
+    );
+}
+
+
 
 export default function HomePage() {
 
@@ -65,9 +215,7 @@ export default function HomePage() {
     <>
         <AppShell
             padding="lg"
-            navbar={<Navbar width={{ base: 300 }} height={500} p="xs">
-                        HTTP COLON
-                    </Navbar>}
+            navbar={NavbarSimple()}
             header={<Header height={60} p="xs">
             <CopyButton value={copyURL}>
                 {({ copied, copy }) => (

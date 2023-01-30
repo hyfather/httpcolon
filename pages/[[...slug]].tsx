@@ -195,7 +195,7 @@ export default function HomePage(props) {
                     // @ts-ignore
                     buffer.push(<tr key={key}><td>{key}</td><td>{value}</td></tr>);
                 });
-                setCopyURL( baseURL + data.id);
+                setCopyURL(window.location.href);
                 // window.history.pushState(data.id, val, '/' + data.id);
                 setRows(buffer);
                 setSlugLoader(1)
@@ -254,7 +254,7 @@ export default function HomePage(props) {
             <CopyButton value={copyURL}>
                 {({ copied, copy }) => (
                     <Button variant="subtle" color={copied ? 'blue' : 'black'} onClick={copy}>
-                        {copied ? 'URL Copied' : copyURL}
+                        {copied ? 'URL Copied' : "✂ "+ copyURL}
                     </Button>
                 )}
             </CopyButton></Header>

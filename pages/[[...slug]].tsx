@@ -1,32 +1,42 @@
 import { Welcome } from '../components/Welcome/Welcome';
-import { useState, useRef, SetStateAction} from 'react';
+import { useState, useRef, SetStateAction, useEffect } from 'react';
 import { useRouter } from 'next/router'
 import GitHubButton from 'react-github-btn'
+import { useForm } from '@mantine/form';
+import { IconSelector, IconChevronDown, IconChevronUp, IconSearch } from '@tabler/icons';
+import { TableSort } from './tablesort';
+
 
 import {
     AppShell,
     Navbar,
     Header,
-    Autocomplete,
-    Loader,
+    Code,
     Button,
-    Collapse,
+    Card,
     Table,
-    Grid,
-    NativeSelect,
+    TextInput,
+    Stack,
     CopyButton,
     Group,
-    Code,
+    Grid,
     Text,
+    ScrollArea,
     Box,
     createStyles, SegmentedControl,
     Center,
+    UnstyledButton,
     useMantineColorScheme,
     Image,
+    Select,
+    Container,
+    Footer,
+    keyframes,
 } from '@mantine/core';
 
-import {ColorSchemeToggle} from '../components/ColorSchemeToggle/ColorSchemeToggle';
-import {IconFingerprint, IconLogout, IconMoon, IconSettings, IconSun, IconSwitchHorizontal} from '@tabler/icons';
+import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
+import { IconFingerprint, IconLogout, IconMoon, IconSquarePlus, IconSun, IconSwitchHorizontal } from '@tabler/icons';
+import { getRandomValues } from 'crypto';
 
 
 const useStyles = createStyles((theme, _params, getRef) => {
@@ -35,17 +45,15 @@ const useStyles = createStyles((theme, _params, getRef) => {
         header: {
             paddingBottom: theme.spacing.md,
             marginBottom: theme.spacing.md * 1.5,
-            borderBottom: `1px solid ${
-                theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2]
-            }`,
+            borderBottom: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2]
+                }`,
         },
 
         footer: {
             paddingTop: theme.spacing.md,
             marginTop: theme.spacing.md,
-            borderTop: `1px solid ${
-                theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2]
-            }`,
+            borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2]
+                }`,
         },
 
         link: {
@@ -85,12 +93,69 @@ const useStyles = createStyles((theme, _params, getRef) => {
                 },
             },
         },
+
+        card: {
+            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+        },
+
+        label: {
+            fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+            fontWeight: 700,
+            lineHeight: 1,
+        },
+
+        lead: {
+            fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+            fontWeight: 700,
+            fontSize: 22,
+            lineHeight: 1,
+        },
+
+        inner: {
+            display: 'flex',
+
+            [theme.fn.smallerThan(350)]: {
+                flexDirection: 'column',
+            },
+        },
+
+        ring: {
+            flex: 1,
+            display: 'flex',
+            justifyContent: 'flex-end',
+
+            [theme.fn.smallerThan(350)]: {
+                justifyContent: 'center',
+                marginTop: theme.spacing.md,
+            },
+        },
+
+        th: {
+            padding: '0 !important',
+        },
+
+        control: {
+            width: '100%',
+            padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
+
+            '&:hover': {
+                backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+            },
+        },
+
+        icon: {
+            width: 21,
+            height: 21,
+            borderRadius: 21,
+        },
+
+
     };
 });
 
 const data = [
+    { link: '', label: 'New URL', icon: IconSquarePlus },
     { link: '', label: 'History', icon: IconFingerprint },
-    { link: '', label: 'Settings', icon: IconSettings },
 ];
 
 export function NavbarSimple() {
@@ -166,10 +231,13 @@ export function NavbarSimple() {
     );
 }
 
+
 export default function HomePage(props) {
-    const baseURL = 'https://httpcolon.dev/'
+    //    const baseURL = 'https://httpcolon.dev/'
+    const baseURL = 'http://localhost:3000/'
     const timeoutRef = useRef<number>(-1);
     const [value, setValue] = useState('');
+    const [redirect, setRedirect] = useState('');
     const [methodValue, setMethodValue] = useState('');
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState<string[]>([]);
@@ -183,26 +251,28 @@ export default function HomePage(props) {
     const slug = router.query["slug"];
 
     if (slug !== "" && slugLoader == 0) {
-        fetch("/api/v1/" + slug )
+        fetch(baseURL + "/api/v1/" + slug)
             .then(response => response.json())
             .then(data => {
                 console.log("slug fetch: " + data.destination);
+                console.log("slug data:" + JSON.stringify(data));
                 setValue(data.destination);
                 setResponse(data);
                 let buffer: SetStateAction<object[]> = [];
-                let dd = new Map(Object.entries(data.headers));
-                dd.forEach(function(value, key) {
+                let dd = new Map(Object.entries(data.payload));
+                dd.forEach(function (value, key) {
                     // @ts-ignore
-                    buffer.push(<tr key={key}><td>{key}</td><td>{value}</td></tr>);
+                    // buffer.push(<tr key={key}><td>{key}</td><td>{value}</td></tr>);
+                    buffer.push({ "header": key, "value": value })
                 });
-                setCopyURL(window.location.href);
-                // window.history.pushState(data.id, val, '/' + data.id);
+                // setCopyURL(window.location.href);
+                // window.history.pushState(data.id, data.destination);
                 setRows(buffer);
                 setSlugLoader(1)
             })
     }
 
-    function isValidHttpUrl({string}: { string: any }) {
+    function isValidHttpUrl({ string }: { string: any }) {
         let url;
         try {
             url = new URL(string);
@@ -217,103 +287,129 @@ export default function HomePage(props) {
         setMethodValue(val);
     };
 
-    const handleChange = (val: string) => {
-    window.clearTimeout(timeoutRef.current);
-    setValue(val);
-    setData([]);
 
-    if (isValidHttpUrl({string: val})) {
-        fetch(`/api/v1/create?url=${encodeURIComponent(val)}`)
-            .then(response => response.json())
-            .then(data => {
-                setResponse(data);
-                console.log(data);
-                let buffer: SetStateAction<object[]> = [];
-                let dd = new Map(Object.entries(data.headers));
-                dd.forEach(function(value, key) {
-                    // @ts-ignore
-                    buffer.push(<tr key={key}><td>{key}</td><td>{value}</td></tr>);
-                });
-                setCopyURL( baseURL + data.id);
-                window.history.pushState(data.id, val, '/' + data.id);
-                setRows(buffer);
-                setLoading(false);
-            });
-    } else {
-        setLoading(true);
-    }
-    };
+    // const handleChange = (val: string) => {
+    //     window.clearTimeout(timeoutRef.current);
+    //     setValue(val);
+    //     setData([]);
+
+    //     if (isValidHttpUrl({ string: val })) {
+    //         console.log(val);
+    //         const strippedUrl = val.replace(/(^\w+:|^)\/\//, '').split('?')[0];
+    //         console.log("strippedurl:" + strippedUrl);
+    //         fetch(baseURL + `/api/v1/${strippedUrl}`)
+    //             .then(response => response.json())
+    //             .then(data => {
+    //                 setResponse(data);
+    //                 console.log("data:" + data);
+    //                 let buffer: SetStateAction<object[]> = [];
+    //                 let dd = new Map(Object.entries(data.headers));
+    //                 dd.forEach(function (value, key) {
+    //                     // @ts-ignore
+    //                     // buffer.push(<tr key={key}><td>{key}</td><td>{value}</td></tr>);
+    //                     buffer.push({ "header": key, "value": value })
+    //                 });
+    //                 setCopyURL(baseURL + data.id);
+    //                 window.history.pushState(data.id, val, '/' + data.id);
+    //                 setRows(buffer);
+    //                 setLoading(false);
+    //             });
+    //     } else {
+    //         setLoading(true);
+    //     }
+    // };
+
+    const form = useForm({
+        initialValues: { url: '', method: '' },
+    });
+
+    const { classes, theme } = useStyles();
+
+    // setRedirect("");
+
+    useEffect(() => {
+        if (redirect !== "") {
+            const r = redirect;
+            setRedirect("");
+            if (window.location.href !== r) {
+                window.location.href = r;
+            }
+        }
+    });
+
 
     // @ts-ignore
     return (
-    <>
-        <AppShell
-            padding="lg"
-            navbar={NavbarSimple()}
-            header={<Header height={60} p="xs">
-            <CopyButton value={copyURL}>
-                {({ copied, copy }) => (
-                    <Button variant="subtle" color={copied ? 'blue' : 'black'} onClick={copy}>
-                        {copied ? 'URL Copied' : "✂ "+ copyURL}
-                    </Button>
-                )}
-            </CopyButton></Header>
-            }
-            styles={(theme) => ({
-                main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
-            })}
-        >
+        <>
+            <AppShell
+                padding="lg"
+                navbar={NavbarSimple()}
+                header={<Header height={60} p="xs">
+                    <CopyButton value={copyURL}>
+                        {({ copied, copy }) => (
+                            <Button variant="subtle" color={copied ? 'blue' : 'black'} onClick={copy}>
+                                {copied ? 'URL Copied' : "✂ " + copyURL}
+                            </Button>
+                        )}
+                    </CopyButton></Header>
+                }
+                styles={(theme) => ({
+                    main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
+                })}
+            >
 
-            <Grid>
-                <Grid.Col span={"content"}>
-                    <NativeSelect
-                        data={['GET', 'POST', 'PUT', 'DELETE']}
-                        value={methodValue}
-                        placeholder="GET"
-                        onChange={handleMethodChange}
-                    />
-                </Grid.Col>
+                <Container>
+                    <Stack>
+                        <form onSubmit={form.onSubmit(function (values) {
+                            console.log("redirecting");
+                            const strippedUrl = values.url.replace(/(^\w+:|^)\/\//, '').split('?')[0];
+                            const redirectUrl = values.method === "GET" ? (baseURL + '/' + strippedUrl) : (baseURL + '/' + strippedUrl + "?method=" + values.method);
+                            console.log("redirectUrl: " + redirectUrl);
+                            setRedirect(redirectUrl);
+                        })}>
+                            <Grid>
+                                <Grid.Col span={2}>
+                                    <Select mt="sm" placeholder="GET" {...form.getInputProps('method')} data={['GET', 'POST', 'PUT', 'DELETE']} />
+                                </Grid.Col>
+                                <Grid.Col span={"auto"}>
+                                    <TextInput mt="sm" placeholder="www.google.com" {...form.getInputProps('url')} />
+                                </Grid.Col>
+                                <Grid.Col span={1}>
+                                    <Button type="submit" mt="sm">
+                                        Submit
+                                    </Button>
+                                </Grid.Col>
+                            </Grid>
 
-                <Grid.Col span={"auto"}>
-                    <Autocomplete
-                    value={value}
-                    data={data}
-                    onChange={handleChange}
-                    rightSection={loading ? <Loader size={16} /> : null}
-                    placeholder="https://blog.httpcolon.dev/"/>
-                </Grid.Col>
-            </Grid>
 
-            <Table>
-                <tbody>
-                    <tr>
-                        <td>Status</td>
-                        <td>{response.status}</td>
-                    </tr>
-                    <tr>
-                        <td>Latency</td>
-                        <td>{response.latency}ms</td>
-                    </tr>
-                    <tr>
-                        <td>Size</td>
-                        <td>KB</td>
-                    </tr>
-                </tbody>
-            </Table>
+                        </form>
 
-            <Table>
-                <thead>
-                <tr>
-                    <th>Response Header</th>
-                    <th>Value</th>
-                </tr>
-                </thead>
-                <tbody>
-                  {rows}
-                </tbody>
-            </Table>
+                        <Card withBorder p="xl" radius="md" className={classes.card}>
+                            <div className={classes.inner}>
+                                <div>
+                                    <Code color="teal">
+                                        {response.destination}
+                                    </Code>
+                                    <div>
+                                        <Code>
+                                            {response.status}
+                                        </Code>
+                                        <Code>
+                                            {response.latency} ms
+                                        </Code>
+                                    </div>
+                                </div>
+                            </div>
+                        </Card>
 
-        </AppShell>
-    </>
-  );
+                        <div>
+                            <TableSort data={response.payload} />
+                        </div>
+
+                    </Stack>
+                </Container>
+
+            </AppShell>
+        </>
+    );
 }

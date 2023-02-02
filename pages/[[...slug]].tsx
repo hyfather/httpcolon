@@ -38,6 +38,9 @@ import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeTo
 import { IconFingerprint, IconCopy, IconMoon, IconSquarePlus, IconSun, IconSwitchHorizontal } from '@tabler/icons';
 import { getRandomValues } from 'crypto';
 
+//const baseURL = 'https://httpcolon.dev/'
+const baseURL = 'http://localhost:3000'
+
 
 const useStyles = createStyles((theme, _params, getRef) => {
     const icon = getRef('icon');
@@ -231,10 +234,19 @@ export function NavbarSimple() {
     );
 }
 
+export function getFromAPI(slug: string) {
+    fetch(baseURL + "/api/v1/" + slug)
+    .then(response => response.json())
+    .then(data => {
+        console.log("slug fetch: " + data.destination);
+        console.log("slug data:" + JSON.stringify(data));
+        return data;
+    }).catch((error) => {
+        console.error('Error:', error);
+    });
+}
 
 export default function HomePage(props) {
-    //    const baseURL = 'https://httpcolon.dev/'
-    const baseURL = 'http://localhost:3000/'
     const timeoutRef = useRef<number>(-1);
     const [value, setValue] = useState('');
     const [redirect, setRedirect] = useState('');
@@ -250,6 +262,15 @@ export default function HomePage(props) {
     const router = useRouter()
     const slug = router.query["slug"];
 
+    // if (slug !== "" && slugLoader == 0) {
+    //     const data = getFromAPI(slug);
+    //     if(data !== null){
+    //         setResponse(data);
+    //         setSlugLoader(1);
+    //         setValue(data.destination);    
+    //     }
+    // }
+
     if (slug !== "" && slugLoader == 0) {
         fetch(baseURL + "/api/v1/" + slug)
             .then(response => response.json())
@@ -257,20 +278,28 @@ export default function HomePage(props) {
                 console.log("slug fetch: " + data.destination);
                 console.log("slug data:" + JSON.stringify(data));
                 setValue(data.destination);
-                setResponse(data);
-                let buffer: SetStateAction<object[]> = [];
-                let dd = new Map(Object.entries(data.payload));
-                dd.forEach(function (value, key) {
-                    // @ts-ignore
-                    // buffer.push(<tr key={key}><td>{key}</td><td>{value}</td></tr>);
-                    buffer.push({ "header": key, "value": value })
-                });
-                // setCopyURL(window.location.href);
-                // window.history.pushState(data.id, data.destination);
-                setRows(buffer);
+                setResponse(data.instances[0]);
                 setSlugLoader(1)
-            })
+            }).catch((error) => {
+                console.error('Error:', error);
+            });
     }
+
+    function refreshTable() {
+        console.log("refreshing table");
+        fetch(baseURL + "/api/v1/" + slug + "?refresh=true")
+        .then(response => response.json())
+        .then(data => {
+            console.log("slug fetch: " + data.destination);
+            console.log("slug data:" + JSON.stringify(data));
+            setValue(data.destination);
+            setResponse(data.instances[data.instances.length - 1]);
+            console.log("refreshed table" + data);
+            setSlugLoader(1)
+        }).catch((error) => {
+            console.error('Error:', error);
+        });
+    };
 
     function isValidHttpUrl({ string }: { string: any }) {
         let url;
@@ -359,14 +388,13 @@ export default function HomePage(props) {
                                         GET {response.destination}
                                     </Code>
                                     <div>
-                                        <Code>
-                                        Status {response.status}
+                                       <Code>
+                                            Status {response.status}
                                         </Code>
                                     </div>
                                     <div>
-                                        
                                         <Code>
-                                        Latency {response.latency} ms
+                                            Latency {response.latency} ms
                                         </Code>
                                     </div>
                                     <div>     
@@ -375,7 +403,7 @@ export default function HomePage(props) {
                                         </Code>
                                     </div>
                                     <div>
-                                        <Button leftIcon={<IconRefresh />} variant="outline" size="xs">
+                                        <Button leftIcon={<IconRefresh />} variant="outline" size="xs" onClick={refreshTable}>
                                             Refresh
                                         </Button>
                                     </div>

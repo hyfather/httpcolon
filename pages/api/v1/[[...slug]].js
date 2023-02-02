@@ -1,7 +1,9 @@
+const SCHEMA_VERSION = 0.1;
+const MAX_INSTANCES = 3;
 
 export default async function handler(req, res) {
     const slug = req.query["slug"];
-
+    const refresh = req.query["refresh"];
 
     console.log("slug: ", slug[0]);
     const slugs = slug[0].split(",");
@@ -15,22 +17,22 @@ export default async function handler(req, res) {
     }
 
     const data = await getKey(uniqSlug);
-    if(data == null){
-        console.log("key not found, will create");
+    if(data == null || refresh != null){
+        console.log("creating entry");
         const rawData = await makeRequest(url, "GET");
+        const destination = rawData.destination;
         if(rawData.status == "500") { 
             console.log("error, will not save");
-            const data = rawData;
-            res.status(200).json({ id: uniqSlug, destination: data.destination, timestamp: data.timestamp, latency: data.latency, status: data.status + " " + data.statusText, payload: data.payload });
+            res.status(200).json({ id: uniqSlug, destination: rawData.destination, instances: [rawData] });
         } else {
-            await createKey(uniqSlug, rawData);
-            console.log("key created======================");
-            const data = await getKey(uniqSlug);
-            res.status(200).json({ id: uniqSlug, destination: data.destination, timestamp: data.timestamp, latency: data.latency, status: data.status + " " + data.statusText, payload: data.payload });
+            await addData(uniqSlug, rawData, destination);
+            console.log("new entry created");
+            const data = await getData(uniqSlug);
+            res.status(200).json({ id: uniqSlug, destination: data.destination, instances: data.instances });
         }
     } else {
         console.log("key found, will return");
-        res.status(200).json({ id: uniqSlug, destination: data.destination, timestamp: data.timestamp, latency: data.latency, status: data.status + " " + data.statusText, payload: data.payload });
+        res.status(200).json({ id: uniqSlug, destination: data.destination, instances: data.instances });
     }   
 }
 
@@ -105,4 +107,85 @@ async function createKey(uniq, rawData){
         body: JSON.stringify(rawData),
         method: "POST",
     }).then(response => response.ok ? response.json() : console.log("==ERR" + response)).then(data => console.log(data)).catch(err => console.log(err));            
+}
+
+async function getData(uniq){
+    const keyURL = process.env.UPSTASH_REDIS_REST_URL + "/get/" + uniq;
+
+    console.log("getting keyurl: " + keyURL);
+    const response = await fetch(keyURL, {
+        headers: {
+            Authorization: "Bearer " + process.env.UPSTASH_REDIS_REST_TOKEN
+        }
+    })
+    if(response.ok) {
+        console.log("response ok");
+        const fullData = await response.json();
+        console.log("fullData: ", fullData)
+        const data = await JSON.parse(fullData.result);
+        if(data.schema != SCHEMA_VERSION) {
+            console.log("schema mismatch, skipping");
+            return null;
+        }
+        return data;    
+    }
+    else {
+        console.log("key not found");
+        return null;
+    }
+}
+
+
+async function addData(uniq, rawData, destination){
+    console.log("uniq: ", uniq);
+
+    rawData.id = uniq;
+
+    const getKeyURL = process.env.UPSTASH_REDIS_REST_URL + "/get/" + uniq;
+    const setKeyURL = process.env.UPSTASH_REDIS_REST_URL + "/set/" + uniq + "/";
+
+    const response = await fetch(getKeyURL, {
+        headers: {
+            Authorization: "Bearer " + process.env.UPSTASH_REDIS_REST_TOKEN
+        }
+    })
+    if(response.ok) {
+        console.log("response ok");
+        const fullData = await response.json();
+        console.log("fullData: ", fullData)
+        const data = await JSON.parse(fullData.result);
+        if(data != null) {
+            if(data.schema != SCHEMA_VERSION) {
+                console.log("schema mismatch, will not save");
+            }
+            data.instances.push(rawData);
+            if (data.instances.length > MAX_INSTANCES) {
+                data.instances.shift();
+            }
+            await fetch(setKeyURL, {
+                headers: {
+                    Authorization: "Bearer " + process.env.UPSTASH_REDIS_REST_TOKEN
+                },
+                body: JSON.stringify(data),
+                method: "POST",
+            }).then(response => response.ok ? response.json() : console.log("==ERR" + response)).then(data => console.log(data)).catch(err => console.log(err));
+            return data;    
+        }
+    }
+
+    console.log("key not found");
+    const newEntry = {
+        instances: [rawData],
+        schema: SCHEMA_VERSION,
+        id: uniq,
+        destination: destination
+    }
+    await fetch(setKeyURL, {
+        headers: {
+            Authorization: "Bearer " + process.env.UPSTASH_REDIS_REST_TOKEN
+        },
+        body: JSON.stringify(newEntry),
+        method: "POST",
+    }).then(response => response.ok ? response.json() : console.log("==ERR" + response)).then(data => console.log(data)).catch(err => console.log(err));                
+    return newEntry;
 }

@@ -168,9 +168,6 @@ export function TableSort({ data }: TableSortProps) {
           ) : (
             <tr>
               <td colSpan="auto">
-                <Text weight={500} align="center">
-                  Nothing found {typeof(data)}
-                </Text>
               </td>
             </tr>
           )}

@@ -39,9 +39,10 @@ import {LinksGroup} from 'NavbarLinksGroup';
 import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
 import { IconFingerprint, IconCopy, IconMoon, IconSquarePlus, IconSun, IconSwitchHorizontal } from '@tabler/icons';
 import { getRandomValues } from 'crypto';
+import { DefaultValue } from '@mantine/core/lib/MultiSelect/DefaultValue/DefaultValue';
 
-// const BASE_URL = 'https://httpcolon.dev/'
-const BASE_URL = 'http://localhost:3000'
+const BASE_URL = 'https://httpcolon.dev/'
+//const BASE_URL = 'http://localhost:3000'
 
 
 const useStyles = createStyles((theme, _params, getRef) => {
@@ -170,103 +171,103 @@ const useStyles = createStyles((theme, _params, getRef) => {
     };
 });
 
-const navbarData = [
-    { link: '', label: 'New URL', icon: IconSquarePlus },
-    { link: '', label: 'History', icon: IconFingerprint },
-];
+// const navbarData = [
+//     { link: '', label: 'New URL', icon: IconSquarePlus },
+//     { link: '', label: 'History', icon: IconFingerprint },
+// ];
 
-export function NavbarSimple(data) {
-    const { classes, cx } = useStyles();
-    const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-    const {instanceData, setInstanceData} = useState(data);
+// export function NavbarSimple(data) {
+//     const { classes, cx } = useStyles();
+//     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+//     const {instanceData, setInstanceData} = useState(data);
 
-    const [active, setActive] = useState('Billing');
+//     const [active, setActive] = useState('Billing');
 
-    const links = navbarData.map((item) => (
-        <a
-            className={cx(classes.link, { [classes.linkActive]: item.label === active })}
-            href={item.link}
-            key={item.label}
-            onClick={(event) => {
-                event.preventDefault();
-                setActive(item.label);
-            }}
-        >
-            <item.icon className={classes.linkIcon} stroke={1.5} />
-            <span>{item.label}</span>
-        </a>
-    ));
+//     const links = navbarData.map((item) => (
+//         <a
+//             className={cx(classes.link, { [classes.linkActive]: item.label === active })}
+//             href={item.link}
+//             key={item.label}
+//             onClick={(event) => {
+//                 event.preventDefault();
+//                 setActive(item.label);
+//             }}
+//         >
+//             <item.icon className={classes.linkIcon} stroke={1.5} />
+//             <span>{item.label}</span>
+//         </a>
+//     ));
 
-    if(instanceData != null ) {
-        console.log("instanceData");
-        console.log(instanceData);
-        const iLinks = instanceData.map((item) => (
-            <a
-                className={cx(classes.link, { [classes.linkActive]: item.label === active })}
-                onClick={(event) => {
-                    event.preventDefault();
-                    setActive(item.label);
-                }}
-                >
-                <item.icon className={classes.linkIcon} stroke={1.5} />
-                <span>{item.timestamp}</span>
-            </a>       
-        ));
-        setInstanceData(iLinks);
-    };
+//     if(instanceData != null ) {
+//         console.log("instanceData");
+//         console.log(instanceData);
+//         const iLinks = instanceData.map((item) => (
+//             <a
+//                 className={cx(classes.link, { [classes.linkActive]: item.label === active })}
+//                 onClick={(event) => {
+//                     event.preventDefault();
+//                     setActive(item.label);
+//                 }}
+//                 >
+//                 <item.icon className={classes.linkIcon} stroke={1.5} />
+//                 <span>{item.timestamp}</span>
+//             </a>       
+//         ));
+//         setInstanceData(iLinks);
+//     };
 
-    return (
-        <Navbar height={700} width={{ sm: 300 }} p="md">
-            <Navbar.Section grow>
-                <Group className={classes.header} position="apart">
-                    <Center>
-                        <Image
-                            width={250}
-                            height={80}
-                            src="/httpcolon.png"
-                            fit="contain"
-                        />
-                    </Center>
-                    {/*<Code sx={{ fontWeight: 700 }}>Beta</Code>*/}
-                </Group>
-                {links}
-                {instanceData}
-            </Navbar.Section>
+//     return (
+//         <Navbar height={700} width={{ sm: 300 }} p="md">
+//             <Navbar.Section grow>
+//                 <Group className={classes.header} position="apart">
+//                     <Center>
+//                         <Image
+//                             width={250}
+//                             height={80}
+//                             src="/httpcolon.png"
+//                             fit="contain"
+//                         />
+//                     </Center>
+//                     {/*<Code sx={{ fontWeight: 700 }}>Beta</Code>*/}
+//                 </Group>
+//                 {links}
+//                 {instanceData}
+//             </Navbar.Section>
 
-            <Navbar.Section className={classes.footer}>
-                <Group position="center" my="xl">
-                    <SegmentedControl
-                        value={colorScheme}
-                        onChange={(value: 'light' | 'dark') => toggleColorScheme(value)}
-                        data={[
-                            {
-                                value: 'light',
-                                label: (
-                                    <Center>
-                                        <IconSun size={16} stroke={1.5} />
-                                        <Box ml={10}>Light</Box>
-                                    </Center>
-                                ),
-                            },
-                            {
-                                value: 'dark',
-                                label: (
-                                    <Center>
-                                        <IconMoon size={16} stroke={1.5} />
-                                        <Box ml={10}>Dark</Box>
-                                    </Center>
-                                ),
-                            },
-                        ]}
-                    />
-                </Group>
-                <Center>
-                    {/*<GitHubButton href="https://github.com/hyfather/httpcolon" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" aria-label="Star hyfather/httpcolon on GitHub"></GitHubButton>*/}
-                </Center>
-            </Navbar.Section>
-        </Navbar>
-    );
-}
+//             <Navbar.Section className={classes.footer}>
+//                 <Group position="center" my="xl">
+//                     <SegmentedControl
+//                         value={colorScheme}
+//                         onChange={(value: 'light' | 'dark') => toggleColorScheme(value)}
+//                         data={[
+//                             {
+//                                 value: 'light',
+//                                 label: (
+//                                     <Center>
+//                                         <IconSun size={16} stroke={1.5} />
+//                                         <Box ml={10}>Light</Box>
+//                                     </Center>
+//                                 ),
+//                             },
+//                             {
+//                                 value: 'dark',
+//                                 label: (
+//                                     <Center>
+//                                         <IconMoon size={16} stroke={1.5} />
+//                                         <Box ml={10}>Dark</Box>
+//                                     </Center>
+//                                 ),
+//                             },
+//                         ]}
+//                     />
+//                 </Group>
+//                 <Center>
+//                     {/*<GitHubButton href="https://github.com/hyfather/httpcolon" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" aria-label="Star hyfather/httpcolon on GitHub"></GitHubButton>*/}
+//                 </Center>
+//             </Navbar.Section>
+//         </Navbar>
+//     );
+// }
 
 export function getFromAPI(slug: string) {
     fetch(BASE_URL + "/api/v1/" + slug)
@@ -283,6 +284,7 @@ export function getFromAPI(slug: string) {
 export default function HomePage(props) {
     const timeoutRef = useRef<number>(-1);
     const [value, setValue] = useState('');
+    const [inputValue, setInputValue] = useState('');
     const [redirect, setRedirect] = useState('');
     const [methodValue, setMethodValue] = useState('');
     const [loading, setLoading] = useState(false);
@@ -293,11 +295,14 @@ export default function HomePage(props) {
     const [copyURL, setCopyURL] = useState<string>(BASE_URL);
     const [slugLoader, setSlugLoader] = useState<number>(0);
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+    const { classes, cx } = useStyles();
+    const [active, setActive] = useState('');
 
     const router = useRouter()
+
     const slug = router.query["slug"];
 
-    if (slug !== "" && slugLoader == 0) {
+    if (slug != null && slugLoader == 0) {
         fetch(BASE_URL + "/api/v1/" + slug)
             .then(response => response.json())
             .then(data => {
@@ -305,6 +310,7 @@ export default function HomePage(props) {
                 console.log("slug data:" + JSON.stringify(data));
                 setData(data);
                 setValue(data.destination);
+                setInputValue(data.destination);
                 setResponse(data.instances[0]);
                 setSlugLoader(1)
             }).catch((error) => {
@@ -321,6 +327,7 @@ export default function HomePage(props) {
             console.log("slug data:" + JSON.stringify(data));
             setData(data);
             setValue(data.destination);
+            setInputValue(data.destination);
             setResponse(data.instances[data.instances.length - 1]);
             console.log("refreshed table" + data);
             setSlugLoader(1)
@@ -349,10 +356,6 @@ export default function HomePage(props) {
         initialValues: { url: '', method: '' },
     });
 
-    const { classes, cx } = useStyles();
-
-    const [active, setActive] = useState('Billing');
-
 
     useEffect(() => {
         if (redirect !== "") {
@@ -367,6 +370,7 @@ export default function HomePage(props) {
     var iLinks = [];
     if(data != null && data.instances != null) {
         const instances = data.instances;
+        // setActive(instances[0].timestamp);
         console.log("data.instances: " + instances);
         var d = new Date(0);
         iLinks = instances.map(function(item) {
@@ -375,17 +379,15 @@ export default function HomePage(props) {
             className={cx(classes.link, { [classes.linkActive]: item.timestamp === active })}
             key={item.timestamp}
             onClick={(event) => {
-                    console.log("click me" + item);
-                    setResponse(item);
                     event.preventDefault();
+                    // console.log("click me" + item);
+                    setResponse(item);
                     setActive(item.timestamp);
                 }}
                 >
-                 
                 <span> <IconClock size={16} stroke={1} /> <Code> {d.toLocaleString()} </Code></span>
             </a>       
         });
-        console.log("iLinks: " + iLinks);
     }
 
 //     <CopyButton value={copyURL}>
@@ -396,6 +398,12 @@ export default function HomePage(props) {
 //     )}
 // </CopyButton></Header> 
 
+    function handleTextInputChange(event) {
+        event.preventDefault();
+        if(event.target.value != null) {
+            setInputValue(event.target.value);
+        }
+    }
 
     // @ts-ignore
     return (
@@ -448,15 +456,15 @@ export default function HomePage(props) {
                             />
                         </Group>
                         <Center>
-                            {/*<GitHubButton href="https://github.com/hyfather/httpcolon" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" aria-label="Star hyfather/httpcolon on GitHub"></GitHubButton>*/}
+                            <GitHubButton href="https://github.com/hyfather/httpcolon" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" aria-label="Star hyfather/httpcolon on GitHub"></GitHubButton>
                         </Center>
                     </Navbar.Section>
                 </Navbar>
                 }
                 header={<Header height={80} p="xs">
                             <form onSubmit={form.onSubmit(function (values) {
-                                console.log("redirecting");
-                                const strippedUrl = values.url.replace(/(^\w+:|^)\/\//, '').split('?')[0];
+                                console.log("redirecting", inputValue);
+                                const strippedUrl = inputValue.replace(/(^\w+:|^)\/\//, '').split('?')[0];
                                 const redirectUrl = values.method === "GET" || values.method == "" ? (BASE_URL + '/' + strippedUrl) : (BASE_URL + '/' + strippedUrl + "?method=" + values.method);
                                 console.log("redirectUrl: " + redirectUrl + values.method);
                                 setCopyURL(redirectUrl);
@@ -467,7 +475,7 @@ export default function HomePage(props) {
                                         <Select mt="xs" placeholder="GET" {...form.getInputProps('method')} data={['GET', 'POST', 'PUT', 'DELETE']} />
                                     </Grid.Col>
                                     <Grid.Col span={"auto"}>
-                                        <TextInput mt="xs" {...form.getInputProps('url')}/>
+                                        <TextInput mt="xs" {...form.getInputProps('url')} value={inputValue} onChange={handleTextInputChange} />
                                     </Grid.Col>
                                     <Grid.Col span={1}>
                                         <Button type="submit" mt="xs" variant="gradient" gradient={{ from: 'pink', to: 'grape' }}>

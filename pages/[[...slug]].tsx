@@ -3,7 +3,7 @@ import { useState, useRef, SetStateAction, useEffect } from 'react';
 import { useRouter } from 'next/router'
 import GitHubButton from 'react-github-btn'
 import { useForm } from '@mantine/form';
-import { IconSelector, IconChevronDown, IconChevronUp, IconSearch } from '@tabler/icons';
+import { IconSelector, IconChevronDown, IconChevronUp, IconSearch, IconRefresh } from '@tabler/icons';
 import { TableSort } from './tablesort';
 
 
@@ -35,7 +35,7 @@ import {
 } from '@mantine/core';
 
 import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
-import { IconFingerprint, IconLogout, IconMoon, IconSquarePlus, IconSun, IconSwitchHorizontal } from '@tabler/icons';
+import { IconFingerprint, IconCopy, IconMoon, IconSquarePlus, IconSun, IconSwitchHorizontal } from '@tabler/icons';
 import { getRandomValues } from 'crypto';
 
 
@@ -288,44 +288,11 @@ export default function HomePage(props) {
     };
 
 
-    // const handleChange = (val: string) => {
-    //     window.clearTimeout(timeoutRef.current);
-    //     setValue(val);
-    //     setData([]);
-
-    //     if (isValidHttpUrl({ string: val })) {
-    //         console.log(val);
-    //         const strippedUrl = val.replace(/(^\w+:|^)\/\//, '').split('?')[0];
-    //         console.log("strippedurl:" + strippedUrl);
-    //         fetch(baseURL + `/api/v1/${strippedUrl}`)
-    //             .then(response => response.json())
-    //             .then(data => {
-    //                 setResponse(data);
-    //                 console.log("data:" + data);
-    //                 let buffer: SetStateAction<object[]> = [];
-    //                 let dd = new Map(Object.entries(data.headers));
-    //                 dd.forEach(function (value, key) {
-    //                     // @ts-ignore
-    //                     // buffer.push(<tr key={key}><td>{key}</td><td>{value}</td></tr>);
-    //                     buffer.push({ "header": key, "value": value })
-    //                 });
-    //                 setCopyURL(baseURL + data.id);
-    //                 window.history.pushState(data.id, val, '/' + data.id);
-    //                 setRows(buffer);
-    //                 setLoading(false);
-    //             });
-    //     } else {
-    //         setLoading(true);
-    //     }
-    // };
-
     const form = useForm({
         initialValues: { url: '', method: '' },
     });
 
     const { classes, theme } = useStyles();
-
-    // setRedirect("");
 
     useEffect(() => {
         if (redirect !== "") {
@@ -347,8 +314,8 @@ export default function HomePage(props) {
                 header={<Header height={60} p="xs">
                     <CopyButton value={copyURL}>
                         {({ copied, copy }) => (
-                            <Button variant="subtle" color={copied ? 'blue' : 'black'} onClick={copy}>
-                                {copied ? 'URL Copied' : "✂ " + copyURL}
+                            <Button variant="outline" size="xs" leftIcon={<IconCopy />} color={copied ? 'blue' : 'black'} onClick={copy}>
+                                {copied ? 'URL Copied' : copyURL}
                             </Button>
                         )}
                     </CopyButton></Header>
@@ -363,8 +330,9 @@ export default function HomePage(props) {
                         <form onSubmit={form.onSubmit(function (values) {
                             console.log("redirecting");
                             const strippedUrl = values.url.replace(/(^\w+:|^)\/\//, '').split('?')[0];
-                            const redirectUrl = values.method === "GET" ? (baseURL + '/' + strippedUrl) : (baseURL + '/' + strippedUrl + "?method=" + values.method);
-                            console.log("redirectUrl: " + redirectUrl);
+                            const redirectUrl = values.method === "GET" || values.method == "" ? (baseURL + '/' + strippedUrl) : (baseURL + '/' + strippedUrl + "?method=" + values.method);
+                            console.log("redirectUrl: " + redirectUrl + values.method);
+                            setCopyURL(redirectUrl);
                             setRedirect(redirectUrl);
                         })}>
                             <Grid>
@@ -372,11 +340,11 @@ export default function HomePage(props) {
                                     <Select mt="sm" placeholder="GET" {...form.getInputProps('method')} data={['GET', 'POST', 'PUT', 'DELETE']} />
                                 </Grid.Col>
                                 <Grid.Col span={"auto"}>
-                                    <TextInput mt="sm" placeholder="www.google.com" {...form.getInputProps('url')} />
+                                    <TextInput mt="sm" {...form.getInputProps('url')}/>
                                 </Grid.Col>
                                 <Grid.Col span={1}>
                                     <Button type="submit" mt="sm">
-                                        Submit
+                                        Colonize
                                     </Button>
                                 </Grid.Col>
                             </Grid>
@@ -388,16 +356,31 @@ export default function HomePage(props) {
                             <div className={classes.inner}>
                                 <div>
                                     <Code color="teal">
-                                        {response.destination}
+                                        GET {response.destination}
                                     </Code>
                                     <div>
                                         <Code>
-                                            {response.status}
-                                        </Code>
-                                        <Code>
-                                            {response.latency} ms
+                                        Status {response.status}
                                         </Code>
                                     </div>
+                                    <div>
+                                        
+                                        <Code>
+                                        Latency {response.latency} ms
+                                        </Code>
+                                    </div>
+                                    <div>     
+                                        <Code>
+                                            Timestamp {response.timestamp}
+                                        </Code>
+                                    </div>
+                                    <div>
+                                        <Button leftIcon={<IconRefresh />} variant="outline" size="xs">
+                                            Refresh
+                                        </Button>
+                                    </div>
+
+
                                 </div>
                             </div>
                         </Card>

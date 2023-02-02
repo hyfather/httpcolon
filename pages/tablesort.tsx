@@ -126,10 +126,8 @@ export function TableSort({ data }: TableSortProps) {
         <tr key={row.header}>
           <td><Code>{row.header}</Code></td>
           <td><Code>{row.value}</Code></td>
-          <td><Code>{row.size}</Code></td>
         </tr>));
   }
-
 
   return (
     <ScrollArea>
@@ -161,13 +159,6 @@ export function TableSort({ data }: TableSortProps) {
               onSort={() => setSorting('value')}
             >
               Value
-            </Th>
-            <Th
-              sorted={sortBy === 'size'}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting('size')}
-            >
-              Size
             </Th>
           </tr>
         </thead>

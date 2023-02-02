@@ -1,5 +1,5 @@
 const SCHEMA_VERSION = 0.1;
-const MAX_INSTANCES = 3;
+const MAX_INSTANCES = 10;
 
 export default async function handler(req, res) {
     const slug = req.query["slug"];

@@ -38,8 +38,8 @@ import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeTo
 import { IconFingerprint, IconCopy, IconMoon, IconSquarePlus, IconSun, IconSwitchHorizontal } from '@tabler/icons';
 import { getRandomValues } from 'crypto';
 
-//const baseURL = 'https://httpcolon.dev/'
-const baseURL = 'http://localhost:3000'
+const BASE_URL = 'https://httpcolon.dev/'
+// const BASE_URL = 'http://localhost:3000'
 
 
 const useStyles = createStyles((theme, _params, getRef) => {
@@ -235,7 +235,7 @@ export function NavbarSimple() {
 }
 
 export function getFromAPI(slug: string) {
-    fetch(baseURL + "/api/v1/" + slug)
+    fetch(BASE_URL + "/api/v1/" + slug)
     .then(response => response.json())
     .then(data => {
         console.log("slug fetch: " + data.destination);
@@ -256,7 +256,7 @@ export default function HomePage(props) {
     const [response, setResponse] = useState<string[]>([]);
     const [opened, setOpened] = useState(false);
     const [rows, setRows] = useState<object[]>([]);
-    const [copyURL, setCopyURL] = useState<string>(baseURL);
+    const [copyURL, setCopyURL] = useState<string>(BASE_URL);
     const [slugLoader, setSlugLoader] = useState<number>(0);
 
     const router = useRouter()
@@ -272,7 +272,7 @@ export default function HomePage(props) {
     // }
 
     if (slug !== "" && slugLoader == 0) {
-        fetch(baseURL + "/api/v1/" + slug)
+        fetch(BASE_URL + "/api/v1/" + slug)
             .then(response => response.json())
             .then(data => {
                 console.log("slug fetch: " + data.destination);
@@ -287,7 +287,7 @@ export default function HomePage(props) {
 
     function refreshTable() {
         console.log("refreshing table");
-        fetch(baseURL + "/api/v1/" + slug + "?refresh=true")
+        fetch(BASE_URL + "/api/v1/" + slug + "?refresh=true")
         .then(response => response.json())
         .then(data => {
             console.log("slug fetch: " + data.destination);
@@ -359,7 +359,7 @@ export default function HomePage(props) {
                         <form onSubmit={form.onSubmit(function (values) {
                             console.log("redirecting");
                             const strippedUrl = values.url.replace(/(^\w+:|^)\/\//, '').split('?')[0];
-                            const redirectUrl = values.method === "GET" || values.method == "" ? (baseURL + '/' + strippedUrl) : (baseURL + '/' + strippedUrl + "?method=" + values.method);
+                            const redirectUrl = values.method === "GET" || values.method == "" ? (BASE_URL + '/' + strippedUrl) : (BASE_URL + '/' + strippedUrl + "?method=" + values.method);
                             console.log("redirectUrl: " + redirectUrl + values.method);
                             setCopyURL(redirectUrl);
                             setRedirect(redirectUrl);

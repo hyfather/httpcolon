@@ -3,7 +3,7 @@ import { useState, useRef, SetStateAction, useEffect } from 'react';
 import { useRouter } from 'next/router'
 import GitHubButton from 'react-github-btn'
 import { useForm } from '@mantine/form';
-import { IconSelector, IconChevronDown, IconChevronUp, IconSearch, IconRefresh, IconTimeline, IconClock } from '@tabler/icons';
+import { IconSelector, IconChevronLeft, IconChevronRight, IconSearch, IconRefresh, IconTimeline, IconClock, IconPlus } from '@tabler/icons';
 import { TableSort } from './tablesort';
 
 
@@ -32,6 +32,8 @@ import {
     Container,
     Footer,
     keyframes,
+    Space,
+    useMantineTheme,
 } from '@mantine/core';
 
 import {LinksGroup} from 'NavbarLinksGroup';
@@ -41,8 +43,8 @@ import { IconFingerprint, IconCopy, IconMoon, IconSquarePlus, IconSun, IconSwitc
 import { getRandomValues } from 'crypto';
 import { DefaultValue } from '@mantine/core/lib/MultiSelect/DefaultValue/DefaultValue';
 
-const BASE_URL = 'https://httpcolon.dev/'
-//const BASE_URL = 'http://localhost:3000'
+// const BASE_URL = 'https://httpcolon.dev/'
+const BASE_URL = 'http://localhost:3000'
 
 
 const useStyles = createStyles((theme, _params, getRef) => {
@@ -171,104 +173,6 @@ const useStyles = createStyles((theme, _params, getRef) => {
     };
 });
 
-// const navbarData = [
-//     { link: '', label: 'New URL', icon: IconSquarePlus },
-//     { link: '', label: 'History', icon: IconFingerprint },
-// ];
-
-// export function NavbarSimple(data) {
-//     const { classes, cx } = useStyles();
-//     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-//     const {instanceData, setInstanceData} = useState(data);
-
-//     const [active, setActive] = useState('Billing');
-
-//     const links = navbarData.map((item) => (
-//         <a
-//             className={cx(classes.link, { [classes.linkActive]: item.label === active })}
-//             href={item.link}
-//             key={item.label}
-//             onClick={(event) => {
-//                 event.preventDefault();
-//                 setActive(item.label);
-//             }}
-//         >
-//             <item.icon className={classes.linkIcon} stroke={1.5} />
-//             <span>{item.label}</span>
-//         </a>
-//     ));
-
-//     if(instanceData != null ) {
-//         console.log("instanceData");
-//         console.log(instanceData);
-//         const iLinks = instanceData.map((item) => (
-//             <a
-//                 className={cx(classes.link, { [classes.linkActive]: item.label === active })}
-//                 onClick={(event) => {
-//                     event.preventDefault();
-//                     setActive(item.label);
-//                 }}
-//                 >
-//                 <item.icon className={classes.linkIcon} stroke={1.5} />
-//                 <span>{item.timestamp}</span>
-//             </a>       
-//         ));
-//         setInstanceData(iLinks);
-//     };
-
-//     return (
-//         <Navbar height={700} width={{ sm: 300 }} p="md">
-//             <Navbar.Section grow>
-//                 <Group className={classes.header} position="apart">
-//                     <Center>
-//                         <Image
-//                             width={250}
-//                             height={80}
-//                             src="/httpcolon.png"
-//                             fit="contain"
-//                         />
-//                     </Center>
-//                     {/*<Code sx={{ fontWeight: 700 }}>Beta</Code>*/}
-//                 </Group>
-//                 {links}
-//                 {instanceData}
-//             </Navbar.Section>
-
-//             <Navbar.Section className={classes.footer}>
-//                 <Group position="center" my="xl">
-//                     <SegmentedControl
-//                         value={colorScheme}
-//                         onChange={(value: 'light' | 'dark') => toggleColorScheme(value)}
-//                         data={[
-//                             {
-//                                 value: 'light',
-//                                 label: (
-//                                     <Center>
-//                                         <IconSun size={16} stroke={1.5} />
-//                                         <Box ml={10}>Light</Box>
-//                                     </Center>
-//                                 ),
-//                             },
-//                             {
-//                                 value: 'dark',
-//                                 label: (
-//                                     <Center>
-//                                         <IconMoon size={16} stroke={1.5} />
-//                                         <Box ml={10}>Dark</Box>
-//                                     </Center>
-//                                 ),
-//                             },
-//                         ]}
-//                     />
-//                 </Group>
-//                 <Center>
-//                     {/*<GitHubButton href="https://github.com/hyfather/httpcolon" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" aria-label="Star hyfather/httpcolon on GitHub"></GitHubButton>*/}
-//                 </Center>
-//             </Navbar.Section>
-//         </Navbar>
-//     );
-// }
-
 export function getFromAPI(slug: string) {
     fetch(BASE_URL + "/api/v1/" + slug)
     .then(response => response.json())
@@ -297,6 +201,12 @@ export default function HomePage(props) {
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const { classes, cx } = useStyles();
     const [active, setActive] = useState('');
+    const inputRef = useRef<HTMLInputElement>(null);
+    const copyButtonRef = useRef<HTMLButtonElement>(null);
+    const colonizeButtonRef = useRef<HTMLButtonElement>(null);
+    const tableRef = useRef<HTMLTableElement>(null);
+    const theme = useMantineTheme();
+    const [updateTable, setUpdateTable] = useState('');
 
     const router = useRouter()
 
@@ -318,9 +228,18 @@ export default function HomePage(props) {
             });
     }
 
-    function refreshTable() {
+    function refreshTable(slug: string) {
+        var url;
+        if(slug != null){
+            const slug_ = router.query["slug"];
+            if(slug_ != null){
+                url = "/api/v1/" + slug_.toString() + "?refresh=true";
+            }
+        } else {
+            url = "/api/v1/" + slug + "?refresh=true";
+        }
         console.log("refreshing table");
-        fetch(BASE_URL + "/api/v1/" + slug + "?refresh=true")
+        fetch(BASE_URL + url?.toString())
         .then(response => response.json())
         .then(data => {
             console.log("slug fetch: " + data.destination);
@@ -370,7 +289,10 @@ export default function HomePage(props) {
     var iLinks = [];
     if(data != null && data.instances != null) {
         const instances = data.instances;
-        // setActive(instances[0].timestamp);
+        // if(instances.length > 0){
+        //     setActive(instances[0].timestamp);            
+        // }
+
         console.log("data.instances: " + instances);
         var d = new Date(0);
         iLinks = instances.map(function(item) {
@@ -380,12 +302,16 @@ export default function HomePage(props) {
             key={item.timestamp}
             onClick={(event) => {
                     event.preventDefault();
-                    // console.log("click me" + item);
+                    console.log("click me" + item);
                     setResponse(item);
                     setActive(item.timestamp);
+                    console.log("updatetable1", updateTable, updateTable ? false : true);
+                    setUpdateTable(item.timestamp);
+                    console.log("updatetable", updateTable);
+
                 }}
                 >
-                <span> <IconClock size={16} stroke={1} /> <Code> {d.toLocaleString()} </Code></span>
+                <span> <IconClock size={16} stroke={1} /> {d.toLocaleString()}</span>
             </a>       
         });
     }
@@ -404,6 +330,18 @@ export default function HomePage(props) {
             setInputValue(event.target.value);
         }
     }
+
+    function goHome() {
+        router.push("/");
+        setValue("");
+        setInputValue("");
+        setData([]);
+        setResponse([]);
+        inputRef.current?.focus();
+        // copyButtonRef.current?.disabled = false;
+    }
+
+    
 
     // @ts-ignore
     return (
@@ -429,34 +367,34 @@ export default function HomePage(props) {
                     </Navbar.Section>
         
                     <Navbar.Section className={classes.footer}>
-                        <Group position="center" my="xl">
-                            <SegmentedControl
-                                value={colorScheme}
-                                onChange={(value: 'light' | 'dark') => toggleColorScheme(value)}
-                                data={[
-                                    {
-                                        value: 'light',
-                                        label: (
-                                            <Center>
-                                                <IconSun size={16} stroke={1.5} />
-                                                <Box ml={10}>Light</Box>
-                                            </Center>
-                                        ),
-                                    },
-                                    {
-                                        value: 'dark',
-                                        label: (
-                                            <Center>
-                                                <IconMoon size={16} stroke={1.5} />
-                                                <Box ml={10}>Dark</Box>
-                                            </Center>
-                                        ),
-                                    },
-                                ]}
-                            />
-                        </Group>
-                        <Center>
-                            <GitHubButton href="https://github.com/hyfather/httpcolon" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" aria-label="Star hyfather/httpcolon on GitHub"></GitHubButton>
+                       <Center>
+                            <Group position="center" my="xl">
+                                <SegmentedControl
+                                    value={colorScheme}
+                                    onChange={(value: 'light' | 'dark') => toggleColorScheme(value)}
+                                    data={[
+                                        {
+                                            value: 'light',
+                                            label: (
+                                                <Center>
+                                                    <IconSun size={16} stroke={1.5} />
+                                                    {/* <Box ml={10}>Light</Box> */}
+                                                </Center>
+                                            ),
+                                        },
+                                        {
+                                            value: 'dark',
+                                            label: (
+                                                <Center>
+                                                    <IconMoon size={16} stroke={1.5} />
+                                                    {/* <Box ml={10}>Dark</Box> */}
+                                                </Center>
+                                            ),
+                                        },
+                                    ]}
+                                />
+                                <GitHubButton href="https://github.com/hyfather/httpcolon" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" aria-label="Star hyfather/httpcolon on GitHub"></GitHubButton>
+                            </Group>
                         </Center>
                     </Navbar.Section>
                 </Navbar>
@@ -475,10 +413,15 @@ export default function HomePage(props) {
                                         <Select mt="xs" placeholder="GET" {...form.getInputProps('method')} data={['GET', 'POST', 'PUT', 'DELETE']} />
                                     </Grid.Col>
                                     <Grid.Col span={"auto"}>
-                                        <TextInput mt="xs" {...form.getInputProps('url')} value={inputValue} onChange={handleTextInputChange} />
+                                        <TextInput mt="xs" {...form.getInputProps('url')} value={inputValue} onChange={handleTextInputChange} ref={inputRef} />
                                     </Grid.Col>
                                     <Grid.Col span={1}>
-                                        <Button type="submit" mt="xs" variant="gradient" gradient={{ from: 'pink', to: 'grape' }}>
+                                        <Button mt="xs" variant="gradient" gradient={{ from: theme.colors.blue[9], to: theme.colors.grape[7]}} ref={copyButtonRef}>
+                                            Copy URL
+                                        </Button>
+                                    </Grid.Col>
+                                    <Grid.Col span={1}>
+                                        <Button type="submit" mt="xs" variant="gradient" gradient={{ from: theme.colors.blue[9], to: theme.colors.grape[7] }} ref={colonizeButtonRef}>
                                             Colonize
                                         </Button>
                                     </Grid.Col>
@@ -491,10 +434,23 @@ export default function HomePage(props) {
             >
 
                 <Container>
-                         <Button variant="light" color="grape" size="xs" onClick={refreshTable}>
-                            <IconRefresh size={16} stroke={1.5} />
-                        </Button>
-
+                    <div>
+                        <Group position='left'>
+                            <Button variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[5] }} size="xs" >
+                                <IconChevronLeft size={14} stroke={2} />
+                            </Button>
+                            <Button variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[5] }} size="xs" >
+                                <IconChevronRight size={14} stroke={2} />
+                            </Button>
+                            <Button leftIcon={<IconRefresh size={14} stroke={2} />} variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[5] }} size="xs" onClick={refreshTable}>
+                                Refresh
+                            </Button>
+                            <Button leftIcon={<IconPlus size={14} stroke={2} />} variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[5] }} size="xs" onClick={goHome}>
+                                New URL
+                            </Button>
+                        </Group>
+                        </div>
+                        <Space h="md" />
                         <Card withBorder p="xl" radius="md" className={classes.card}>
                             <div className={classes.inner}>
                                 <div>
@@ -516,16 +472,12 @@ export default function HomePage(props) {
                                             Timestamp {new Date(response.timestamp).toLocaleString()}
                                         </Code>
                                     </div>
-                                    <div>
-                                    </div>
-
-
                                 </div>
                             </div>
                         </Card>
-
+                        <Space h="md" />
                         <div>
-                            <TableSort data={response.payload} />
+                            <TableSort ref={tableRef} data={response.payload} updateTable={updateTable} />
                         </div>
 
                 </Container>

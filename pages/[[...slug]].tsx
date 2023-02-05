@@ -3,7 +3,7 @@ import { useState, useRef, SetStateAction, useEffect } from 'react';
 import { useRouter } from 'next/router'
 import GitHubButton from 'react-github-btn'
 import { useForm } from '@mantine/form';
-import { IconSelector, IconChevronLeft, IconChevronRight, IconSearch, IconRefresh, IconTimeline, IconClock, IconPlus } from '@tabler/icons';
+import { IconSelector, IconChevronLeft, IconChevronRight, IconSearch, IconRefresh, IconLink, IconClock, IconPlus, IconShare } from '@tabler/icons';
 import { TableSort } from './tablesort';
 
 
@@ -23,6 +23,7 @@ import {
     Text,
     ScrollArea,
     Box,
+    Popover,
     createStyles, SegmentedControl,
     Center,
     UnstyledButton,
@@ -34,6 +35,7 @@ import {
     keyframes,
     Space,
     useMantineTheme,
+    Loader,
 } from '@mantine/core';
 
 import {LinksGroup} from 'NavbarLinksGroup';
@@ -208,16 +210,17 @@ export default function HomePage(props) {
     const [inputValue, setInputValue] = useState('');
     const [redirect, setRedirect] = useState('');
     const [methodValue, setMethodValue] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [data, setData] = useState<string[]>([]);
     const [response, setResponse] = useState<string[]>([]);
     const [opened, setOpened] = useState(false);
     const [rows, setRows] = useState<object[]>([]);
+    const [navLinks, setNavLinks] = useState([]);
     const [copyURL, setCopyURL] = useState<string>(BASE_URL);
     const [slugLoader, setSlugLoader] = useState<number>(0);
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const { classes, cx } = useStyles();
-    const [active, setActive] = useState('');
+    const [ active, setActive] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
     const copyButtonRef = useRef<HTMLButtonElement>(null);
     const colonizeButtonRef = useRef<HTMLButtonElement>(null);
@@ -230,8 +233,9 @@ export default function HomePage(props) {
     const slug = router.query["slug"];
     const refreshURL = !router.query["refresh"] ? "" : "?refresh=true"
 
-    if (slug != null && slugLoader == 0) {
-        fetch(BASE_URL + "/api/v1/" + slug + refreshURL)
+    const makeAPICall = (url: string) => {
+        setLoading(true);
+        fetch(url)
             .then(response => response.json())
             .then(data => {
                 console.log("slug fetch: " + data.destination);
@@ -240,28 +244,30 @@ export default function HomePage(props) {
                 setValue(data.destination);
                 setInputValue(data.destination);
                 setSlugLoader(1)
+                setCopyURL(window.location.href);
 
-                const responsePayload = data.instances[0]
+                const responsePayload = data.instances[data.instances.length - 1];
                 setResponse(responsePayload);
                 setUpdateTable(responsePayload.timestamp);
-                setActive(responsePayload.timestamp);    
+                setLoading(false);
             }).catch((error) => {
+                setLoading(false);
                 console.error('Error:', error);
             });
-    }
+    };
+
+    useEffect(()=>{
+        if (slug != null && slugLoader == 0) {
+            const fetchURL = BASE_URL + "/api/v1/" + slug + refreshURL;
+            makeAPICall(fetchURL);
+            refreshNavBar();
+        }
+    }, []);
 
     function refreshTable(event) {
         event.preventDefault();
 
-        var url;
-        // if(slug != null){
-        //     const slug_ = router.query["slug"];
-        //     if(slug_ != null){
-        //         url = "/api/v1/" + slug_.toString() + "?refresh=true";
-        //     }
-        // } else {
-        //     url = "/api/v1/" + slug + "?refresh=true";
-        // }
+        var url = "";
 
         console.log("slugs: ", slug);
         if(!slug){
@@ -277,25 +283,10 @@ export default function HomePage(props) {
         if(!router.query["refresh"]) {
             url = url + "?refresh=true";
         }
-
         console.log("refreshing table", url);
-        fetch(BASE_URL + url?.toString())
-        .then(response => response.json())
-        .then(data => {
-            console.log("slug fetch: " + data.destination);
-            console.log("slug data:" + JSON.stringify(data));
-            setData(data);
-            setValue(data.destination);
-            setInputValue(data.destination);
-            setSlugLoader(1)
-
-            const responsePayload = data.instances[data.instances.length - 1]
-            setResponse(responsePayload);
-            setUpdateTable(responsePayload.timestamp);
-            setActive(responsePayload.timestamp);
-        }).catch((error) => {
-            console.error('Error:', error);
-        });
+        const fetchURL = BASE_URL + url?.toString();
+        makeAPICall(fetchURL);
+        refreshNavBar();
     };
 
     function isValidHttpUrl({ string }: { string: any }) {
@@ -328,38 +319,68 @@ export default function HomePage(props) {
         }
     });
 
-    var iLinks = [];
-    if(data != null && data.instances != null) {
-        const instances = data.instances.slice().reverse();
-        var d = new Date(0);
-        iLinks = instances.map(function(item) {
-            d = new Date(item.timestamp);
-            return <a
-            className={cx(classes.link, { [classes.linkActive]: item.timestamp === active })}
-            key={item.timestamp}
-            onClick={(event) => {
-                    event.preventDefault();
-                    setResponse(item);
-                    setActive(item.timestamp);
-                    setUpdateTable(item.timestamp);
-                    console.log("updatetable", updateTable);
-                }}
+    // var iLinks = [];
+    // if(data != null && data.instances != null) {
+    //     console.log("old refresh navbar");
+
+    //     const instances = data.instances.slice().reverse();
+    //     var d = new Date(0);
+    //     iLinks = instances.map(function(item) {
+    //         d = new Date(item.timestamp);
+    //         return <a
+    //         className={cx(classes.link, { [classes.linkActive]: item.timestamp === active })}
+    //         key={item.timestamp}
+    //         onClick={(event) => {
+    //                 event.preventDefault();
+    //                 setResponse(item);
+    //                 setActive(item.timestamp);
+    //                 setUpdateTable(item.timestamp);
+    //                 console.log("updatetable", updateTable);
+    //             }}
+    //             >
+    //             <span> <IconClock size={16} stroke={1} /> {d.toLocaleString()}</span>
+    //         </a>       
+    //     });
+
+    //     // if(instances.length > 1) {
+    //     //     setActive(instances[0].timestamp);
+    //     // }
+    // }
+
+    function refreshNavBar() {
+        console.log("refresh navbar");
+        if(data != null && data.instances != null) {
+            console.log("refresh navbar 2");
+            const instances = data.instances.slice().reverse();
+            console.log("setting active", instances[0].timestamp, instances)
+
+            const _links = instances.map(function(item) {
+                const timestamp = new Date(item.timestamp);
+                return <a
+                    className={cx(classes.link, { [classes.linkActive]: item.timestamp === active })}
+                    key={item.timestamp}
+                    onClick={(event) => {
+                            event.preventDefault();
+                            setResponse(item);
+                            setActive(item.timestamp);
+                            setUpdateTable(item.timestamp);
+                            console.log("updatetable", updateTable);
+                        }}
                 >
-                <span> <IconClock size={16} stroke={1} /> {d.toLocaleString()}</span>
-            </a>       
-        });
-        // if(instances.length > 1) {
-        //     setActive(instances[0].timestamp);
-        // }
+                    <span> <IconClock size={16} stroke={1} /> {timestamp.toLocaleString()}</span>
+                </a>
+            });
+            console.log("ilonks", _links);
+            // setActive(instances[0].timestamp);
+            setNavLinks(_links);
+        }    
     }
 
-//     <CopyButton value={copyURL}>
-//     {({ copied, copy }) => (
-//         <Button variant="outline" size="xs" leftIcon={<IconCopy />} color={copied ? 'blue' : 'black'} onClick={copy}>
-//             {copied ? 'URL Copied' : copyURL}
-//         </Button>
-//     )}
-// </CopyButton></Header> 
+    // refreshNavBar();
+
+    useEffect(() => {
+        refreshNavBar();
+    }, [data]);
 
     function handleTextInputChange(event) {
         event.preventDefault();
@@ -376,11 +397,10 @@ export default function HomePage(props) {
         setData([]);
         setResponse([]);
         setUpdateTable("");
+        setCopyURL("");
         inputRef.current?.focus();
         // copyButtonRef.current?.disabled = false;
     }
-
-    
 
     // @ts-ignore
     return (
@@ -390,19 +410,7 @@ export default function HomePage(props) {
                 navbar={
                     <Navbar height={700} width={{ sm: 300 }} p="md" className={classes.navbar}>
                     <Navbar.Section grow>
-                        <Group className={classes.header} position="apart">
-                            <Center>
-                                <Image
-                                    width={250}
-                                    height={80}
-                                    src="/httpcolon.png"
-                                    fit="contain"
-                                />
-                            </Center>
-                            {/*<Code sx={{ fontWeight: 700 }}>Beta</Code>*/}
-                        </Group>
-                        {/* {instanceData} */}
-                        {iLinks}
+                        {navLinks}
                     </Navbar.Section>
         
                     <Navbar.Section className={classes.footer}>
@@ -444,27 +452,24 @@ export default function HomePage(props) {
                                 const strippedUrl = inputValue.replace(/(^\w+:|^)\/\//, '').split('?')[0];
                                 const redirectUrl = values.method === "GET" || values.method == "" ? (BASE_URL + '/' + strippedUrl + "?refresh=true") : (BASE_URL + '/' + strippedUrl + "?method=" + values.method + "&refresh=true");
                                 console.log("redirectUrl: " + redirectUrl + values.method);
-                                setCopyURL(redirectUrl);
                                 setRedirect(redirectUrl);
                             })}>
-                                <Grid>
-                                    <Grid.Col span={2}>
-                                        <Select mt="xs" placeholder="GET" {...form.getInputProps('method')} data={['GET', 'POST', 'PUT', 'DELETE']} />
-                                    </Grid.Col>
-                                    <Grid.Col span={"auto"}>
-                                        <TextInput autoComplete={'on'} mt="xs" {...form.getInputProps('url')} value={inputValue} onChange={handleTextInputChange} ref={inputRef} />
-                                    </Grid.Col>
-                                    <Grid.Col span={1}>
-                                        <Button mt="xs" variant="gradient" gradient={{ from: theme.colors.blue[9], to: theme.colors.grape[7]}} ref={copyButtonRef}>
-                                            Copy URL
-                                        </Button>
-                                    </Grid.Col>
-                                    <Grid.Col span={1}>
-                                        <Button type="submit" mt="xs" variant="gradient" gradient={{ from: theme.colors.blue[9], to: theme.colors.grape[7] }} ref={colonizeButtonRef}>
-                                            Colonize
-                                        </Button>
-                                    </Grid.Col>
-                                </Grid>
+                                <Group grow spacing="sm">
+                                    <Image
+                                        width={300}
+                                        height={60}
+                                        src="/httpcolon.png"
+                                        fit="contain"
+                                    />
+
+                                    <Select mt="xs" placeholder="GET" {...form.getInputProps('method')} data={['GET', 'POST', 'PUT', 'DELETE']} />
+
+                                    <TextInput autoComplete={'on'} mt="xs" {...form.getInputProps('url')} value={inputValue} onChange={handleTextInputChange} ref={inputRef} />
+
+                                    <Button type="submit" mt="xs" variant="gradient" gradient={{ from: theme.colors.blue[9], to: theme.colors.grape[7] }} ref={colonizeButtonRef}>
+                                        Colonize
+                                    </Button>
+                                </Group>
                             </form>
                         </Header>}
                 styles={(theme) => ({
@@ -485,6 +490,23 @@ export default function HomePage(props) {
                                 <Button className={classes.leftButtons} leftIcon={<IconRefresh size={14} stroke={2} />} variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[5] }} size="xs" onClick={refreshTable}>
                                     Refresh
                                 </Button>
+                                <Popover width="auto" position="top" transition="pop"  withArrow>
+                                    <Popover.Target>
+                                       <Button className={classes.leftButtons} leftIcon={<IconLink size={14} stroke={2} />} variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[5] }} size="xs" onClick={refreshTable}>
+                                            Share
+                                        </Button>
+                                    </Popover.Target>
+                                    <Popover.Dropdown>
+                                        <CopyButton value={copyURL}>
+                                            {({ copied, copy }) => (
+                                                <Button variant="outline" color="grape" size="xs" rightIcon={<IconCopy />} onClick={copy}>
+                                                    <Code>{copyURL.replace(/^https?:\/\//, '').split('?')[0]}</Code>
+                                                </Button>
+                                            )}
+                                        </CopyButton>
+                                    </Popover.Dropdown>
+                                </Popover>
+
                             </div>
                             <div>
                                 <Button leftIcon={<IconPlus size={14} stroke={2} />} variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[5] }} size="xs" onClick={goHome}>
@@ -520,7 +542,10 @@ export default function HomePage(props) {
                         </Card>
                         <Space h="md" />
                         <div>
-                            <TableSort data={response.payload} updateTable={updateTable} />
+                            {loading ? <Group position="center">
+                                            <Loader color="grape" size="xl" />
+                                        </Group> : 
+                                        <TableSort data={response.payload} updateTable={updateTable} /> }
                         </div>
 
                 </Container>

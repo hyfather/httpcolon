@@ -13,6 +13,7 @@ import {
 import { keys } from '@mantine/utils';
 import { IconSelector, IconChevronDown, IconChevronUp, IconSearch } from '@tabler/icons';
 import { useForceUpdate } from '@mantine/hooks';
+import { ClassNames } from '@emotion/react';
 
 const useStyles = createStyles((theme) => ({
   th: {
@@ -26,6 +27,11 @@ const useStyles = createStyles((theme) => ({
     '&:hover': {
       backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
     },
+  },
+
+  searchBar: {
+    marginLeft: 100,
+    marginRight: 100,
   },
 
   icon: {
@@ -43,7 +49,7 @@ interface RowData {
 
 interface TableSortProps {
   data: RowData[];
-  updateTable: string;
+    updateTable: string;
 }
 
 interface ThProps {
@@ -107,6 +113,8 @@ export function TableSort({ data, updateTable }: TableSortProps, { sortField }: 
   const [sortBy, setSortBy] = useState<keyof RowData | null>(sortField);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
   const [rows, setRows] = useState([]);
+  const { classes } = useStyles();
+
 //   const [refreshTable, setRefreshTable] = useState("");
 
   const setSorting = (field: keyof RowData) => {
@@ -149,10 +157,11 @@ export function TableSort({ data, updateTable }: TableSortProps, { sortField }: 
   return (
     <ScrollArea>
       <TextInput
-        placeholder="Search by any field"
+        placeholder="Search headers"
         mb="md"
         icon={<IconSearch size={14} stroke={1.5} />}
         value={search}
+        className={classes.searchBar}
         onChange={handleSearchChange}
       />
 

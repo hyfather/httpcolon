@@ -43,7 +43,7 @@ interface RowData {
 
 interface TableSortProps {
   data: RowData[];
-  updateTable: boolean;
+  updateTable: string;
 }
 
 interface ThProps {
@@ -105,60 +105,46 @@ export function TableSort({ data, updateTable }: TableSortProps, { sortField }: 
   const [search, setSearch] = useState('');
   const [sortedData, setSortedData] = useState(data);
   const [sortBy, setSortBy] = useState<keyof RowData | null>(sortField);
-//   const [rows, setRows] = useState();
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
   const [rows, setRows] = useState([]);
-  const [updateFlag, setUpdateFlag] = useState(updateTable);
+//   const [refreshTable, setRefreshTable] = useState("");
 
   const setSorting = (field: keyof RowData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
     setReverseSortDirection(reversed);
     setSortBy(field);
-    setSortedData(sortData(data, { sortBy: field, reversed, search }));
-    setUpdateFlag(updateFlag ? false : true);
+    // setSortedData(sortData(data, { sortBy: field, reversed, search }));
+    makeRows();
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget;
     setSearch(value);
-    setSortedData(sortData(data, { sortBy, reversed: reverseSortDirection, search: value }));
-    setUpdateFlag(updateFlag ? false : true);
+    // setSortedData(sortData(data, { sortBy, reversed: reverseSortDirection, search: value }));
+    makeRows();
   };
 
-//   var rows = [];
-//   if(sortedData != null){
-//     rows = sortedData.map((row) => (
-//         <tr key={row.header}>
-//           <td><Code>{row.header}</Code></td>
-//           <td><Code>{row.value}</Code></td>
-//         </tr>));
-//   }
-
-const makeRows = () => {
+  const makeRows = () => {
     console.log("makeRows", data, sortedData);
-    if (data != null && sortedData == null) {
-        setSorting('header')
+    if (data == null) {
+        setRows([]);
+        return;
     }
+    setSortedData(sortData(data, { sortBy: sortBy, reversed: reverseSortDirection, search: search }));
     if (sortedData != null) {
-        // console.log("making rows", sortedData);
         const rows_ = sortedData.map((row) => {
-            // console.log("====row", row.header, row.value);
             return (<tr key={row.header}>
-              <td><Code>{row.header}</Code></td>
-              <td><Code>{row.value}</Code></td>
+            <td><Code>{row.header}</Code></td>
+            <td><Code>{row.value}</Code></td>
             </tr>);});
-        // console.log("making rows_ 2", rows_);     
         setRows(rows_);
     }
-};
+  };
 
   useEffect(() => {
-    if(data != null) {
-        setSortedData(sortData(data, { sortBy: sortBy, reversed: reverseSortDirection, search: search }));
-    }
+    console.log("updating table");
     makeRows();
-    console.log("makeRows2", rows);
-  }, [updateFlag, updateTable, sortedData]);
+  }, [updateTable]);
 
   return (
     <ScrollArea>

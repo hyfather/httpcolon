@@ -42,6 +42,9 @@ import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeTo
 import { IconFingerprint, IconCopy, IconMoon, IconSquarePlus, IconSun, IconSwitchHorizontal } from '@tabler/icons';
 import { getRandomValues } from 'crypto';
 import { DefaultValue } from '@mantine/core/lib/MultiSelect/DefaultValue/DefaultValue';
+import { unstable_HistoryRouter } from 'react-router-dom';
+import { text } from 'stream/consumers';
+import { url } from 'inspector';
 
 // const BASE_URL = 'https://httpcolon.dev/'
 const BASE_URL = 'http://localhost:3000'
@@ -163,11 +166,25 @@ const useStyles = createStyles((theme, _params, getRef) => {
             },
         },
 
+        navbar: {
+            zIndex: 'unset'
+        },
+
         icon: {
             width: 21,
             height: 21,
             borderRadius: 21,
         },
+        
+        buttonContainer: {
+            display: 'flex',
+            justifyContent: 'space-between',
+        },
+
+        leftButtons: {
+            paddingRight: '10px',
+            marginRight: '10px',
+        }
 
 
     };
@@ -211,9 +228,10 @@ export default function HomePage(props) {
     const router = useRouter()
 
     const slug = router.query["slug"];
+    const refreshURL = !router.query["refresh"] ? "" : "?refresh=true"
 
     if (slug != null && slugLoader == 0) {
-        fetch(BASE_URL + "/api/v1/" + slug)
+        fetch(BASE_URL + "/api/v1/" + slug + refreshURL)
             .then(response => response.json())
             .then(data => {
                 console.log("slug fetch: " + data.destination);
@@ -221,24 +239,46 @@ export default function HomePage(props) {
                 setData(data);
                 setValue(data.destination);
                 setInputValue(data.destination);
-                setResponse(data.instances[0]);
                 setSlugLoader(1)
+
+                const responsePayload = data.instances[0]
+                setResponse(responsePayload);
+                setUpdateTable(responsePayload.timestamp);
+                setActive(responsePayload.timestamp);    
             }).catch((error) => {
                 console.error('Error:', error);
             });
     }
 
-    function refreshTable(slug: string) {
+    function refreshTable(event) {
+        event.preventDefault();
+
         var url;
-        if(slug != null){
-            const slug_ = router.query["slug"];
-            if(slug_ != null){
-                url = "/api/v1/" + slug_.toString() + "?refresh=true";
+        // if(slug != null){
+        //     const slug_ = router.query["slug"];
+        //     if(slug_ != null){
+        //         url = "/api/v1/" + slug_.toString() + "?refresh=true";
+        //     }
+        // } else {
+        //     url = "/api/v1/" + slug + "?refresh=true";
+        // }
+
+        console.log("slugs: ", slug);
+        if(!slug){
+            const querySlug = router.query["slug"];
+            console.log("query slugs: ", querySlug);
+            if(!querySlug) {
+                url = "/api/v1/" + querySlug?.toString();
             }
         } else {
-            url = "/api/v1/" + slug + "?refresh=true";
+            url = "/api/v1/" + slug;
         }
-        console.log("refreshing table");
+
+        if(!router.query["refresh"]) {
+            url = url + "?refresh=true";
+        }
+
+        console.log("refreshing table", url);
         fetch(BASE_URL + url?.toString())
         .then(response => response.json())
         .then(data => {
@@ -247,9 +287,12 @@ export default function HomePage(props) {
             setData(data);
             setValue(data.destination);
             setInputValue(data.destination);
-            setResponse(data.instances[data.instances.length - 1]);
-            console.log("refreshed table" + data);
             setSlugLoader(1)
+
+            const responsePayload = data.instances[data.instances.length - 1]
+            setResponse(responsePayload);
+            setUpdateTable(responsePayload.timestamp);
+            setActive(responsePayload.timestamp);
         }).catch((error) => {
             console.error('Error:', error);
         });
@@ -275,7 +318,6 @@ export default function HomePage(props) {
         initialValues: { url: '', method: '' },
     });
 
-
     useEffect(() => {
         if (redirect !== "") {
             const r = redirect;
@@ -288,12 +330,7 @@ export default function HomePage(props) {
 
     var iLinks = [];
     if(data != null && data.instances != null) {
-        const instances = data.instances;
-        // if(instances.length > 0){
-        //     setActive(instances[0].timestamp);            
-        // }
-
-        console.log("data.instances: " + instances);
+        const instances = data.instances.slice().reverse();
         var d = new Date(0);
         iLinks = instances.map(function(item) {
             d = new Date(item.timestamp);
@@ -302,18 +339,18 @@ export default function HomePage(props) {
             key={item.timestamp}
             onClick={(event) => {
                     event.preventDefault();
-                    console.log("click me" + item);
                     setResponse(item);
                     setActive(item.timestamp);
-                    console.log("updatetable1", updateTable, updateTable ? false : true);
                     setUpdateTable(item.timestamp);
                     console.log("updatetable", updateTable);
-
                 }}
                 >
                 <span> <IconClock size={16} stroke={1} /> {d.toLocaleString()}</span>
             </a>       
         });
+        // if(instances.length > 1) {
+        //     setActive(instances[0].timestamp);
+        // }
     }
 
 //     <CopyButton value={copyURL}>
@@ -331,12 +368,14 @@ export default function HomePage(props) {
         }
     }
 
-    function goHome() {
+    function goHome(event) {
+        event.preventDefault();
         router.push("/");
         setValue("");
         setInputValue("");
         setData([]);
         setResponse([]);
+        setUpdateTable("");
         inputRef.current?.focus();
         // copyButtonRef.current?.disabled = false;
     }
@@ -349,7 +388,7 @@ export default function HomePage(props) {
             <AppShell
                 padding="lg"
                 navbar={
-                    <Navbar height={700} width={{ sm: 300 }} p="md">
+                    <Navbar height={700} width={{ sm: 300 }} p="md" className={classes.navbar}>
                     <Navbar.Section grow>
                         <Group className={classes.header} position="apart">
                             <Center>
@@ -403,7 +442,7 @@ export default function HomePage(props) {
                             <form onSubmit={form.onSubmit(function (values) {
                                 console.log("redirecting", inputValue);
                                 const strippedUrl = inputValue.replace(/(^\w+:|^)\/\//, '').split('?')[0];
-                                const redirectUrl = values.method === "GET" || values.method == "" ? (BASE_URL + '/' + strippedUrl) : (BASE_URL + '/' + strippedUrl + "?method=" + values.method);
+                                const redirectUrl = values.method === "GET" || values.method == "" ? (BASE_URL + '/' + strippedUrl + "?refresh=true") : (BASE_URL + '/' + strippedUrl + "?method=" + values.method + "&refresh=true");
                                 console.log("redirectUrl: " + redirectUrl + values.method);
                                 setCopyURL(redirectUrl);
                                 setRedirect(redirectUrl);
@@ -413,7 +452,7 @@ export default function HomePage(props) {
                                         <Select mt="xs" placeholder="GET" {...form.getInputProps('method')} data={['GET', 'POST', 'PUT', 'DELETE']} />
                                     </Grid.Col>
                                     <Grid.Col span={"auto"}>
-                                        <TextInput mt="xs" {...form.getInputProps('url')} value={inputValue} onChange={handleTextInputChange} ref={inputRef} />
+                                        <TextInput autoComplete={'on'} mt="xs" {...form.getInputProps('url')} value={inputValue} onChange={handleTextInputChange} ref={inputRef} />
                                     </Grid.Col>
                                     <Grid.Col span={1}>
                                         <Button mt="xs" variant="gradient" gradient={{ from: theme.colors.blue[9], to: theme.colors.grape[7]}} ref={copyButtonRef}>
@@ -434,22 +473,26 @@ export default function HomePage(props) {
             >
 
                 <Container>
-                    <div>
-                        <Group position='left'>
-                            <Button variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[5] }} size="xs" >
-                                <IconChevronLeft size={14} stroke={2} />
-                            </Button>
-                            <Button variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[5] }} size="xs" >
-                                <IconChevronRight size={14} stroke={2} />
-                            </Button>
-                            <Button leftIcon={<IconRefresh size={14} stroke={2} />} variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[5] }} size="xs" onClick={refreshTable}>
-                                Refresh
-                            </Button>
-                            <Button leftIcon={<IconPlus size={14} stroke={2} />} variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[5] }} size="xs" onClick={goHome}>
-                                New URL
-                            </Button>
-                        </Group>
-                        </div>
+                    <div className={classes.buttonContainer}>
+                        {/* <Group position='left'> */}
+                            <div>
+                                <Button className={classes.leftButtons} variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[5] }} size="xs" >
+                                    <IconChevronLeft size={14} stroke={2} />
+                                </Button>
+                                <Button className={classes.leftButtons} variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[5] }} size="xs" >
+                                    <IconChevronRight size={14} stroke={2} />
+                                </Button>
+                                <Button className={classes.leftButtons} leftIcon={<IconRefresh size={14} stroke={2} />} variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[5] }} size="xs" onClick={refreshTable}>
+                                    Refresh
+                                </Button>
+                            </div>
+                            <div>
+                                <Button leftIcon={<IconPlus size={14} stroke={2} />} variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[5] }} size="xs" onClick={goHome}>
+                                    New URL
+                                </Button>
+                            </div>                            
+                        {/* </Group> */}
+                    </div>
                         <Space h="md" />
                         <Card withBorder p="xl" radius="md" className={classes.card}>
                             <div className={classes.inner}>
@@ -469,7 +512,7 @@ export default function HomePage(props) {
                                     </div>
                                     <div>     
                                         <Code>
-                                            Timestamp {new Date(response.timestamp).toLocaleString()}
+                                            Timestamp {response.timestamp != null ? new Date(response.timestamp).toLocaleString(): ""}
                                         </Code>
                                     </div>
                                 </div>
@@ -477,7 +520,7 @@ export default function HomePage(props) {
                         </Card>
                         <Space h="md" />
                         <div>
-                            <TableSort ref={tableRef} data={response.payload} updateTable={updateTable} />
+                            <TableSort data={response.payload} updateTable={updateTable} />
                         </div>
 
                 </Container>

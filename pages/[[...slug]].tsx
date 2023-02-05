@@ -4,8 +4,8 @@ import { useRouter } from 'next/router'
 import GitHubButton from 'react-github-btn'
 import { useForm } from '@mantine/form';
 import { IconSelector, IconChevronLeft, IconChevronRight, IconSearch, IconRefresh, IconLink, IconClock, IconPlus, IconShare } from '@tabler/icons';
-import { TableSort } from './tablesort';
-
+import { TableSort } from './_tablesort';
+import { Analytics } from '@vercel/analytics/react';
 
 import {
     AppShell,
@@ -192,17 +192,17 @@ const useStyles = createStyles((theme, _params, getRef) => {
     };
 });
 
-export function getFromAPI(slug: string) {
-    fetch(BASE_URL + "/api/v1/" + slug)
-    .then(response => response.json())
-    .then(data => {
-        console.log("slug fetch: " + data.destination);
-        console.log("slug data:" + JSON.stringify(data));
-        return data;
-    }).catch((error) => {
-        console.error('Error:', error);
-    });
-}
+// export function getFromAPI(slug: string) {
+//     fetch(BASE_URL + "/api/v1/" + slug)
+//     .then(response => response.json())
+//     .then(data => {
+//         console.log("slug fetch: " + data.destination);
+//         console.log("slug data:" + JSON.stringify(data));
+//         return data;
+//     }).catch((error) => {
+//         console.error('Error:', error);
+//     });
+// }
 
 export default function HomePage(props) {
     const timeoutRef = useRef<number>(-1);
@@ -476,6 +476,8 @@ export default function HomePage(props) {
                     main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
                 })}
             >
+
+                <Analytics />
 
                 <Container>
                     <div className={classes.buttonContainer}>

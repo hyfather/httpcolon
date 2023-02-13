@@ -1,0 +1,21 @@
+{
+  "header": "X-Frame-Options",
+  "description": "The X-Frame-Options response header provides clickjacking protection by preventing a page from being loaded in an iframe or frame.",
+  "response-directives": [
+    {
+      "directive": "DENY",
+      "description": "Indicates that the page cannot be displayed in a frame or iframe under any circumstances",
+      "example": "X-Frame-Options: DENY"
+    },
+    {
+      "directive": "SAMEORIGIN",
+      "description": "Indicates that the page can only be displayed in a frame or iframe if the parent frame is from the same origin",
+      "example": "X-Frame-Options: SAMEORIGIN"
+    },
+    {
+      "directive": "ALLOW-FROM",
+      "description": "Indicates that the page can only be displayed in a frame or iframe on the specified origin",
+      "example": "X-Frame-Options: ALLOW-FROM https://example.com"
+    }
+  ]
+}

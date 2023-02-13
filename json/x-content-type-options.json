@@ -1,0 +1,11 @@
+{
+  "header": "X-Content-Type-Options",
+  "description": "The X-Content-Type-Options response header is a marker used by the server to indicate that the MIME types advertised in the Content-Type headers should not be changed and be followed.",
+  "response-directives": [
+    {
+      "directive": "nosniff",
+      "description": "Prevents browsers from MIME-sniffing a response away from the declared content-type.",
+      "details": "When the browser receives a response with this header set, it will refuse to change the content type and will treat it as if the server had specified the declared content-type in the response."
+    }
+  ]
+}

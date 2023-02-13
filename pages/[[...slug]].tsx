@@ -40,8 +40,8 @@ import {
 
 import { IconFingerprint, IconCopy, IconMoon, IconSquarePlus, IconSun, IconSwitchHorizontal } from '@tabler/icons';
 
-const BASE_URL = 'https://httpcolon.dev/'
-// const BASE_URL = 'http://localhost:3000'
+// const BASE_URL = 'https://httpcolon.dev/';
+const BASE_URL = 'http://localhost:3000';
 
 const useStyles = createStyles((theme, _params, getRef) => {
     const icon = getRef('icon');
@@ -442,7 +442,7 @@ export default function HomePage(props) {
                                 console.log("redirectUrl: " + redirectUrl + values.method);
                                 setRedirect(redirectUrl);
                             })}>
-                                <Group grow spacing="sm">
+                                <Group spacing="sm" grow>
                                     <Image
                                         width={300}
                                         height={60}
@@ -452,7 +452,7 @@ export default function HomePage(props) {
 
                                     <Select mt="xs" placeholder="GET" {...form.getInputProps('method')} data={['GET', 'POST', 'PUT', 'DELETE']} />
 
-                                    <TextInput autoComplete={'on'} mt="xs" {...form.getInputProps('url')} value={inputValue} onChange={handleTextInputChange} ref={inputRef} />
+                                    <TextInput autoComplete="on" mt="xs" {...form.getInputProps('url')} value={inputValue} onChange={handleTextInputChange} ref={inputRef} />
 
                                     <Button type="submit" mt="xs" variant="gradient" gradient={{ from: theme.colors.blue[9], to: theme.colors.grape[7] }} ref={colonizeButtonRef}>
                                         Colonize
@@ -471,25 +471,19 @@ export default function HomePage(props) {
                     <div className={classes.buttonContainer}>
                         {/* <Group position='left'> */}
                             <div>
-                                <Button className={classes.leftButtons} variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[5] }} size="xs" >
-                                    <IconChevronLeft size={14} stroke={2} />
-                                </Button>
-                                <Button className={classes.leftButtons} variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[5] }} size="xs" >
-                                    <IconChevronRight size={14} stroke={2} />
-                                </Button>
-                                <Button className={classes.leftButtons} leftIcon={<IconRefresh size={14} stroke={2} />} variant="gradient" gradient={{ from: theme.colors.blue[2], to: theme.colors.grape[2] }} size="xs" onClick={refreshTable}>
+                                <Button className={classes.leftButtons} leftIcon={<IconRefresh size={14} stroke={2} />} variant="gradient" gradient={{ from: theme.colors.blue[5], to: theme.colors.grape[5] }} size="xs" onClick={refreshTable}>
                                     Refresh
                                 </Button>
-                                <Popover width="auto" position="top" transition="pop"  withArrow>
+                                <Popover width="auto" position="bottom" transition="pop" withArrow>
                                     <Popover.Target>
-                                       <Button className={classes.leftButtons} leftIcon={<IconLink size={14} stroke={2} />} variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[5] }} size="xs" onClick={refreshTable}>
+                                       <Button className={classes.leftButtons} leftIcon={<IconLink size={14} stroke={2} />} variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[8] }} size="xs" onClick={refreshTable}>
                                             Share
                                         </Button>
                                     </Popover.Target>
                                     <Popover.Dropdown>
                                         <CopyButton value={copyURL}>
                                             {({ copied, copy }) => (
-                                                <Button variant="outline" color="grape" size="xs" rightIcon={<IconCopy />} onClick={copy}>
+                                                <Button variant="outline" color="black" size="xs" rightIcon={<IconCopy />} onClick={copy}>
                                                     <Code>{copyURL.replace(/^https?:\/\//, '').split('?')[0]}</Code>
                                                 </Button>
                                             )}

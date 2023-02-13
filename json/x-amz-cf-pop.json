@@ -1,0 +1,36 @@
+{
+  "header": "x-amz-cf-pop",
+  "description": "The x-amz-cf-pop HTTP request header specifies the CloudFront edge location that served the request. It's a combination of a three-letter IATA airport code and a two-letter code for the location.",
+  "response-directives": [
+    {
+      "directive": "ATL",
+      "description": "CloudFront edge location in Atlanta, GA (ATL56)",
+      "example": "x-amz-cf-pop: ATL56-C1"
+    },
+    {
+      "directive": "DFW",
+      "description": "CloudFront edge location in Dallas/Fort Worth, TX (DFW50)",
+      "example": "x-amz-cf-pop: DFW50-C1"
+    },
+    {
+      "directive": "EWR",
+      "description": "CloudFront edge location in Newark, NJ (EWR50)",
+      "example": "x-amz-cf-pop: EWR50-C1"
+    },
+    {
+      "directive": "LAX",
+      "description": "CloudFront edge location in Los Angeles, CA (LAX50)",
+      "example": "x-amz-cf-pop: LAX50-C1"
+    },
+    {
+      "directive": "SEA",
+      "description": "CloudFront edge location in Seattle, WA (SEA19)",
+      "example": "x-amz-cf-pop: SEA19-C1"
+    },
+    {
+      "directive": "SFO",
+      "description": "CloudFront edge location in San Francisco, CA (SFO20)",
+      "example": "x-amz-cf-pop: SFO20-C1"
+    }
+  ]
+}

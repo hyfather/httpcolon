@@ -1,0 +1,16 @@
+{
+  "header": "Connection",
+  "description": "The Connection header controls whether or not the network connection stays open after the current transaction finishes.",
+  "response-directives": [
+    {
+      "directive": "keep-alive",
+      "description": "Indicates that the connection should be kept open for subsequent requests.",
+      "details": "When the keep-alive directive is present in the Connection header, the server may choose to keep the connection open after the current transaction is completed. This can help reduce the overhead of setting up and tearing down a connection for each request. However, the server is free to ignore the keep-alive directive and close the connection after each request if it chooses."
+    },
+    {
+      "directive": "close",
+      "description": "Indicates that the connection should be closed after the current transaction is completed.",
+      "details": "When the close directive is present in the Connection header, the server will close the connection after the current transaction is completed. This is the default behavior for HTTP/1.0, while HTTP/1.1 assumes that connections are persistent unless the close directive is present."
+    }
+  ]
+}

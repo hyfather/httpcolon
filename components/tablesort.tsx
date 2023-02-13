@@ -180,14 +180,14 @@ export function TableSort({ data, headerData, updateTable }: TableSortProps, { s
             // console.log("output", output);
             // console.log("dInfo", dInfo);
 
-            const tokens = output.split(/([\s,="]+)/);
+            const tokens = output.split(/([\s,=";]+)/);
             const markedUp = tokens.map((token) => {
               console.log('token', token);
               let tooltip;
               responseDirectives.forEach((d) => {
                 if (d.directive.length > 1 && d.directive.toLowerCase() === token.toLocaleLowerCase()) {
                   console.log('found', token, d);
-                  tooltip = <Tooltip label={d.description} withArrow inline multiline
+                  tooltip = <Tooltip label={d.description} withArrow inline multiline color="grape"
                                      width={250}><Mark>{token}</Mark></Tooltip>;
                 }
               });
@@ -200,7 +200,7 @@ export function TableSort({ data, headerData, updateTable }: TableSortProps, { s
 
             return (
                 <tr key={row.header}>
-                  <td><Code><Tooltip label={dInfo["description"]} withArrow inline multiline
+                  <td><Code><Tooltip label={dInfo["description"]} withArrow inline multiline color="grape"
                                position="right" width={250}><Mark>{row.header}</Mark></Tooltip></Code></td>
                   <td><Code>{markedUp}</Code></td>
                 </tr>);

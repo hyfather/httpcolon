@@ -1,0 +1,31 @@
+{
+  "header": "alt-svc",
+  "description": "The Alt-Svc HTTP response header indicates that an alternative service is available for the resource being requested.",
+  "response-directives": [
+    {
+      "directive": "clear",
+      "description": "Indicates that any previously cached alternative service information for the resource should be cleared.",
+      "details": "Alt-Svc: clear"
+    },
+    {
+      "directive": "host",
+      "description": "Specifies the authority (host and port) of the alternative service.",
+      "details": "Alt-Svc: h2=\":8000\""
+    },
+    {
+      "directive": "h2",
+      "description": "The ALPN protocol identifier. Examples include h2 for HTTP/2 and h3-25 for draft 25 of the HTTP/3 protocol.",
+      "details": "Alt-Svc: h2=\":8000\"; ma=60"
+    },
+    {
+      "directive": "h3",
+      "description": "The ALPN protocol identifier. Examples include h2 for HTTP/2 and h3-25 for draft 25 of the HTTP/3 protocol.",
+      "details": "Alt-Svc: h2=\":8000\"; ma=60"
+    },
+    {
+      "directive": "ma",
+      "description": "Specifies the maximum time in seconds that the alternative service should be considered valid.",
+      "details": "Alt-Svc: h2=\":8000\"; ma=60"
+    }
+  ]
+}

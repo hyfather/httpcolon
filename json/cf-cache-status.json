@@ -1,0 +1,34 @@
+{
+  "header": "cf-cache-status",
+  "description": "This header is specific to the Cloudflare CDN and it indicates whether the response was served from the Cloudflare cache.",
+  "response-directives": [
+    {
+      "directive": "HIT",
+      "description": "The response was served from the Cloudflare cache."
+    },
+    {
+      "directive": "MISS",
+      "description": "The response was not served from the Cloudflare cache and was fetched from the origin server."
+    },
+    {
+      "directive": "EXPIRED",
+      "description": "The response was served from the Cloudflare cache, but the cached content has expired and a new version was fetched from the origin server."
+    },
+    {
+      "directive": "STALE",
+      "description": "The response was served from the Cloudflare cache, but the cached content has expired and was used because the origin server was unreachable or returned an error."
+    },
+    {
+      "directive": "UPDATING",
+      "description": "The response was not served from the Cloudflare cache and was fetched from the origin server. However, a new version of the content was being cached in the background."
+    },
+    {
+      "directive": "REVALIDATED",
+      "description": "The response was not served from the Cloudflare cache, but a conditional request was made and the origin server indicated that the cached version was still valid, so the cached version was used."
+    },
+    {
+      "directive": "DYNAMIC",
+      "description": "The response was not served from the Cloudflare cache and was fetched from the origin server. However, the origin server indicated that the content should not be cached."
+    }
+  ]
+}

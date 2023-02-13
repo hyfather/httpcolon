@@ -1,0 +1,11 @@
+{
+  "header": "cf-ray",
+  "description": "The Cloudflare Ray ID is a unique identifier that is returned in the response headers of requests that pass through Cloudflare's edge network. It is used to track and debug web traffic.",
+  "response-directives": [
+    {
+      "directive": "ray-id",
+      "description": "A unique identifier that represents the Cloudflare request",
+      "example": "cf-ray: 67e0fd972e19cc56-EWR"
+    }
+  ]
+}

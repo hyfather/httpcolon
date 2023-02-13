@@ -1,0 +1,21 @@
+{
+  "header": "strict-transport-security",
+  "description": "The Strict-Transport-Security HTTP response header informs the browser that the site should only be accessed using HTTPS for a specified period of time.",
+  "response-directives": [
+    {
+      "directive": "max-age",
+      "description": "Specifies the time duration in seconds that the browser should remember that the site should only be accessed using HTTPS.",
+      "example": "Strict-Transport-Security: max-age=31536000"
+    },
+    {
+      "directive": "includeSubDomains",
+      "description": "Indicates that the policy applies to all subdomains of the current domain.",
+      "example": "Strict-Transport-Security: max-age=31536000; includeSubDomains"
+    },
+    {
+      "directive": "preload",
+      "description": "Indicates that the site should be included in the HSTS preload list maintained by browsers.",
+      "example": "Strict-Transport-Security: max-age=31536000; includeSubDomains; preload"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "header": "content-security-policy",
+  "description": "The HTTP Content-Security-Policy response header allows web site administrators to control resources the user agent is allowed to load for a given page. With a few exceptions, policies mostly involve specifying server origins and script endpoints. This helps guard against cross-site scripting attacks.",
+  "response-directives": [
+    {
+      "directive": "base-uri",
+      "description": "Specifies the default URL that other directives can be relative to.",
+      "details": "The HTTP Content-Security-Policy (CSP) base-uri directive restricts the URLs that can be used in a document's <base> element. This directive helps to mitigate attacks that rely on the use of a malicious base URL."
+    },
+    {
+      "directive": "block-all-mixed-content",
+      "description": "Prevents loading any assets using HTTP when the page is served over HTTPS.",
+      "details": "The HTTP Content-Security-Policy (CSP) block-all-mixed-content directive instructs user agents to prevent loading any assets using HTTP when the page is served over HTTPS."
+    },
+    {
+      "directive": "child-src",
+      "description": "Specifies valid sources for web workers and nested browsing contexts loaded using elements such as <frame> and <iframe>.",
+      "details": "The HTTP Content-Security-Policy (CSP) child-src directive specifies the valid sources for web workers and nested browsing contexts loaded using elements such as <frame> and <iframe>."
+    },
+    {
+      "directive": "connect-src",
+      "description": "Specifies valid sources for fetch, XMLHttpRequest, and WebSockets connections.",
+      "details": "The HTTP Content-Security-Policy (CSP) connect-src directive specifies the valid sources for fetch, XMLHttpRequest, and WebSockets connections."
+    },
+    {
+      "directive": "default-src",
+      "description": "Specifies valid sources for any directive that doesn't have a specific directive.",
+      "details": "The HTTP Content-Security-Policy (CSP) default-src directive specifies the valid sources for any directive that doesn't have a specific directive."
+    },
+    {
+      "directive": "font-src",
+      "description": "Specifies valid sources for fonts loaded using @font-face.",
+      "details": "The HTTP Content-Security-Policy (CSP) font-src directive specifies the valid sources for fonts loaded using @font-face."
+    },
+    {
+      "directive": "form-action",
+      "description": "Specifies valid URLs that can be used as the action of HTML forms.",
+      "details": "The HTTP Content-Security-Policy (CSP) form-action directive specifies the valid URLs that can be used as the action of HTML forms."
+    },
+    {
+      "directive": "frame-ancestors",
+      "description": "Specifies valid parents that may embed a page using <frame>, <iframe>, <object>, <embed>, or <applet>.",
+      "details": "The HTTP Content-Security-Policy (CSP) frame-ancestors directive specifies valid parents that may embed a page using <frame>, <iframe>, <object>, <embed>, or <applet>.\n\nSetting this directive to 'none' is similar to X-Frame-Options: deny (which is also supported in older browsers)."
+    },
+    {
+      "directive": "frame-src",
+      "description": "Specifies valid sources for frames.",
+      "details": "The HTTP Content-Security-Policy (CSP) frame-src specifies valid sources for nested browsing contexts loading using elements such as <frame> and <iframe>."
+    }
+  ]
+}
+
+

@@ -1,0 +1,16 @@
+{
+  "header": "if-match",
+  "description": "The If-Match HTTP request header is used to make a request conditional on the existence of a specific ETag value.",
+  "response-directives": [
+    {
+      "directive": "*",
+      "description": "Indicates that the request should be conditional on the existence of any ETag value.",
+      "details": "If-Match: *"
+    },
+    {
+      "directive": "etag",
+      "description": "Indicates that the request should be conditional on the existence of the specified ETag value.",
+      "details": "If-Match: 686897696a7c876b7e"
+    }
+  ]
+}

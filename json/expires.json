@@ -1,0 +1,11 @@
+{
+  "header": "expires",
+  "description": "The Expires header indicates the date and time after which the response is considered stale. If there is a Cache-Control header with the max-age or s-maxage directive in the response, the Expires header is ignored.",
+  "response-directives": [
+    {
+      "directive": "date",
+      "description": "Specifies the date and time at which the response expires.",
+      "details": "The date directive is used to specify the date and time at which the response expires. This is typically in the format of an HTTP date, such as Sat, 13 Feb 2023 08:46:03 GMT. User agents will cache the response until this date, after which they will request a fresh copy from the server."
+    }
+  ]
+}

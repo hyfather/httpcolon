@@ -40,8 +40,8 @@ import {
 
 import { IconFingerprint, IconCopy, IconMoon, IconSquarePlus, IconSun, IconSwitchHorizontal } from '@tabler/icons';
 
-// const BASE_URL = 'https://httpcolon.dev/'
-const BASE_URL = 'http://localhost:3000'
+const BASE_URL = 'https://httpcolon.dev/'
+// const BASE_URL = 'http://localhost:3000'
 
 const useStyles = createStyles((theme, _params, getRef) => {
     const icon = getRef('icon');

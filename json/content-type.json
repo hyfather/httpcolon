@@ -1,0 +1,31 @@
+{
+  "header": "content-type",
+  "description": "The Content-Type header indicates the media type of the resource.",
+  "response-directives": [
+    {
+      "directive": "charset",
+      "description": "Specifies the character encoding used in the response body.",
+      "details": "The charset directive is used to specify the character encoding used in the response body. If this directive is not present, the default encoding is usually ISO-8859-1. Common values include UTF-8 and UTF-16."
+    },
+    {
+      "directive": "boundary",
+      "description": "Specifies the boundary string used for multipart entities.",
+      "details": "The boundary directive is used to specify the boundary string used for multipart entities. This is only used when the content-type is set to multipart/*."
+    },
+    {
+      "directive": "type",
+      "description": "Specifies the media type of the resource.",
+      "details": "The type directive is used to specify the media type of the resource. This is typically in the format of a MIME type, such as text/html, image/png, or application/json."
+    },
+    {
+      "directive": "language",
+      "description": "Specifies the natural language of the resource.",
+      "details": "The language directive is used to specify the natural language of the resource. This is typically in the format of a language tag, such as en-US or fr-CA. This can be used by user agents to automatically translate the content to the user's preferred language."
+    },
+    {
+      "directive": "encoding",
+      "description": "Specifies the content transfer encoding of the resource.",
+      "details": "The encoding directive is used to specify the content transfer encoding of the resource. This is typically in the format of a content transfer encoding, such as base64 or quoted-printable."
+    }
+  ]
+}

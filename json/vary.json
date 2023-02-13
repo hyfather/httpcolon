@@ -1,0 +1,16 @@
+{
+  "header": "vary",
+  "description": "The Vary HTTP response header indicates the set of request headers that were used to determine the response.",
+  "response-directives": [
+    {
+      "directive": "*",
+      "description": "Indicates that the response may vary based on any request header.",
+      "details": "Vary: *"
+    },
+    {
+      "directive": "header",
+      "description": "Indicates that the response may vary based on the specified request header.",
+      "details": "Vary: Accept-Language"
+    }
+  ]
+}

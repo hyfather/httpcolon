@@ -1,0 +1,21 @@
+{
+  "header": "content-encoding",
+  "description": "The Content-Encoding header indicates the encoding format of the HTTP message body. It is used to compress data and improve the efficiency of data transfer over the network.",
+  "response-directives": [
+    {
+      "directive": "gzip",
+      "description": "Specifies that the HTTP message body is compressed using the GZIP algorithm.",
+      "details": "The GZIP algorithm is a popular method of compressing data to reduce its size for more efficient data transfer. When the Content-Encoding header specifies the 'gzip' directive, the server has compressed the message body using the GZIP algorithm."
+    },
+    {
+      "directive": "deflate",
+      "description": "Specifies that the HTTP message body is compressed using the DEFLATE algorithm.",
+      "details": "The DEFLATE algorithm is another method of compressing data to reduce its size for more efficient data transfer. When the Content-Encoding header specifies the 'deflate' directive, the server has compressed the message body using the DEFLATE algorithm."
+    },
+    {
+      "directive": "br",
+      "description": "Specifies that the HTTP message body is compressed using the Brotli algorithm.",
+      "details": "The Brotli algorithm is a newer compression algorithm that is designed to be more efficient than GZIP and DEFLATE. When the Content-Encoding header specifies the 'br' directive, the server has compressed the message body using the Brotli algorithm."
+    }
+  ]
+}

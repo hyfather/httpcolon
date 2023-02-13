@@ -1,0 +1,36 @@
+{
+  "header": "referrer-policy",
+  "description": "The Referrer-Policy header controls how much information the browser includes in the Referer header when navigating to other pages.",
+  "response-directives": [
+    {
+      "directive": "no-referrer",
+      "description": "Specifies that no referrer information should be sent.",
+      "details": "The no-referrer directive specifies that no referrer information should be sent. This means that the Referer header will not be sent for any requests made from the current page, including requests to other pages on the same site."
+    },
+    {
+      "directive": "no-referrer-when-downgrade",
+      "description": "Specifies that the Referer header should only be sent for same-origin requests, but not for cross-origin requests.",
+      "details": "The no-referrer-when-downgrade directive specifies that the Referer header should only be sent for same-origin requests, but not for cross-origin requests. This means that the Referer header will be sent for requests to other pages on the same site, but not for requests to pages on other sites."
+    },
+    {
+      "directive": "same-origin",
+      "description": "Specifies that the Referer header should only be sent for same-origin requests.",
+      "details": "The same-origin directive specifies that the Referer header should only be sent for same-origin requests. This means that the Referer header will be sent for requests to other pages on the same site, but not for requests to pages on other sites."
+    },
+    {
+      "directive": "strict-origin",
+      "description": "Specifies that the Referer header should only be sent for same-origin requests, and only include the origin information (scheme, host, and port), but not the full path or query string.",
+      "details": "The strict-origin directive specifies that the Referer header should only be sent for same-origin requests, and only include the origin information (scheme, host, and port), but not the full path or query string. This means that the Referer header will be sent for requests to other pages on the same site, but not for requests to pages on other sites, and will only include the origin information of the referring page."
+    },
+    {
+      "directive": "strict-origin-when-cross-origin",
+      "description": "Specifies that the Referer header should include the origin information (scheme, host, and port) for cross-origin requests, but not the full path or query string.",
+      "details": "The strict-origin-when-cross-origin directive specifies that the Referer header should include the origin information (scheme, host, and port) for cross-origin requests, but not the full path or query string. This means that the Referer header will be sent for requests to pages on other sites, but will only include the origin information of the referring page."
+    },
+    {
+      "directive": "unsafe-url",
+      "description": "Specifies that the Referer header should include the full URL for all requests.",
+      "details": "The unsafe-url directive specifies that the Referer header should include the full URL for all requests. This means that the Referer header will be sent for all requests, including requests to pages on other sites, and will include the full path and query string of the referring page."
+    }
+  ]
+}

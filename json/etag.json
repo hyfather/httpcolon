@@ -1,0 +1,11 @@
+{
+  "header": "etag",
+  "description": "The ETag HTTP response header is an identifier for a specific version of a resource.",
+  "response-directives": [
+    {
+      "directive": "W/",
+      "description": "Indicates that the ETag value represents a weak validator.",
+      "details": "Indicates that the ETag value represents a weak validator."
+    }
+  ]
+}

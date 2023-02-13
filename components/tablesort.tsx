@@ -157,13 +157,13 @@ export function TableSort({ data, headerData, updateTable }: TableSortProps, { s
     setSortedData(sortData(data, { sortBy, reversed: reverseSortDirection, search: search }));
 
     const headerDB = headerMetaData;
-    console.log("headerDb", headerDB, headerDB[0]["response-directives"]);
+    console.log("headerDb", headerDB);
 
     if (sortedData != null && headerDB != null) {
       const rows_ = sortedData.map((row) => {
             let dInfo;
             headerDB.forEach((d) => {
-              if (d.header === row.header) {
+              if (d.header.toLowerCase() === row.header.toLowerCase()) {
                 dInfo = d;
               }
             });
@@ -180,12 +180,12 @@ export function TableSort({ data, headerData, updateTable }: TableSortProps, { s
             // console.log("output", output);
             // console.log("dInfo", dInfo);
 
-            const tokens = output.split(/([\s,=]+)/);
+            const tokens = output.split(/([\s,="]+)/);
             const markedUp = tokens.map((token) => {
               console.log('token', token);
               let tooltip;
               responseDirectives.forEach((d) => {
-                if (d.directive.length > 1 && d.directive === token) {
+                if (d.directive.length > 1 && d.directive.toLowerCase() === token.toLocaleLowerCase()) {
                   console.log('found', token, d);
                   tooltip = <Tooltip label={d.description} withArrow inline multiline
                                      width={250}><Mark>{token}</Mark></Tooltip>;

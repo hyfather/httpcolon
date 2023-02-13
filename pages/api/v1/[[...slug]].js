@@ -186,6 +186,7 @@ async function readJsonFilesFromDir(dirname) {
     const results = [];
 
     jsonFiles.forEach(file => {
+        console.log("file: ", file);
         const filePath = path.join(dirname, file);
         const fileContents = fs.readFileSync(filePath, 'utf8');
         const data = JSON.parse(fileContents);
@@ -201,7 +202,7 @@ async function makeHeaderData() {
         console.log(data);
         return data;
     } catch (error) {
-        console.log("error reading json file for ", headerName)
+        console.log("error reading json file");
         console.log(error);
         return null;
     }

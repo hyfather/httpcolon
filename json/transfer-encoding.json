@@ -1,0 +1,26 @@
+{
+  "header": "transfer-encoding",
+  "description": "The Transfer-Encoding header indicates the form of encoding used to safely transfer the entity to the user. Each segment of a multi-node connection can use different Transfer-Encoding values. If you want to compress data over the whole connection, use the end-to-end Content-Encoding header instead.",
+  "response-directives": [
+    {
+      "directive": "chunked",
+      "description": "Specifies that the HTTP message body is divided into a series of chunks to be transferred using chunked transfer coding.",
+      "details": "Chunked transfer coding is a method of sending a large message body in pieces, where each piece is sent in a separate chunk with its own metadata. The chunks are sent in a series and the recipient of the message can determine the length of each chunk by examining the metadata associated with each one."
+    },
+    {
+      "directive": "compress",
+      "description": "Specifies that the HTTP message body is compressed using the Lempel-Ziv-Welch (LZW) algorithm.",
+      "details": "The LZW algorithm is a lossless compression algorithm that was commonly used in the early days of the web. When the Transfer-Encoding header specifies the 'compress' directive, the server has compressed the message body using the LZW algorithm."
+    },
+    {
+      "directive": "deflate",
+      "description": "Specifies that the HTTP message body is compressed using the DEFLATE algorithm.",
+      "details": "The DEFLATE algorithm is another method of compressing data to reduce its size for more efficient data transfer. When the Transfer-Encoding header specifies the 'deflate' directive, the server has compressed the message body using the DEFLATE algorithm."
+    },
+    {
+      "directive": "gzip",
+      "description": "Specifies that the HTTP message body is compressed using the GZIP algorithm.",
+      "details": "The GZIP algorithm is a popular method of compressing data to reduce its size for more efficient data transfer. When the Transfer-Encoding header specifies the 'gzip' directive, the server has compressed the message body using the GZIP algorithm."
+    }
+  ]
+}

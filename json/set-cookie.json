@@ -1,0 +1,56 @@
+{
+  "header": "set-cookie",
+  "description": "The Set-Cookie header is used by servers to send cookies to clients in HTTP responses.",
+  "response-directives": [
+    {
+      "directive": "name",
+      "description": "Specifies the name and value of the cookie being set.",
+      "details": "This directive is required in order to set a cookie. The name of the cookie and its value are separated by an equals sign ('='), and multiple cookies can be set by including multiple 'name=value' pairs separated by semicolons (';')."
+    },
+    {
+      "directive": "domain",
+      "description": "Specifies the domain for which the cookie is valid.",
+      "details": "The Domain directive specifies the domain(s) for which the cookie is valid. If not specified, the cookie is only valid for the domain from which it was set. If specified, the cookie is also valid for any subdomains of the specified domain."
+    },
+    {
+      "directive": "path",
+      "description": "Specifies the path for which the cookie is valid.",
+      "details": "The Path directive specifies the path within the domain for which the cookie is valid. If not specified, the cookie is only valid for the path from which it was set. If specified, the cookie is also valid for any subdirectories of the specified path."
+    },
+    {
+      "directive": "expires",
+      "description": "Specifies the expiration date and time for the cookie.",
+      "details": "The Expires directive specifies the date and time at which the cookie will expire. If not specified, the cookie will expire at the end of the session (i.e., when the user closes the browser). The date and time must be specified in the format 'Wdy, DD-Mon-YYYY HH:MM:SS GMT'."
+    },
+    {
+      "directive": "max-age",
+      "description": "Specifies the maximum age of the cookie in seconds.",
+      "details": "The Max-Age directive specifies the maximum amount of time in seconds that the cookie will be valid. If not specified, the cookie will expire at the end of the session. This directive is often used instead of the Expires directive because it allows the server to specify a relative time instead of an absolute time."
+    },
+    {
+      "directive": "secure",
+      "description": "Indicates that the cookie should only be sent over a secure connection.",
+      "details": "The Secure directive indicates that the cookie should only be sent over a secure connection (i.e., HTTPS). If this directive is not present, the cookie can be sent over an unsecured connection (i.e., HTTP)."
+    },
+    {
+      "directive": "HttpOnly",
+      "description": "Indicates that the cookie should only be accessible via HTTP(S) requests and cannot be accessed via client-side scripts.",
+      "details": "The HttpOnly directive indicates that the cookie should only be accessible via HTTP(S) requests and cannot be accessed via client-side scripts (e.g., JavaScript). This can help mitigate cross-site scripting (XSS) attacks, which often involve stealing or manipulating cookies via client-side scripts."
+    },
+    {
+      "directive": "SameSite=Strict",
+      "description": "Indicates that the cookie should only be sent in a first-party context and not in a cross-site context.",
+      "details": "means that the browser sends the cookie only for same-site requests, that is, requests originating from the same site that set the cookie. If a request originates from a different domain or scheme (even with the same domain), no cookies with the SameSite=Strict attribute are sent."
+    },
+    {
+      "directive": "SameSite=Lax",
+      "description": "Means that the cookie is not sent on cross-site requests, such as on requests to load images or frames, but is sent when a user is navigating to the origin site from an external site (for example, when following a link). This is the default behavior if the SameSite attribute is not specified.",
+      "details": "Means that the cookie is not sent on cross-site requests, such as on requests to load images or frames, but is sent when a user is navigating to the origin site from an external site (for example, when following a link). This is the default behavior if the SameSite attribute is not specified."
+    },
+    {
+      "directive": "SameSite=None",
+      "description": "Means that the browser sends the cookie with both cross-site and same-site requests. The Secure attribute must also be set when setting this value, like so SameSite=None; Secure",
+      "details": "Means that the cookie is not sent on cross-site requests, such as on requests to load images or frames, but is sent when a user is navigating to the origin site from an external site (for example, when following a link). This is the default behavior if the SameSite attribute is not specified."
+    }
+  ]
+}

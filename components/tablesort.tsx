@@ -64,7 +64,7 @@ interface ResponseDirective {
 interface TableSortProps {
   data: RowData[];
   updateTable: string;
-  headerData: HeaderData;
+  headerData: HeaderData[];
 }
 
 interface ThProps {
@@ -157,47 +157,56 @@ export function TableSort({ data, headerData, updateTable }: TableSortProps, { s
     setSortedData(sortData(data, { sortBy, reversed: reverseSortDirection, search: search }));
 
     const headerDB = headerMetaData;
-    console.log("headerDb", headerDB, headerDB["response-directives"], headerDB["response-directives"][0]["directive"]);
+    console.log("headerDb", headerDB, headerDB[0]["response-directives"]);
 
     if (sortedData != null && headerDB != null) {
-        const rows_ = sortedData.map((row) => {
-          // var dInfo = {};
-          var output = row.value;
-          // console.log("directives", directives);
-          console.log("output", output);
-          // directives?.forEach((d) => {
-          //   if (d.directive === 'cache-control'){
-          //     d = d;
-          //   }
-          // });
-
-          const responseDirectives = headerDB['response-directives'];
-
-          const tokens = output.split(/([\s,=]+)/);
-          const markedUp = tokens.map((token) => {
-            console.log('token', token);
-            let tooltip;
-            responseDirectives.forEach((d) => {
-              if (d.directive.length > 1 && d.directive === token ) {
-                console.log('found', token, d);
-                tooltip = <Tooltip label={d.description}><Mark>{token}</Mark></Tooltip>;
+      const rows_ = sortedData.map((row) => {
+            let dInfo;
+            headerDB.forEach((d) => {
+              if (d.header === row.header) {
+                dInfo = d;
               }
             });
-            if (tooltip) {
-              return tooltip;
+            if (dInfo == null) {
+              return (
+                  <tr key={row.header}>
+                    <td><Code>{row.header}</Code></td>
+                    <td><Code>{row.value}</Code></td>
+                  </tr>);
             }
-            return <span>{token}</span>;
-          });
-          console.log('markedUp', markedUp);
 
-          return (
-            <tr key={row.header}>
-              <td><Code>{row.header}</Code></td>
-              <td>{markedUp}</td>
-            </tr>);}
-        );
+            const responseDirectives = dInfo["response-directives"];
+            var output = row.value;
+            // console.log("output", output);
+            // console.log("dInfo", dInfo);
 
-        setRows(rows_);
+            const tokens = output.split(/([\s,=]+)/);
+            const markedUp = tokens.map((token) => {
+              console.log('token', token);
+              let tooltip;
+              responseDirectives.forEach((d) => {
+                if (d.directive.length > 1 && d.directive === token) {
+                  console.log('found', token, d);
+                  tooltip = <Tooltip label={d.description} withArrow inline multiline
+                                     width={250}><Mark>{token}</Mark></Tooltip>;
+                }
+              });
+              if (tooltip) {
+                return tooltip;
+              }
+              return <span>{token}</span>;
+            });
+            // console.log('markedUp', markedUp);
+
+            return (
+                <tr key={row.header}>
+                  <td><Code><Tooltip label={dInfo["description"]} withArrow inline multiline
+                               position="right" width={250}><Mark>{row.header}</Mark></Tooltip></Code></td>
+                  <td><Code>{markedUp}</Code></td>
+                </tr>);
+          }
+      );
+      setRows(rows_);
     }
   };
 
@@ -231,7 +240,7 @@ export function TableSort({ data, headerData, updateTable }: TableSortProps, { s
               reversed={reverseSortDirection}
               onSort={() => setSorting('header')}
             >
-              <Mark>Header</Mark>
+              HTTP Header
             </Th>
             <Th
               sorted={sortBy === 'value'}

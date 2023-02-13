@@ -15,7 +15,7 @@ export default async function handler(req, res) {
     if(db != null){
         console.log("db check", db)
         if(db == "cache-control") {
-            const data = await getHeaderData(db);
+            const data = await makeHeaderData(db);
             console.log("returning header data", data);
             res.status(200).json(data);
             return;
@@ -155,27 +155,58 @@ async function processValue(header, value) {
     return output;
 }
 
-const readFile = util.promisify(fs.readFile);
+// const readFile = util.promisify(fs.readFile);
 
-async function getHeaderData(headerName) {
+// async function getHeaderData(headerName) {
+//     try {
+//         const data = await getKey("_internal/" + headerName);
+//         if(data != null) {
+//             console.log("gerheaderdata", data);
+//             return data;
+//         }
+//         const filePath = path.join(process.cwd() ,'json', headerName + ".json");
+//         const data2 = await readFile(filePath, 'utf-8');
+//         const parsedData = JSON.parse(data2);
+//         console.log("parsedData", parsedData);
+//         await setKey("_internal/" + headerName, parsedData);
+//         return parsedData;
+//     } catch (error) {
+//         console.log("error reading json file for ", headerName)
+//         console.log(error);
+//         return null;
+//     }
+// }
+
+
+async function readJsonFilesFromDir(dirname) {
+    const jsonFiles = fs.readdirSync(dirname).filter(filename => {
+        return path.extname(filename).toLowerCase() === '.json';
+    });
+
+    const results = [];
+
+    jsonFiles.forEach(file => {
+        const filePath = path.join(dirname, file);
+        const fileContents = fs.readFileSync(filePath, 'utf8');
+        const data = JSON.parse(fileContents);
+        results.push(data);
+    });
+
+    return results;
+}
+
+async function makeHeaderData() {
     try {
-        const data = await getKey("_internal/" + headerName);
-        if(data != null) {
-            console.log("gerheaderdata", data);
-            return data;
-        }
-        const filePath = path.join(process.cwd() ,'json', headerName + ".json");
-        const data2 = await readFile(filePath, 'utf-8');
-        const parsedData = JSON.parse(data2);
-        console.log("parsedData", parsedData);
-        await setKey("_internal/" + headerName, parsedData);
-        return parsedData;
+        const data = await readJsonFilesFromDir(path.join(process.cwd() ,'json'));
+        console.log(data);
+        return data;
     } catch (error) {
         console.log("error reading json file for ", headerName)
         console.log(error);
         return null;
     }
 }
+
 
 async function getData(uniq){
     const keyURL = process.env.UPSTASH_REDIS_REST_URL + "/get/" + uniq;

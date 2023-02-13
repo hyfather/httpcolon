@@ -8,6 +8,8 @@ import {
   Text,
   Center,
   TextInput,
+  Mark,
+  Tooltip,
   Code
 } from '@mantine/core';
 import { keys } from '@mantine/utils';
@@ -47,9 +49,22 @@ interface RowData {
   size: number;
 }
 
+interface HeaderData {
+  header: string;
+  description: string;
+  responseDirectives: ResponseDirective[];
+}
+
+interface ResponseDirective {
+  directive: string,
+  description: string,
+  details: string
+}
+
 interface TableSortProps {
   data: RowData[];
-    updateTable: string;
+  updateTable: string;
+  headerData: HeaderData;
 }
 
 interface ThProps {
@@ -107,12 +122,13 @@ function sortData(
   );
 }
 
-export function TableSort({ data, updateTable }: TableSortProps, { sortField }: any) {
+export function TableSort({ data, headerData, updateTable }: TableSortProps, { sortField }: any) {
   const [search, setSearch] = useState('');
   const [sortedData, setSortedData] = useState(data);
   const [sortBy, setSortBy] = useState<keyof RowData | null>(sortField);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
   const [rows, setRows] = useState([]);
+  const [headerMetaData, setHeaderMetaData] = useState(headerData);
   const { classes } = useStyles();
 
 //   const [refreshTable, setRefreshTable] = useState("");
@@ -138,13 +154,49 @@ export function TableSort({ data, updateTable }: TableSortProps, { sortField }: 
         setRows([]);
         return;
     }
-    setSortedData(sortData(data, { sortBy: sortBy, reversed: reverseSortDirection, search: search }));
-    if (sortedData != null) {
+    setSortedData(sortData(data, { sortBy, reversed: reverseSortDirection, search: search }));
+
+    const headerDB = headerMetaData;
+    console.log("headerDb", headerDB, headerDB["response-directives"], headerDB["response-directives"][0]["directive"]);
+
+    if (sortedData != null && headerDB != null) {
         const rows_ = sortedData.map((row) => {
-            return (<tr key={row.header}>
-            <td><Code>{row.header}</Code></td>
-            <td><Code>{row.value}</Code></td>
-            </tr>);});
+          // var dInfo = {};
+          var output = row.value;
+          // console.log("directives", directives);
+          console.log("output", output);
+          // directives?.forEach((d) => {
+          //   if (d.directive === 'cache-control'){
+          //     d = d;
+          //   }
+          // });
+
+          const responseDirectives = headerDB['response-directives'];
+
+          const tokens = output.split(/([\s,=]+)/);
+          const markedUp = tokens.map((token) => {
+            console.log('token', token);
+            let tooltip;
+            responseDirectives.forEach((d) => {
+              if (d.directive.length > 1 && d.directive === token ) {
+                console.log('found', token, d);
+                tooltip = <Tooltip label={d.description}><Mark>{token}</Mark></Tooltip>;
+              }
+            });
+            if (tooltip) {
+              return tooltip;
+            }
+            return <span>{token}</span>;
+          });
+          console.log('markedUp', markedUp);
+
+          return (
+            <tr key={row.header}>
+              <td><Code>{row.header}</Code></td>
+              <td>{markedUp}</td>
+            </tr>);}
+        );
+
         setRows(rows_);
     }
   };
@@ -152,7 +204,7 @@ export function TableSort({ data, updateTable }: TableSortProps, { sortField }: 
   useEffect(() => {
     console.log("updating table");
     makeRows();
-  }, [updateTable]);
+  }, [updateTable, headerData]);
 
   return (
     <ScrollArea>
@@ -179,7 +231,7 @@ export function TableSort({ data, updateTable }: TableSortProps, { sortField }: 
               reversed={reverseSortDirection}
               onSort={() => setSorting('header')}
             >
-              Header
+              <Mark>Header</Mark>
             </Th>
             <Th
               sorted={sortBy === 'value'}

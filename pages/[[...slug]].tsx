@@ -31,26 +31,17 @@ import {
     Image,
     Select,
     Container,
-    Footer,
+    Mark,
     keyframes,
     Space,
     useMantineTheme,
     Loader,
 } from '@mantine/core';
 
-import {LinksGroup} from 'NavbarLinksGroup';
-
-import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
 import { IconFingerprint, IconCopy, IconMoon, IconSquarePlus, IconSun, IconSwitchHorizontal } from '@tabler/icons';
-import { getRandomValues } from 'crypto';
-import { DefaultValue } from '@mantine/core/lib/MultiSelect/DefaultValue/DefaultValue';
-import { unstable_HistoryRouter } from 'react-router-dom';
-import { text } from 'stream/consumers';
-import { url } from 'inspector';
 
-const BASE_URL = 'https://httpcolon.dev/'
-// const BASE_URL = 'http://localhost:3000'
-
+// const BASE_URL = 'https://httpcolon.dev/'
+const BASE_URL = 'http://localhost:3000'
 
 const useStyles = createStyles((theme, _params, getRef) => {
     const icon = getRef('icon');
@@ -94,13 +85,11 @@ const useStyles = createStyles((theme, _params, getRef) => {
             marginLeft: -theme.spacing.md,
             marginRight: -theme.spacing.md,
           },
-        
+
           linksInner: {
             paddingTop: theme.spacing.xl,
             paddingBottom: theme.spacing.xl,
           },
-        
-        
 
         linkIcon: {
             ref: icon,
@@ -177,32 +166,16 @@ const useStyles = createStyles((theme, _params, getRef) => {
             height: 21,
             borderRadius: 21,
         },
-        
         buttonContainer: {
             display: 'flex',
             justifyContent: 'space-between',
         },
-
         leftButtons: {
             paddingRight: '10px',
             marginRight: '10px',
-        }
-
-
+        },
     };
 });
-
-// export function getFromAPI(slug: string) {
-//     fetch(BASE_URL + "/api/v1/" + slug)
-//     .then(response => response.json())
-//     .then(data => {
-//         console.log("slug fetch: " + data.destination);
-//         console.log("slug data:" + JSON.stringify(data));
-//         return data;
-//     }).catch((error) => {
-//         console.error('Error:', error);
-//     });
-// }
 
 export default function HomePage(props) {
     const timeoutRef = useRef<number>(-1);
@@ -227,6 +200,7 @@ export default function HomePage(props) {
     const tableRef = useRef<HTMLTableElement>(null);
     const theme = useMantineTheme();
     const [updateTable, setUpdateTable] = useState('');
+    const [headerData, setHeaderData] = useState({});
 
     const router = useRouter()
 
@@ -234,12 +208,26 @@ export default function HomePage(props) {
     const refreshURL = !router.query["refresh"] ? "" : "?refresh=true"
 
     const makeAPICall = (url: string) => {
+        console.log("make api call");
         setLoading(true);
+        // if (headerData) {
+        // if (headerData) {
+            fetch(url + "&db=cache-control")
+                .then(response => response.json())
+                .then(data => {
+                    console.log("headerData fetch", data);
+                    setHeaderData(data);
+                }).catch((error) => {
+                     console.error("Error:", error);
+             });
+        // }
+
         fetch(url)
             .then(response => response.json())
             .then(data => {
                 console.log("slug fetch: " + data.destination);
                 console.log("slug data:" + JSON.stringify(data));
+
                 setData(data);
                 setValue(data.destination);
                 setInputValue(data.destination);
@@ -489,7 +477,7 @@ export default function HomePage(props) {
                                 <Button className={classes.leftButtons} variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[5] }} size="xs" >
                                     <IconChevronRight size={14} stroke={2} />
                                 </Button>
-                                <Button className={classes.leftButtons} leftIcon={<IconRefresh size={14} stroke={2} />} variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[5] }} size="xs" onClick={refreshTable}>
+                                <Button className={classes.leftButtons} leftIcon={<IconRefresh size={14} stroke={2} />} variant="gradient" gradient={{ from: theme.colors.blue[2], to: theme.colors.grape[2] }} size="xs" onClick={refreshTable}>
                                     Refresh
                                 </Button>
                                 <Popover width="auto" position="top" transition="pop"  withArrow>
@@ -514,7 +502,7 @@ export default function HomePage(props) {
                                 <Button leftIcon={<IconPlus size={14} stroke={2} />} variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[5] }} size="xs" onClick={goHome}>
                                     New URL
                                 </Button>
-                            </div>                            
+                            </div>
                         {/* </Group> */}
                     </div>
                         <Space h="md" />
@@ -547,7 +535,7 @@ export default function HomePage(props) {
                             {loading ? <Group position="center">
                                             <Loader color="grape" size="xl" />
                                         </Group> : 
-                                        <TableSort data={response.payload} updateTable={updateTable} /> }
+                                        <TableSort data={response.payload} headerData={headerData} updateTable={updateTable} /> }
                         </div>
 
                 </Container>

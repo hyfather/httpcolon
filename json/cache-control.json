@@ -1,0 +1,72 @@
+{
+  "header": "cache-control",
+  "description": "The \"Cache-Control\" HTTP header is used to specify caching policies in HTTP responses. It provides directives to control how a response can be cached by the client, intermediaries, and/or shared cache. These directives dictate whether a response can be stored, how long it can be stored for, and if it should be revalidated with the origin server before being used.",
+  "response-directives" : [
+    {
+      "directive": "max-age",
+      "description": "The max-age=N response directive indicates that the response remains fresh until N seconds after the response is generated.",
+      "details": "Note that max-age is not the elapsed time since the response was received; it is the elapsed time since the response was generated on the origin server. So if the other cache(s) — on the network route taken by the response — store the response for 100 seconds (indicated using the Age response header field), the browser cache would deduct 100 seconds from its freshness lifetime."
+    },
+    {
+      "directive": "public",
+      "description": "The public directive indicates that the response can be stored by any cache.",
+      "details": "The public directive applies to the entire response and overrides the default behavior, which is to restrict caching only to non-shared caches (e.g., the browser cache). When a response is marked as public, it may be cached by any cache, including those shared by many users (e.g., a proxy cache). This can lead to increased hit rates and improved performance, but it also means that the response may be stored in places where privacy is a concern."
+    },
+    {
+      "directive": "private",
+      "description": "The private directive indicates that the response can only be stored in non-shared caches (e.g., the browser cache).",
+      "details": "The private directive applies to the entire response and overrides the public directive. When a response is marked as private, it may only be cached by the user agent that made the request. This is useful for sensitive information that should not be stored in shared caches. For example, an API that returns personal data such as financial information would use the private directive."
+    },
+    {
+      "directive": "no-cache",
+      "description": "The no-cache directive indicates that the response must be revalidated before it can be used.",
+      "details": "The no-cache directive applies to the entire response and overrides the max-age and s-maxage response directives. When a response is marked as no-cache, the browser must revalidate the response with the origin server before using it. Revalidation involves sending a conditional request to the server and checking the freshness of the response using the Last-Modified or ETag header fields. If the response has changed, the browser will receive the updated version."
+    },
+    {
+      "directive": "no-store",
+      "description": "The no-store directive indicates that the response must not be stored by any cache.",
+      "details": "The no-store directive applies to the entire response and overrides all other cache-control response directives. When a response is marked as no-store, the browser and all intermediate caches must not store a copy of the response. This is useful for sensitive information that should not be stored in any cache, such as financial information or personal data."
+    },
+    {
+      "directive": "s-maxage",
+      "description": "The s-maxage=N response directive is similar to the max-age directive, but it only applies to shared caches (e.g., proxy caches) and not to private caches (e.g., the browser cache).",
+      "details": "This directive allows the origin server to override the max-age value set by an intermediary cache (e.g., a proxy cache) with a new value. The s-maxage directive only applies to shared caches, so it has no effect on private caches like the browser cache. Note that this directive overrides the max-age directive if both are present in the same response."
+    },
+    {
+      "directive": "no-transform",
+      "description": "The no-transform directive indicates that an intermediary cache (e.g., a proxy cache) must not modify the content of the response in any way.",
+      "details": "The no-transform directive is intended to prevent intermediaries from altering the content of the response in ways that might be harmful or confusing to the end user. For example, an intermediary might remove some of the response headers to save space, but this could lead to a less secure response. The no-transform directive is particularly useful for responses that contain sensitive information (e.g., credit card numbers), or for responses that rely on precise header ordering (e.g., multi-part responses). Note that the no-transform directive only applies to intermediary caches and has no effect on the browser cache."
+    },
+    {
+      "directive": "must-revalidate",
+      "description": "The must-revalidate directive indicates that a cache must not serve a stale response, even if the client doesn't request a fresh response.",
+      "details": "The must-revalidate directive is used to prevent caches from serving stale responses to clients. When a response is marked as must-revalidate, caches must always check with the origin server to see if the response has changed before serving it to the client. If the response has changed, the cache must request a new copy from the origin server. If the response has not changed, the cache may serve the stored response. The must-revalidate directive is useful for responses that change frequently or for responses that contain sensitive information (e.g., credit card numbers)."
+    },
+
+    {
+      "directive": "proxy-revalidate",
+      "description": "The proxy-revalidate directive is similar to the must-revalidate directive, but it only applies to shared caches (e.g., proxy caches) and not to private caches (e.g., the browser cache).",
+      "details": "This directive indicates that an intermediary cache must revalidate its stored response with the origin server before serving it to a client, even if the response appears to be fresh. The proxy-revalidate directive is intended to prevent intermediary caches from serving stale responses to clients. Note that this directive only applies to shared caches, so it has no effect on private caches like the browser cache."
+    },
+    {
+      "directive": "must-understand",
+      "description": "The must-understand response directive indicates that a cache should store the response only if it understands the requirements for caching based on status code.",
+      "details": "This directive is intended to indicate that certain headers must be understood by an intermediary cache (e.g., a proxy cache) in order to properly handle the response. However, this directive is not part of the HTTP standard and is not widely used. It is not to be confused with the similar-sounding 'must-revalidate' directive, which is part of the HTTP standard and is used to indicate that a cache must always revalidate its stored response with the origin server."
+    },
+    {
+      "directive": "immutable",
+      "description": "The immutable directive indicates that a response must not be modified in any way by intermediaries (e.g., proxy caches) or the browser cache.",
+      "details": "This directive is used to indicate that a response is not subject to change, and therefore, it can be safely cached for a long time. Intermediary caches and the browser cache are not allowed to modify the response in any way, not even to add or remove headers. The immutable directive is particularly useful for resources that are not expected to change, such as public assets like scripts and stylesheets."
+    },
+    {
+      "directive": "stale-while-revalidate",
+      "description": "The stale-while-revalidate directive allows a cache to serve a stale response while revalidating it in the background.",
+      "details": "This directive is used to indicate that a cache is allowed to serve a stale response to a client while it revalidates the response with the origin server in the background. The stale-while-revalidate directive takes two values, stale-while-revalidate=N and s-maxage=M, where N is the maximum time (in seconds) that a stale response can be served, and M is the maximum time that a response can be fresh in a shared cache. The stale-while-revalidate directive is useful for improving the performance of cache-rich environments, such as content delivery networks (CDNs)."
+    },
+    {
+      "directive": "stale-if-error",
+      "description": "The stale-if-error directive allows a cache to serve a stale response if it is unable to communicate with the origin server.",
+      "details": "This directive is used to indicate that a cache is allowed to serve a stale response to a client if it is unable to communicate with the origin server. After the stale-if-error period passes, the client will receive any error generated."
+    }
+  ]
+}

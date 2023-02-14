@@ -10,10 +10,10 @@ import {
   TextInput,
   Mark,
   Tooltip,
-  Code
+  Code, Alert
 } from '@mantine/core';
 import { keys } from '@mantine/utils';
-import { IconSelector, IconChevronDown, IconChevronUp, IconSearch } from '@tabler/icons';
+import { IconSelector, IconChevronDown, IconChevronUp, IconSearch, IconInfoSquareRounded } from '@tabler/icons';
 import { useForceUpdate } from '@mantine/hooks';
 import { ClassNames } from '@emotion/react';
 
@@ -167,7 +167,7 @@ export function TableSort({ data, headerData, updateTable }: TableSortProps, { s
                 dInfo = d;
               }
             });
-            if (dInfo == null) {
+            if (dInfo == null || dInfo['response-directives'] == null) {
               return (
                   <tr key={row.header}>
                     <td><Code>{row.header}</Code></td>
@@ -175,20 +175,26 @@ export function TableSort({ data, headerData, updateTable }: TableSortProps, { s
                   </tr>);
             }
 
-            const responseDirectives = dInfo["response-directives"];
-            var output = row.value;
-            // console.log("output", output);
-            // console.log("dInfo", dInfo);
-
-            const tokens = output.split(/([\s,=";]+)/);
+            const responseDirectives = dInfo['response-directives'];
+            const tokens = row.value.split(/([\s,=";]+)/);
             const markedUp = tokens.map((token) => {
               console.log('token', token);
               let tooltip;
-              responseDirectives.forEach((d) => {
+              responseDirectives?.forEach((d) => {
+                // eslint-disable-next-line max-len
                 if (d.directive.length > 1 && d.directive.toLowerCase() === token.toLocaleLowerCase()) {
-                  console.log('found', token, d);
-                  tooltip = <Tooltip label={d.description} withArrow inline multiline color="grape"
-                                     width={250}><Mark>{token}</Mark></Tooltip>;
+                  // console.log('found', token, d);
+                  tooltip =
+                      <Tooltip
+                        label={d.description}
+                        withArrow
+                        inline
+                        multiline
+                        color="grape"
+                        width={250}
+                      >
+                        <Mark>{token}</Mark>
+                      </Tooltip>;
                 }
               });
               if (tooltip) {
@@ -225,7 +231,19 @@ export function TableSort({ data, headerData, updateTable }: TableSortProps, { s
         className={classes.searchBar}
         onChange={handleSearchChange}
       />
-
+      <Alert
+        icon={<IconInfoSquareRounded size={14} stroke={1.5} />}
+        color="grape"
+        variant={"light"}
+        withCloseButton
+        onClose={() => {
+            console.log('todo: close');
+        }}
+      >
+        <Text size="sm">
+            <strong>Tip:</strong> hover on highlighted words to see the description.
+        </Text>
+      </Alert>
       <Table
         horizontalSpacing="md"
         verticalSpacing="xs"

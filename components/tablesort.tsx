@@ -248,7 +248,6 @@ export function TableSort({ data, headerData, updateTable }: TableSortProps, { s
         horizontalSpacing="md"
         verticalSpacing="xs"
         highlightOnHover={true}
-        striped={true}
         sx={{ tableLayout: 'fixed', minWidth: 700 }}
       >
         <thead>

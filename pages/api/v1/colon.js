@@ -4,40 +4,55 @@ const SCHEMA_VERSION = 0.1;
 const MAX_INSTANCES = 10;
 const fs = require('fs');
 const util = require('util');
+const crypto = require('crypto');
+
 
 // const dirs = require('./cache-control');
 
 export default async function handler(req, res) {
     const slug = req.query["slug"];
     const refresh = req.query["refresh"];
-    const db = req.query["db"];
 
-    if(db != null){
-        console.log("db check", db)
-        if(db == "cache-control") {
-            const data = await makeHeaderData(db);
-            console.log("returning header data", data);
-            res.status(200).json(data);
-            return;
-        }
-    }
+    console.log("slug: ", slug);
+    // const slugs = slug[0].split(",");
+    // let uniqSlug = slugs.join("_");
+    // const url = "https://" + slugs.join("/");
+    // console.log("uniqSlug: ", uniqSlug);
 
-
-    console.log("slug: ", slug[0]);
-    const slugs = slug[0].split(",");
-    const uniqSlug = slugs.join("_");
-    const url = "https://" + slugs.join("/");
-    console.log("uniqSlug: ", uniqSlug);
-
-    if(slug[0] === null || uniqSlug === null) {
+    if(slug == null) {
         res.status(200).json({ id: "Enter URL", destination: "Plz"});
         return;
     }
 
+    const encodedSlug = req.query['slug'];
+    let decodedSlug = base64Decode(encodedSlug);
+
+    console.log('encodedSlug:', encodedSlug);
+    console.log('decodedSlug:', decodedSlug);
+
+
+    // Validate that it's a valid URL
+    const urlRegexEasy = /^(http|https):\/\/[^ "]+$/;
+    if (!urlRegexEasy.test(decodedSlug)) {
+        console.log('Invalid URL, appending https://');
+        decodedSlug = 'https://' + decodedSlug;
+    }
+    const urlRegexHard = /^(?:https?:\/\/)?[\w.-]+\.[a-zA-Z]{2,20}(?:\/[\w\.-]*)*\/?$/;
+    if (!urlRegexHard.test(decodedSlug)) {
+        console.error('Invalid URL');
+        res.status(400).json({ error: 'Invalid URL' });
+        return;
+    }
+
+    const hash = crypto.createHash('sha256').update(decodedSlug).digest('hex');
+    console.log('Hash:', hash);
+
+    let uniqSlug = hash;
+
     const data = await getKey(uniqSlug);
     if(data == null || refresh != null){
-        console.log("creating entry");
-        const rawData = await makeRequest(url, "GET");
+        console.log("creating entry", uniqSlug, decodedSlug);
+        const rawData = await makeRequest(decodedSlug, "GET");
         const destination = rawData.destination;
         if(rawData.status == "500") { 
             console.log("error, will not save");
@@ -54,6 +69,11 @@ export default async function handler(req, res) {
     }   
 }
 
+function base64Decode(encodedStr) {
+    const buffer = Buffer.from(encodedStr, 'base64');
+    return buffer.toString('utf-8');
+}
+
 
 async function makeRequest(url, method) {
     const d1 = new Date().getTime();
@@ -63,21 +83,14 @@ async function makeRequest(url, method) {
     let statusText = "";
 
     try {
+        // todo: add timeout
         const response = await fetch(url, {method: method});
         const data = await response;
         latency = new Date().getTime() - d1;
-        console.log("raw data: ", data);
+
+        // console.log("raw data: ", data);
         for (var pair of data.headers.entries()) {
-            if(pair[0] == '/cache-control') {
-                console.log("in cache control")
-                payload.push(
-                    {
-                        "header": pair[0],
-                        "value": await processValue(pair[0], pair[1])},
-                );
-            } else {
-                payload.push({"header": pair[0], "value": pair[1]});
-            }
+            payload.push({"header": pair[0], "value": pair[1]});
         }
         status = "" + data.status;
         statusText = data.statusText;
@@ -139,76 +152,6 @@ async function setKey(uniq, rawData) {
         .catch(err => console.log(err));
 }
 
-async function processValue(header, value) {
-    let output = value;
-    try {
-        const data = await getHeaderData('cache-control');
-        console.log(data);
-        data['response-directives'].forEach(directive => {
-            const regex = new RegExp("\\b" + directive.directive + "\\b", "gi");
-            output = output.replace(regex, `<Mark>${directive.directive}+${directive.description}</Mark>`);
-        });
-    } catch (error) {
-        console.log("cache control error")
-        console.error(error);
-    }
-    return output;
-}
-
-// const readFile = util.promisify(fs.readFile);
-
-// async function getHeaderData(headerName) {
-//     try {
-//         const data = await getKey("_internal/" + headerName);
-//         if(data != null) {
-//             console.log("gerheaderdata", data);
-//             return data;
-//         }
-//         const filePath = path.join(process.cwd() ,'json', headerName + ".json");
-//         const data2 = await readFile(filePath, 'utf-8');
-//         const parsedData = JSON.parse(data2);
-//         console.log("parsedData", parsedData);
-//         await setKey("_internal/" + headerName, parsedData);
-//         return parsedData;
-//     } catch (error) {
-//         console.log("error reading json file for ", headerName)
-//         console.log(error);
-//         return null;
-//     }
-// }
-
-
-async function readJsonFilesFromDir(dirname) {
-    const jsonFiles = fs.readdirSync(dirname).filter(filename => {
-        return path.extname(filename).toLowerCase() === '.json';
-    });
-
-    const results = [];
-
-    jsonFiles.forEach(file => {
-        console.log("file: ", file);
-        const filePath = path.join(dirname, file);
-        const fileContents = fs.readFileSync(filePath, 'utf8');
-        const data = JSON.parse(fileContents);
-        results.push(data);
-    });
-
-    return results;
-}
-
-async function makeHeaderData() {
-    try {
-        const data = await readJsonFilesFromDir(path.join(process.cwd() ,'json'));
-        console.log(data);
-        return data;
-    } catch (error) {
-        console.log("error reading json file");
-        console.log(error);
-        return null;
-    }
-}
-
-
 async function getData(uniq){
     const keyURL = process.env.UPSTASH_REDIS_REST_URL + "/get/" + uniq;
 
@@ -234,7 +177,6 @@ async function getData(uniq){
         return null;
     }
 }
-
 
 async function addData(uniq, rawData, destination){
     console.log("uniq: ", uniq);

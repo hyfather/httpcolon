@@ -39,8 +39,8 @@
     },
     {
       "directive": "frame-ancestors",
-      "description": "Specifies valid parents that may embed a page using <frame>, <iframe>, <object>, <embed>, or <applet>.",
-      "details": "The HTTP Content-Security-Policy (CSP) frame-ancestors directive specifies valid parents that may embed a page using <frame>, <iframe>, <object>, <embed>, or <applet>.\n\nSetting this directive to 'none' is similar to X-Frame-Options: deny (which is also supported in older browsers)."
+      "description": "Specifies valid parent URLs that may embed this page using the <frame>, <iframe>, <object>, <embed>, or <applet> tags.",
+      "details": "The HTTP Content-Security-Policy (CSP) frame-ancestors directive specifies valid parent URLs that may embed a page using <frame>, <iframe>, <object>, <embed>, or <applet>.\n\nSetting this directive to 'none' is similar to X-Frame-Options: deny (which is also supported in older browsers)."
     },
     {
       "directive": "frame-src",

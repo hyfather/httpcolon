@@ -39,9 +39,10 @@ import {
 } from '@mantine/core';
 
 import { IconFingerprint, IconCopy, IconMoon, IconSquarePlus, IconSun, IconSwitchHorizontal } from '@tabler/icons';
+import {atob} from "buffer";
 
-const BASE_URL = 'https://httpcolon.dev/';
-// const BASE_URL = 'http://localhost:3000';
+// const BASE_URL = 'https://httpcolon.dev/';
+const BASE_URL = 'http://localhost:3000';
 
 const useStyles = createStyles((theme, _params, getRef) => {
     const icon = getRef('icon');
@@ -177,6 +178,11 @@ const useStyles = createStyles((theme, _params, getRef) => {
     };
 });
 
+function base64Encode(str) {
+    const buffer = Buffer.from(str, 'utf-8');
+    return buffer.toString('base64');
+}
+
 export default function HomePage(props) {
     const timeoutRef = useRef<number>(-1);
     const [value, setValue] = useState('');
@@ -207,26 +213,26 @@ export default function HomePage(props) {
     const slug = router.query["slug"];
     const refreshURL = !router.query["refresh"] ? "" : "?refresh=true"
 
-    const makeAPICall = (url: string) => {
-        console.log("make api call");
-        setLoading(true);
-        // if (headerData) {
-        // if (headerData) {
-            fetch(url + "&db=cache-control")
-                .then(response => response.json())
-                .then(data => {
-                    console.log("headerData fetch", data);
-                    setHeaderData(data);
-                }).catch((error) => {
-                     console.error("Error:", error);
-             });
-        // }
+    const makeAPICall = (encodedSlug: string) => {
+        const dbURL = `${BASE_URL}/api/v1/database`;
+        const slugURL = `${BASE_URL}/api/v1/colon?slug=${encodedSlug}&refresh=1`;
+        console.log('make api call to', encodedSlug);
 
-        fetch(url)
+        setLoading(true);
+        fetch(dbURL)
             .then(response => response.json())
             .then(data => {
-                console.log("slug fetch: " + data.destination);
-                console.log("slug data:" + JSON.stringify(data));
+                console.log("headerData fetch", data);
+                setHeaderData(data);
+            }).catch((error) => {
+                 console.error("Error:", error);
+         });
+
+        fetch(slugURL)
+            .then(response => response.json())
+            .then(data => {
+                // console.log("slug fetch: " + data.destination);
+                // console.log("slug data:" + JSON.stringify(data));
 
                 setData(data);
                 setValue(data.destination);
@@ -244,23 +250,25 @@ export default function HomePage(props) {
             });
     };
 
-    useEffect(()=>{
-        if (slug != null && slugLoader == 0) {
-            const fetchURL = BASE_URL + "/api/v1/" + slug + refreshURL;
-            makeAPICall(fetchURL);
+    useEffect(() => {
+        if (slug) {
+            console.log('slug is not null: ', slug);
+            const encodedSlug = base64Encode(slug.toString());
+            makeAPICall(encodedSlug);
             refreshNavBar();
         }
     }, []);
 
     function refreshTable(event) {
+        //broken
         event.preventDefault();
 
-        var url = "";
+        let url = '';
 
-        console.log("slugs: ", slug);
-        if(!slug){
-            const querySlug = router.query["slug"];
-            console.log("query slugs: ", querySlug);
+        // console.log("slugs: ", slug);
+        if (slug) {
+            const querySlug = router.query.slug;
+            console.log('query slugs: ', querySlug);
             if(!querySlug) {
                 url = "/api/v1/" + querySlug?.toString();
             }

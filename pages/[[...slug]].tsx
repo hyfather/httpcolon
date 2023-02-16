@@ -367,7 +367,8 @@ export default function HomePage(props) {
 
                     <Navbar.Section className={classes.footer}>
                        <Center>
-                            <Group position="center" my="xl">
+                           <Stack>
+
                                 <SegmentedControl
                                   value={colorScheme}
                                   onChange={(value: 'light' | 'dark') => toggleColorScheme(value)}
@@ -392,8 +393,11 @@ export default function HomePage(props) {
                                         },
                                     ]}
                                 />
-                                <GitHubButton href="https://github.com/hyfather/httpcolon" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" aria-label="Star hyfather/httpcolon on GitHub" />
-                            </Group>
+                                <GitHubButton href="https://github.com/hyfather/httpcolon/tree/master/json" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" aria-label="Star hyfather/httpcolon on GitHub">
+                                     Corrections
+                                </GitHubButton>
+                           </Stack>
+
                        </Center>
                     </Navbar.Section>
                     </Navbar>
@@ -421,7 +425,7 @@ export default function HomePage(props) {
 
                                     <TextInput autoComplete="on" mt="xs" {...form.getInputProps('url')} value={inputValue} onChange={handleTextInputChange} ref={inputRef} />
 
-                                    <Button type="submit" mt="xs" variant="gradient" gradient={{ from: theme.colors.blue[9], to: theme.colors.grape[7] }} ref={colonizeButtonRef}>
+                                    <Button type="submit" mt="xs" variant="gradient" gradient={{ from: theme.colors.blue[10], to: theme.colors.grape[7] }} ref={colonizeButtonRef}>
                                         Go
                                     </Button>
                                 </Group>
@@ -443,7 +447,7 @@ export default function HomePage(props) {
                                 </Button>
                                 <Popover width="auto" position="right" transition="pop" withArrow>
                                     <Popover.Target>
-                                       <Button className={classes.leftButtons} leftIcon={<IconLink size={14} stroke={2} />} variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[8] }} size="xs">
+                                       <Button className={classes.leftButtons} leftIcon={<IconLink size={14} stroke={2} />} variant="gradient" gradient={{ from: theme.colors.blue[5], to: theme.colors.grape[5] }} size="xs">
                                             Share
                                        </Button>
                                     </Popover.Target>
@@ -460,7 +464,7 @@ export default function HomePage(props) {
 
                             </div>
                             <div>
-                                <Button leftIcon={<IconPlus size={14} stroke={2} />} variant="gradient" gradient={{ from: theme.colors.blue[8], to: theme.colors.grape[5] }} size="xs" onClick={goHome}>
+                                <Button leftIcon={<IconPlus size={14} stroke={2} />} variant="gradient" gradient={{ from: theme.colors.blue[5], to: theme.colors.grape[5] }} size="xs" onClick={goHome}>
                                     New URL
                                 </Button>
                             </div>

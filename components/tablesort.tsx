@@ -178,7 +178,7 @@ export function TableSort({ data, headerData, updateTable }: TableSortProps, { s
             const responseDirectives = dInfo['response-directives'];
             const tokens = row.value.split(/([\s,=";]+)/);
             const markedUp = tokens.map((token) => {
-              console.log('token', token);
+              // console.log('token', token);
               let tooltip;
               responseDirectives?.forEach((d) => {
                 // eslint-disable-next-line max-len

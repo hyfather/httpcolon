@@ -53,12 +53,7 @@ import {
     Loader, Anchor, Alert,
 } from '@mantine/core';
 
-import { atob } from 'buffer';
 import { TableSort } from '../components/tablesort';
-import { Welcome } from '../components/Welcome/Welcome';
-
-// const BASE_URL = 'https://httpcolon.dev/';
-const BASE_URL = 'http://localhost:3000';
 
 const useStyles = createStyles((theme, _params, getRef) => {
     const icon = getRef('icon');
@@ -211,7 +206,6 @@ export default function HomePage(props) {
     const [opened, setOpened] = useState(false);
     const [rows, setRows] = useState<object[]>([]);
     const [navLinks, setNavLinks] = useState([]);
-    const [copyURL, setCopyURL] = useState<string>(BASE_URL);
     const [slugLoader, setSlugLoader] = useState<number>(0);
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const { classes, cx } = useStyles();
@@ -223,6 +217,9 @@ export default function HomePage(props) {
     const theme = useMantineTheme();
     const [updateTable, setUpdateTable] = useState('');
     const [headerData, setHeaderData] = useState({});
+    const [baseURL, setBaseURL] = useState<string>('');
+    const [copyURL, setCopyURL] = useState<string>('');
+
 
     const router = useRouter();
     const [slug, setSlug] = useState(router.query.slug);
@@ -230,8 +227,8 @@ export default function HomePage(props) {
     // const refreshURL = router.query["refresh"] ? "?refresh=true" : ""
 
     const makeAPICall = (encodedSlug: string) => {
-        const dbURL = `${BASE_URL}/api/v1/database`;
-        const slugURL = `${BASE_URL}/api/v1/colon?slug=${encodedSlug}&refresh=1`;
+        const dbURL = `${baseURL}/api/v1/database`;
+        const slugURL = `${baseURL}/api/v1/colon?slug=${encodedSlug}&refresh=1`;
         console.log('make api call to', encodedSlug);
 
         setLoading(true);
@@ -319,6 +316,12 @@ export default function HomePage(props) {
     });
 
     useEffect(() => {
+        setBaseURL(window.location.origin);
+        setCopyURL(baseURL);
+        // console.log('Setting baseURL', baseURL);
+    }, []);
+
+    useEffect(() => {
         if (redirect !== '') {
             const r = redirect;
             setRedirect('');
@@ -327,8 +330,6 @@ export default function HomePage(props) {
             }
         }
     });
-
-    // refreshNavBar();
 
     useEffect(() => {
         refreshNavBar();
@@ -406,7 +407,7 @@ export default function HomePage(props) {
                             <form onSubmit={form.onSubmit((values) => {
                                 console.log('redirecting', inputValue);
                                 const strippedUrl = inputValue.replace(/(^\w+:|^)\/\//, '').split('?')[0];
-                                const redirectUrl = values.method === 'GET' || values.method == '' ? (`${BASE_URL}/${strippedUrl}?refresh=true`) : (`${BASE_URL}/${strippedUrl}?method=${values.method}&refresh=true`);
+                                const redirectUrl = values.method === 'GET' || values.method == '' ? (`${baseURL}/${strippedUrl}?refresh=true`) : (`${baseURL}/${strippedUrl}?method=${values.method}&refresh=true`);
                                 console.log(`redirectUrl: ${redirectUrl}${values.method}`);
                                 setRedirect(redirectUrl);
                             })}

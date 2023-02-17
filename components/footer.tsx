@@ -208,8 +208,7 @@ export function FooterLinks() {
                 <div className={classes.groups}>{groups}</div>
             </Container>
             <Container className={classes.afterFooter}>
-                <Text variant="gradient" gradient={{ from: "grape", to: "blue" }} size="sm">
-
+                <Text variant="gradient" gradient={{ from: "grape", to: "blue", deg: 200 }} size="sm">
                     <p>Made with ❤️ in San Francisco</p>
                     © 2023 httpcolon.dev. All rights reserved.
                 </Text>

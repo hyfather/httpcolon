@@ -12,7 +12,7 @@ import {
     IconClock,
     IconPlus,
     IconShare,
-    IconFingerprint,
+    IconWorld,
     IconCopy,
     IconMoon,
     IconSquarePlus,
@@ -193,6 +193,10 @@ const useStyles = createStyles((theme, _params, getRef) => {
             paddingRight: '10px',
             marginRight: '10px',
         },
+
+        inputBox: {
+            width: '500px',
+        }
     };
 });
 
@@ -457,7 +461,7 @@ export default function HomePage(props) {
 
                                     <Group spacing="sm">
                                         <NativeSelect variant="filled" color="grape" value={methodValue} data={['GET', 'POST', 'PUT', 'DELETE']} onChange={(event) => setMethodValue(event.currentTarget.value)} ref={methodRef} />
-                                        <TextInput autoComplete="on" {...form.getInputProps('url')} value={inputValue} onChange={handleTextInputChange} ref={inputRef} />
+                                        <TextInput className={classes.inputBox} icon={<IconWorld size={18} />} autoComplete="on" value={inputValue} onChange={handleTextInputChange} ref={inputRef} />
                                         <Button type="submit" variant="gradient" gradient={{ from: theme.colors.blue[10], to: theme.colors.grape[7] }} ref={colonizeButtonRef}>
                                             GO
                                         </Button>

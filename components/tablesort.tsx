@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
 import {
-  createStyles,
-  Table,
-  ScrollArea,
-  UnstyledButton,
-  Group,
-  Text,
-  Center,
-  TextInput,
-  Mark,
-  Tooltip,
-  Code, Alert
+    createStyles,
+    Table,
+    ScrollArea,
+    UnstyledButton,
+    Group,
+    Text,
+    Center,
+    TextInput,
+    Mark,
+    Tooltip,
+    Code, Alert, Space
 } from '@mantine/core';
 import { keys } from '@mantine/utils';
 import { IconSelector, IconChevronDown, IconChevronUp, IconSearch, IconInfoSquareRounded } from '@tabler/icons';
@@ -36,7 +36,17 @@ const useStyles = createStyles((theme) => ({
     marginRight: 100,
   },
 
-  icon: {
+  directiveMark: {
+    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.grape[8] : theme.colors.grape[1],
+    color: theme.colorScheme === 'dark' ? theme.colors.gray[2] : theme.colors.gray[9],
+  },
+
+    headerMark: {
+        backgroundColor: theme.colorScheme === 'dark' ? theme.colors.blue[8] : theme.colors.blue[1],
+        color: theme.colorScheme === 'dark' ? theme.colors.gray[2] : theme.colors.gray[9],
+    },
+
+    icon: {
     width: 21,
     height: 21,
     borderRadius: 21,
@@ -193,7 +203,9 @@ export function TableSort({ data, headerData, updateTable }: TableSortProps, { s
                         color="grape"
                         width={250}
                       >
-                        <Mark>{token}</Mark>
+                        <Mark className={classes.directiveMark}>
+                            {token}
+                        </Mark>
                       </Tooltip>;
                 }
               });
@@ -206,8 +218,21 @@ export function TableSort({ data, headerData, updateTable }: TableSortProps, { s
 
             return (
                 <tr key={row.header}>
-                  <td><Code><Tooltip label={dInfo["description"]} withArrow inline multiline color="grape"
-                               position="right" width={250}><Mark>{row.header}</Mark></Tooltip></Code></td>
+                  <td><Code>
+                      <Tooltip
+                          label={dInfo["description"]}
+                          withArrow
+                          inline
+                          multiline
+                          color="blue"
+                          position="right"
+                          width={250}>
+                          <Mark className={classes.headerMark}>
+                                {row.header}
+                          </Mark>
+                      </Tooltip>
+                  </Code>
+                  </td>
                   <td><Code>{markedUp}</Code></td>
                 </tr>);
           }
@@ -223,6 +248,39 @@ export function TableSort({ data, headerData, updateTable }: TableSortProps, { s
 
   return (
     <ScrollArea>
+        <Alert
+            icon={<IconInfoSquareRounded size={20} stroke={1.5} />}
+            // color=""
+            variant={"light"}
+            withCloseButton
+            onClose={() => {
+                console.log('todo: close');
+            }}
+        >
+            <Text size="sm">
+                <strong>Tip:</strong> hover on
+                <Tooltip
+                    label="just like"
+                    withArrow
+                    inline
+                    color="blue"
+                    position="left"
+                    withinPortal={false}>
+                        <Mark className={classes.headerMark}> highlighted </Mark>
+                </Tooltip>
+                <Tooltip
+                    label="this"
+                    withArrow
+                    inline
+                    color="grape"
+                    position="right"
+                    >
+                    <Mark className={classes.directiveMark}> words </Mark>
+                </Tooltip>
+                 to see the description.
+            </Text>
+        </Alert>
+        <Space h={20} />
       <TextInput
         placeholder="Search headers"
         mb="md"
@@ -231,19 +289,6 @@ export function TableSort({ data, headerData, updateTable }: TableSortProps, { s
         className={classes.searchBar}
         onChange={handleSearchChange}
       />
-      <Alert
-        icon={<IconInfoSquareRounded size={14} stroke={1.5} />}
-        color="grape"
-        variant={"light"}
-        withCloseButton
-        onClose={() => {
-            console.log('todo: close');
-        }}
-      >
-        <Text size="sm">
-            <strong>Tip:</strong> hover on highlighted words to see the description.
-        </Text>
-      </Alert>
       <Table
         horizontalSpacing="md"
         verticalSpacing="xs"

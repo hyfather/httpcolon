@@ -52,7 +52,7 @@ export default async function handler(req, res) {
     const data = await getKey(uniqSlug);
     if(data == null || refresh != null){
         console.log("creating entry", uniqSlug, decodedSlug);
-        const rawData = await makeRequest(decodedSlug, "GET");
+        const rawData = await makeRequest(decodedSlug, req.query['method'] || 'GET');
         const destination = rawData.destination;
         if(rawData.status == "500") { 
             console.log("error, will not save");

@@ -1,6 +1,5 @@
-import { createStyles, Text, Container, ActionIcon, Group } from '@mantine/core';
-import { IconBrandTwitter, IconBrandYoutube, IconBrandInstagram } from '@tabler/icons';
-import { MantineLogo } from '@mantine/ds';
+import {createStyles, Text, Container, ActionIcon, Group, Anchor, useMantineTheme} from '@mantine/core';
+import { IconBrandTwitter, IconBrandGithub, IconBrandInstagram } from '@tabler/icons';
 
 const useStyles = createStyles((theme) => ({
     footer: {
@@ -52,7 +51,7 @@ const useStyles = createStyles((theme) => ({
     },
 
     wrapper: {
-        width: 160,
+        width: 180,
     },
 
     link: {
@@ -96,7 +95,74 @@ const useStyles = createStyles((theme) => ({
             marginTop: theme.spacing.xs,
         },
     },
+
 }));
+
+const DATA =  [
+        {
+            "title": "Cache Headers",
+            "links": [
+                {
+                    "label": "cache-control",
+                    "link": "#"
+                },
+                {
+                    "label": "expires",
+                    "link": "#"
+                },
+                {
+                    "label": "last-modified",
+                    "link": "#"
+                },
+                {
+                    "label": "etag",
+                    "link": "#"
+                }
+            ]
+        },
+        {
+            "title": "Content Headers",
+            "links": [
+                {
+                    "label": "content-type",
+                    "link": "#"
+                },
+                {
+                    "label": "content-length",
+                    "link": "#"
+                },
+                {
+                    "label": "content-encoding",
+                    "link": "#"
+                },
+                {
+                    "label": "transfer-encoding",
+                    "link": "#"
+                }
+            ]
+        },
+        {
+            "title": "Security Headers",
+            "links": [
+                {
+                    "label": "content-security-policy",
+                    "link": "#"
+                },
+                {
+                    "label": "x-frame-options",
+                    "link": "#"
+                },
+                {
+                    "label": "x-xss-protection",
+                    "link": "#"
+                },
+                {
+                    "label": "x-content-type-options",
+                    "link": "#"
+                }
+            ]
+        }
+    ];
 
 interface FooterLinksProps {
     data: {
@@ -105,10 +171,9 @@ interface FooterLinksProps {
     }[];
 }
 
-export function FooterLinks({ data }: FooterLinksProps) {
+export function FooterLinks() {
     const { classes } = useStyles();
-
-    const groups = data.map((group) => {
+    const groups = DATA.map((group) => {
         const links = group.links.map((link, index) => (
             <Text<'a'>
                 key={index}
@@ -133,28 +198,28 @@ export function FooterLinks({ data }: FooterLinksProps) {
         <footer className={classes.footer}>
             <Container className={classes.inner}>
                 <div className={classes.logo}>
-                    <MantineLogo size={30} />
+                    <Text size="xl" weight={700} className={classes.title}>
+                        HTTP:COLON
+                    </Text>
                     <Text size="xs" color="dimmed" className={classes.description}>
-                        Build fully functional accessible web applications faster than ever
+                        The very best tool for HTTP headers
                     </Text>
                 </div>
                 <div className={classes.groups}>{groups}</div>
             </Container>
             <Container className={classes.afterFooter}>
-                <Text color="dimmed" size="sm">
-                    © 2020 mantine.dev. All rights reserved.
-                </Text>
+                <Text variant="gradient" gradient={{ from: "grape", to: "blue" }} size="sm">
 
-                <Group spacing={0} className={classes.social} position="right" noWrap>
-                    <ActionIcon size="lg">
-                        <IconBrandTwitter size={18} stroke={1.5} />
-                    </ActionIcon>
-                    <ActionIcon size="lg">
-                        <IconBrandYoutube size={18} stroke={1.5} />
-                    </ActionIcon>
-                    <ActionIcon size="lg">
-                        <IconBrandInstagram size={18} stroke={1.5} />
-                    </ActionIcon>
+                    <p>Made with ❤️ in San Francisco</p>
+                    © 2023 httpcolon.dev. All rights reserved.
+                </Text>
+                <Group spacing={10} className={classes.social} position="right" noWrap>
+                        <Anchor href="https://twitter.com/nmungel" target="_blank">
+                            <IconBrandTwitter size={18} stroke={1.5} />
+                        </Anchor>
+                        <Anchor href="https://github.com/hyfather/httpcolon" target="_blank">
+                            <IconBrandGithub size={18} stroke={1.5} />
+                        </Anchor>
                 </Group>
             </Container>
         </footer>

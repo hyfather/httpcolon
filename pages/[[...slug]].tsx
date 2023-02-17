@@ -41,7 +41,7 @@ import {
     Popover,
     createStyles, SegmentedControl,
     Center,
-    UnstyledButton,
+    NativeSelect,
     useMantineColorScheme,
     Image,
     Select,
@@ -54,6 +54,7 @@ import {
 } from '@mantine/core';
 
 import { TableSort } from '../components/tablesort';
+import { FooterLinks} from "../components/footer";
 
 const useStyles = createStyles((theme, _params, getRef) => {
     const icon = getRef('icon');
@@ -67,7 +68,9 @@ const useStyles = createStyles((theme, _params, getRef) => {
 
         footer: {
             paddingTop: theme.spacing.md,
+            marginBottom: 80,
             marginTop: theme.spacing.md,
+            // height: 500,
             borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2]
                 }`,
         },
@@ -121,7 +124,11 @@ const useStyles = createStyles((theme, _params, getRef) => {
         },
 
         card: {
-            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+            // backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+            width: 400,
+            backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.grape[9], to: theme.colors.blue[9], deg: 200 }) : theme.fn.gradient({ from: theme.colors.grape[1], to: theme.colors.blue[1], deg: 200 }),
+            fontSize: theme.fontSizes.sm,
+            // color: theme.white,
         },
 
         label: {
@@ -194,12 +201,34 @@ function base64Encode(str) {
     return buffer.toString('base64');
 }
 
+function getResponseColor(statusCode: number) {
+    if (statusCode >= 200 && statusCode < 300) {
+        return 'green';
+    } else if (statusCode >= 300 && statusCode < 400) {
+        return 'yellow';
+    } else if (statusCode >= 400 && statusCode < 500) {
+        return 'red';
+    } else if (statusCode >= 500) {
+        return 'red';
+    }
+}
+
+function getLatencyColor(latencyMS: number) {
+    if (latencyMS < 100) {
+        return 'green';
+    } else if (latencyMS >= 100 && latencyMS < 500) {
+        return 'yellow';
+    } else if (latencyMS >= 500) {
+        return 'red';
+    }
+}
+
 export default function HomePage(props) {
     const timeoutRef = useRef<number>(-1);
     const [value, setValue] = useState('');
     const [inputValue, setInputValue] = useState('');
     const [redirect, setRedirect] = useState('');
-    const [methodValue, setMethodValue] = useState('');
+    const [methodValue, setMethodValue] = useState('GET');
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState<string[]>([]);
     const [response, setResponse] = useState<string[]>([]);
@@ -213,6 +242,7 @@ export default function HomePage(props) {
     const inputRef = useRef<HTMLInputElement>(null);
     const copyButtonRef = useRef<HTMLButtonElement>(null);
     const colonizeButtonRef = useRef<HTMLButtonElement>(null);
+    const [methodRef,methodDropdown] = useRef<HTMLButtonElement>(null);
     const tableRef = useRef<HTMLTableElement>(null);
     const theme = useMantineTheme();
     const [updateTable, setUpdateTable] = useState('');
@@ -226,9 +256,9 @@ export default function HomePage(props) {
 
     // const refreshURL = router.query["refresh"] ? "?refresh=true" : ""
 
-    const makeAPICall = (encodedSlug: string) => {
+    const makeAPICall = (encodedSlug: string, decodedMethod: string) => {
         const dbURL = `${baseURL}/api/v1/database`;
-        const slugURL = `${baseURL}/api/v1/colon?slug=${encodedSlug}&refresh=1`;
+        const slugURL = `${baseURL}/api/v1/colon?slug=${encodedSlug}&method=${decodedMethod}&refresh=1`;
         console.log('make api call to', encodedSlug);
 
         setLoading(true);
@@ -271,7 +301,7 @@ export default function HomePage(props) {
         const slug1 = router.query.slug;
         if (slug1) {
             const encodedSlug = base64Encode(slug1.toString());
-            makeAPICall(encodedSlug);
+            makeAPICall(encodedSlug, router.query.method ? router.query.method.toString() : 'GET');
             refreshNavBar();
         }
     }
@@ -318,7 +348,9 @@ export default function HomePage(props) {
     useEffect(() => {
         setBaseURL(window.location.origin);
         setCopyURL(baseURL);
-        // console.log('Setting baseURL', baseURL);
+        const queryParams = new URLSearchParams(window.location.search);
+        // console.log("==>", queryParams, queryParams.get('url'), queryParams.get('method'));
+        setMethodValue(queryParams.get('method') || 'GET');
     }, []);
 
     useEffect(() => {
@@ -329,7 +361,7 @@ export default function HomePage(props) {
                 window.location.href = r;
             }
         }
-    });
+    }, [redirect]);
 
     useEffect(() => {
         refreshNavBar();
@@ -347,6 +379,7 @@ export default function HomePage(props) {
         router.push('/');
         setValue('');
         setInputValue('');
+        setMethodValue('GET');
         setData([]);
         setResponse([]);
         setUpdateTable('');
@@ -361,7 +394,7 @@ export default function HomePage(props) {
             <AppShell
               padding="lg"
               navbar={
-                    <Navbar height={700} width={{ sm: 300 }} p="md" className={classes.navbar}>
+                    <Navbar height="100%" width={{ sm: 300 }} p="md" className={classes.navbar}>
                     <Navbar.Section grow>
                         {navLinks}
                     </Navbar.Section>
@@ -407,12 +440,12 @@ export default function HomePage(props) {
                             <form onSubmit={form.onSubmit((values) => {
                                 console.log('redirecting', inputValue);
                                 const strippedUrl = inputValue.replace(/(^\w+:|^)\/\//, '').split('?')[0];
-                                const redirectUrl = values.method === 'GET' || values.method == '' ? (`${baseURL}/${strippedUrl}?refresh=true`) : (`${baseURL}/${strippedUrl}?method=${values.method}&refresh=true`);
-                                console.log(`redirectUrl: ${redirectUrl}${values.method}`);
+                                const redirectUrl = methodValue === 'GET' ? (`${baseURL}/${strippedUrl}?refresh=true`) : (`${baseURL}/${strippedUrl}?method=${methodValue}&refresh=true`);
+                                console.log(`redirectUrl: ${redirectUrl}/${methodValue}`);
                                 setRedirect(redirectUrl);
                             })}
                             >
-                                <Group spacing="sm" grow>
+                                <Group spacing="sm" position="apart">
                                     <Anchor href="/">
                                         <Image
                                           width={300}
@@ -422,13 +455,13 @@ export default function HomePage(props) {
                                         />
                                     </Anchor>
 
-                                    <Select mt="xs" placeholder="GET" {...form.getInputProps('method')} data={['GET', 'POST', 'PUT', 'DELETE']} />
-
-                                    <TextInput autoComplete="on" mt="xs" {...form.getInputProps('url')} value={inputValue} onChange={handleTextInputChange} ref={inputRef} />
-
-                                    <Button type="submit" mt="xs" variant="gradient" gradient={{ from: theme.colors.blue[10], to: theme.colors.grape[7] }} ref={colonizeButtonRef}>
-                                        Go
-                                    </Button>
+                                    <Group spacing="sm">
+                                        <NativeSelect variant="filled" color="grape" value={methodValue} data={['GET', 'POST', 'PUT', 'DELETE']} onChange={(event) => setMethodValue(event.currentTarget.value)} ref={methodRef} />
+                                        <TextInput autoComplete="on" {...form.getInputProps('url')} value={inputValue} onChange={handleTextInputChange} ref={inputRef} />
+                                        <Button type="submit" variant="gradient" gradient={{ from: theme.colors.blue[10], to: theme.colors.grape[7] }} ref={colonizeButtonRef}>
+                                            GO
+                                        </Button>
+                                    </Group>
                                 </Group>
                             </form>
                       </Header>}
@@ -443,12 +476,12 @@ export default function HomePage(props) {
                     <div className={classes.buttonContainer}>
                         {/* <Group position='left'> */}
                             <div>
-                                <Button className={classes.leftButtons} leftIcon={<IconRefresh size={14} stroke={2} />} variant="gradient" gradient={{ from: theme.colors.blue[5], to: theme.colors.grape[5] }} size="xs" onClick={refreshTable}>
+                                <Button className={classes.leftButtons} leftIcon={<IconRefresh size={14} stroke={2} />} variant="light" color="grape" size="xs" onClick={refreshTable}>
                                     Refresh
                                 </Button>
                                 <Popover width="auto" position="right" transition="pop" withArrow>
                                     <Popover.Target>
-                                       <Button className={classes.leftButtons} leftIcon={<IconLink size={14} stroke={2} />} variant="gradient" gradient={{ from: theme.colors.blue[5], to: theme.colors.grape[5] }} size="xs">
+                                       <Button className={classes.leftButtons} leftIcon={<IconLink size={14} stroke={2} />} variant="light" color="grape" size="xs">
                                             Share
                                        </Button>
                                     </Popover.Target>
@@ -465,7 +498,7 @@ export default function HomePage(props) {
 
                             </div>
                             <div>
-                                <Button leftIcon={<IconPlus size={14} stroke={2} />} variant="gradient" gradient={{ from: theme.colors.blue[5], to: theme.colors.grape[5] }} size="xs" onClick={goHome}>
+                                <Button leftIcon={<IconPlus size={14} stroke={2} />} variant="light" color="grape"  size="xs" onClick={goHome}>
                                     New URL
                                 </Button>
                             </div>
@@ -475,24 +508,27 @@ export default function HomePage(props) {
                         <Card withBorder p="xl" radius="md" className={classes.card}>
                             <div className={classes.inner}>
                                 <div>
-                                    <Code color="teal">
-                                        GET {response.destination}
-                                    </Code>
-                                    <div>
-                                       <Code>
-                                            Status {response.status}
-                                       </Code>
-                                    </div>
-                                    <div>
-                                        <Code>
-                                            Latency {response.latency} ms
-                                        </Code>
-                                    </div>
-                                    <div>
-                                        <Code>
-                                            Timestamp {response.timestamp != null ? new Date(response.timestamp).toLocaleString() : ''}
-                                        </Code>
-                                    </div>
+                                    <Text
+                                      sx={{
+                                            fontFamily: 'Monaco, monospace',
+                                        }}
+                                    >
+                                        <div>
+                                            <strong>{response.method}</strong> {response.destination}
+                                        </div>
+                                        <Space h={10} />
+                                        <div>
+                                                Status <Mark color={getResponseColor(response.status)}>{response.status}</Mark>
+                                        </div>
+                                        <Space h={5} />
+                                        <div>
+                                                Latency <Mark color={getLatencyColor(response.latency)}>{response.latency} ms</Mark>
+                                        </div>
+                                        <Space h={5} />
+                                        <div>
+                                                Timestamp <strong>{response.timestamp != null ? new Date(response.timestamp).toLocaleString() : ''}</strong>
+                                        </div>
+                                    </Text>{}
                                 </div>
                             </div>
                         </Card>
@@ -519,6 +555,7 @@ export default function HomePage(props) {
                         </div>
 
                 </Container>
+                <FooterLinks />
 
             </AppShell>
         </>

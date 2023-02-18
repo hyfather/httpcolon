@@ -18,7 +18,7 @@ import {
     IconSquarePlus,
     IconSun,
     IconSwitchHorizontal,
-    IconInfoSquareRounded
+    IconInfoSquareRounded,
 } from '@tabler/icons';
 import { Analytics } from '@vercel/analytics/react';
 
@@ -29,7 +29,7 @@ import {
     Code,
     Button,
     Card,
-    Table,
+    Avatar,
     TextInput,
     Stack,
     CopyButton,
@@ -37,7 +37,7 @@ import {
     Grid,
     Text,
     ScrollArea,
-    Box,
+    ActionIcon,
     Popover,
     createStyles, SegmentedControl,
     Center,
@@ -53,8 +53,10 @@ import {
     Loader, Anchor, Alert,
 } from '@mantine/core';
 
+import { motion } from 'framer-motion';
 import { TableSort } from '../components/tablesort';
-import { FooterLinks} from "../components/footer";
+import { FooterLinks } from '../components/footer';
+import {TaskCard} from "../components/taskcard";
 
 const useStyles = createStyles((theme, _params, getRef) => {
     const icon = getRef('icon');
@@ -196,7 +198,11 @@ const useStyles = createStyles((theme, _params, getRef) => {
 
         inputBox: {
             width: '500px',
-        }
+        },
+
+        logo: {
+            background: theme.fn.gradient({ from: theme.colors.grape[3], to: theme.colors.blue[3], deg: 200 }),
+        },
     };
 });
 
@@ -208,11 +214,11 @@ function base64Encode(str) {
 function getResponseColor(statusCode: number) {
     if (statusCode >= 200 && statusCode < 300) {
         return 'green';
-    } else if (statusCode >= 300 && statusCode < 400) {
+    } if (statusCode >= 300 && statusCode < 400) {
         return 'yellow';
-    } else if (statusCode >= 400 && statusCode < 500) {
+    } if (statusCode >= 400 && statusCode < 500) {
         return 'red';
-    } else if (statusCode >= 500) {
+    } if (statusCode >= 500) {
         return 'red';
     }
 }
@@ -220,9 +226,9 @@ function getResponseColor(statusCode: number) {
 function getLatencyColor(latencyMS: number) {
     if (latencyMS < 100) {
         return 'green';
-    } else if (latencyMS >= 100 && latencyMS < 500) {
+    } if (latencyMS >= 100 && latencyMS < 500) {
         return 'yellow';
-    } else if (latencyMS >= 500) {
+    } if (latencyMS >= 500) {
         return 'red';
     }
 }
@@ -246,14 +252,13 @@ export default function HomePage(props) {
     const inputRef = useRef<HTMLInputElement>(null);
     const copyButtonRef = useRef<HTMLButtonElement>(null);
     const colonizeButtonRef = useRef<HTMLButtonElement>(null);
-    const [methodRef,methodDropdown] = useRef<HTMLButtonElement>(null);
+    const [methodRef, methodDropdown] = useRef<HTMLButtonElement>(null);
     const tableRef = useRef<HTMLTableElement>(null);
     const theme = useMantineTheme();
     const [updateTable, setUpdateTable] = useState('');
     const [headerData, setHeaderData] = useState({});
     const [baseURL, setBaseURL] = useState<string>('');
     const [copyURL, setCopyURL] = useState<string>('');
-
 
     const router = useRouter();
     const [slug, setSlug] = useState(router.query.slug);
@@ -450,15 +455,29 @@ export default function HomePage(props) {
                             })}
                             >
                                 <Group spacing="sm" position="apart">
-                                    <Anchor href="/">
-                                        <Image
-                                          width={300}
-                                          height={60}
-                                          src="/httpcolon.png"
-                                          fit="contain"
-                                        />
-                                    </Anchor>
-
+                                    <Group spacing="sm">
+                                        <motion.div
+                                          whileHover={{ scale: 1.2, rotate: 90 }}
+                                          whileTap={{ scale: 0.7, rotate: -90, borderRadius: '100%' }}
+                                        >
+                                            <Avatar
+                                              className={classes.logo}
+                                              src="/httpcolon.png"
+                                              alt="it's me, http:colon"
+                                              size="lg"
+                                              radius="md"
+                                            />
+                                        </motion.div>
+                                        <Text
+                                            size={36}
+                                            sx={{
+                                                fontFamily: 'Monaco, monospace',
+                                            }}
+                                            variant="gradient" gradient={{ from: "grape", to: "blue", deg: 200 }}
+                                        >
+                                            http:colon
+                                        </Text>
+                                    </Group>
                                     <Group spacing="sm">
                                         <NativeSelect variant="filled" color="grape" value={methodValue} data={['GET', 'POST', 'PUT', 'DELETE']} onChange={(event) => setMethodValue(event.currentTarget.value)} ref={methodRef} />
                                         <TextInput className={classes.inputBox} icon={<IconWorld size={18} />} autoComplete="on" value={inputValue} onChange={handleTextInputChange} ref={inputRef} />
@@ -480,75 +499,42 @@ export default function HomePage(props) {
                     <div className={classes.buttonContainer}>
                         {/* <Group position='left'> */}
                             <div>
-                                <Button className={classes.leftButtons} leftIcon={<IconRefresh size={14} stroke={2} />} variant="light" color="grape" size="xs" onClick={refreshTable}>
-                                    Refresh
-                                </Button>
-                                <Popover width="auto" position="right" transition="pop" withArrow>
-                                    <Popover.Target>
-                                       <Button className={classes.leftButtons} leftIcon={<IconLink size={14} stroke={2} />} variant="light" color="grape" size="xs">
-                                            Share
-                                       </Button>
-                                    </Popover.Target>
-                                    <Popover.Dropdown>
-                                        <CopyButton value={copyURL}>
-                                            {({ copied, copy }) => (
-                                                <Button uppercase variant="light" color="grape" size="xs" rightIcon={<IconCopy />} onClick={copy}>
-                                                    <Code color="grape">{copyURL.replace(/^https?:\/\//, '').split('?')[0]}</Code>
-                                                </Button>
-                                            )}
-                                        </CopyButton>
-                                    </Popover.Dropdown>
-                                </Popover>
-
                             </div>
                             <div>
-                                <Button leftIcon={<IconPlus size={14} stroke={2} />} variant="light" color="grape"  size="xs" onClick={goHome}>
+                                <Button leftIcon={<IconPlus size={14} stroke={2} />} variant="light" color="grape" size="xs" onClick={goHome}>
                                     New URL
                                 </Button>
                             </div>
                         {/* </Group> */}
                     </div>
                         <Space h="md" />
-                        <Card withBorder p="xl" radius="md" className={classes.card}>
-                            <div className={classes.inner}>
-                                <div>
-                                    <Text
-                                      sx={{
-                                            fontFamily: 'Monaco, monospace',
-                                        }}
-                                    >
-                                        <div>
-                                            <strong>{response.method}</strong> {response.destination}
-                                        </div>
-                                        <Space h={10} />
-                                        <div>
-                                                Status <Mark color={getResponseColor(response.status)}>{response.status}</Mark>
-                                        </div>
-                                        <Space h={5} />
-                                        <div>
-                                                Latency <Mark color={getLatencyColor(response.latency)}>{response.latency} ms</Mark>
-                                        </div>
-                                        <Space h={5} />
-                                        <div>
-                                                Timestamp <strong>{response.timestamp != null ? new Date(response.timestamp).toLocaleString() : ''}</strong>
-                                        </div>
-                                    </Text>{}
-                                </div>
-                            </div>
-                        </Card>
+                        <Container size={500}>
+
+                        <TaskCard
+                            status={response.status}
+                            statusMsg=""
+                            method={response.method}
+                            url={response.destination}
+                            latency={response.latency}
+                            timestamp={response.timestamp}
+                            copyURL={copyURL}
+                            refreshTable={refreshTable}
+                        />
+                        </Container>
+
                         <Space h="md" />
                     <div>
                         {!slug ? <Group position="center">
                             <Alert
-                                icon={<IconInfoSquareRounded size={14} stroke={1.5} />}
-                                color="grape"
-                                variant={"light"}
+                              icon={<IconInfoSquareRounded size={14} stroke={1.5} />}
+                              color="grape"
+                              variant="light"
                             >
                                 <Text size="sm">
                                     <strong>Tip:</strong> enter a URL to get started.
                                 </Text>
                             </Alert>
-                        </Group> : null}
+                                 </Group> : null}
                         <Space h="md" />
                     </div>
                         <div>

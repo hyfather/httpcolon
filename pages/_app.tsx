@@ -20,7 +20,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
       <Head>
         <title>HTTP COLON</title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
-        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="shortcut icon" href="/favicon1.ico" />
         <script async defer src="https://buttons.github.io/buttons.js"></script>
       </Head>
 

@@ -45,14 +45,14 @@ export function Explore({ refreshTable }: ExploreProps) {
             method: 'GET',
         },
         {
-            url: 'https://www.nike.com',
+            url: 'https://news.ycombinator.com',
             method: 'GET',
         },
         {
             url: 'https://www.amazon.com',
             method: 'GET',
         },
-    ];
+    ]; 
 
     useEffect(() => {
         setBaseURL(window.location.origin);

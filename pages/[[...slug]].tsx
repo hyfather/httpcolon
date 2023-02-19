@@ -257,7 +257,7 @@ export default function HomePage(props) {
     const tableRef = useRef<HTMLTableElement>(null);
     const theme = useMantineTheme();
     const [updateTable, setUpdateTable] = useState('');
-    const [headerData, setHeaderData] = useState({});
+    const [headerData, setHeaderData] = useState([]);
     const [baseURL, setBaseURL] = useState<string>('');
     const [copyURL, setCopyURL] = useState<string>('');
     const router = useRouter();
@@ -304,7 +304,7 @@ export default function HomePage(props) {
 
     useEffect(() => {
         slug ? reSlug() : null;
-    }, [slug]);
+    }, []);
 
     function reSlug() {
         const slug1 = router.query.slug;
@@ -402,7 +402,7 @@ export default function HomePage(props) {
         <>
             <AppShell
               padding="lg"
-              navbar={
+              navbar={ slug &&
                     <Navbar height="100%" width={{ sm: 300 }} p="md" className={classes.navbar}>
                     <Navbar.Section grow>
                         {navLinks}
@@ -512,7 +512,7 @@ export default function HomePage(props) {
 
                          <TaskCard
                            status={response.status}
-                           statusMsg=""
+                           statusMsg={response.statusText}
                            method={response.method}
                            url={response.destination}
                            latency={response.latency}

@@ -10,7 +10,9 @@ import {
     Button,
     Popover,
     CopyButton,
-    Avatar
+    Avatar,
+    Space,
+    Divider,
 } from '@mantine/core';
 import {IconCopy, IconEdit, IconLink, IconRefresh, IconUpload} from '@tabler/icons';
 
@@ -29,7 +31,8 @@ interface TaskCardProps {
 
 export function TaskCard({ url, status, statusMsg, latency, method, timestamp, copyURL, refreshTable, hideRequestParams, clickable }: TaskCardProps) {
 
-    const href = url ? `/${url.replace(/(^\w+:|^)\/\//, '').split('?')[0]}` : '/';
+    const strippedUrl = url.replace(/(^\w+:|^)\/\//, '').split('?')[0];
+    const href = url ? `/${strippedUrl}` : '/';
     return (
         <Card
           withBorder
@@ -53,15 +56,26 @@ export function TaskCard({ url, status, statusMsg, latency, method, timestamp, c
                   color={status == 200 ? 'green' : 'red'}
                 >{status} {statusMsg}</Badge>
             </Group>
-            <Text size="md" weight={500} mt="md"
-                  sx={{
-                      fontFamily: 'Monaco, monospace',
-                  }}
-            >
-                {method}
-                <br />{url}
-            </Text>
+            <Space h="sm" />
 
+            <Divider color="gray" size="xs" />
+
+            <Space h="xl" />
+            <Group>
+                <Badge color={method === 'GET' ? 'grape' : method === 'POST' ? 'pink' : method === 'PUT' ? 'orange' : 'red'} radius="xs" size="md" variant="light">
+                    {method}
+                </Badge>
+                {/*<Space h="sm" />*/}
+
+                <Text size="sm"
+                      sx={{
+                          fontFamily: 'Monaco, monospace',
+                      }}
+                >
+                    {clickable ? strippedUrl : url}
+                </Text>
+
+            </Group>
             {!hideRequestParams && <Container>
                                         <br />
                                         <Text lineClamp={40} size="xs" ><IconEdit size={12}></IconEdit>{' '}User-Agent: Mozilla/5.0 (compatible; http:colon; +https://httpcolon.dev)</Text>
@@ -80,6 +94,7 @@ export function TaskCard({ url, status, statusMsg, latency, method, timestamp, c
                 <Progress
                   value={(latency / 1000) * 100} mt={5}
                   color={latency < 200 ? 'green' : latency < 600 ? 'yellow' : latency < 800 ? 'orange' : 'red'}
+                  animate={clickable}
                 />
 
             <Group position="apart" mt="lg">

@@ -59,8 +59,8 @@ export default async function handler(req, res) {
             res.status(200).json({ id: uniqSlug, destination: rawData.destination, instances: [rawData] });
         } else {
             await addData(uniqSlug, rawData, destination);
-            console.log("new entry created");
             const data = await getData(uniqSlug);
+            console.log("new entry created", data);
             res.status(200).json({ id: uniqSlug, destination: data.destination, instances: data.instances });
         }
     } else {
@@ -86,6 +86,7 @@ async function makeRequest(url, method) {
         // todo: add timeout
         const response = await fetch(url, {method: method});
         const data = await response;
+        console.log("~~~", data);
         latency = new Date().getTime() - d1;
 
         // console.log("raw data: ", data);

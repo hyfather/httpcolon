@@ -258,7 +258,7 @@ export function TableSort({ data, headerData, updateTable }: TableSortProps, { s
             }}
         >
             <Text size="sm">
-                <strong>Tip:</strong> hover on
+                <strong>Tip:</strong> hover on{' '}
                 <Tooltip
                     label="just like"
                     withArrow
@@ -266,8 +266,8 @@ export function TableSort({ data, headerData, updateTable }: TableSortProps, { s
                     color="blue"
                     position="left"
                     withinPortal={false}>
-                        <Mark className={classes.headerMark}> highlighted </Mark>
-                </Tooltip>
+                        <Mark className={classes.headerMark}>highlighted</Mark>
+                </Tooltip>{' '}
                 <Tooltip
                     label="this"
                     withArrow
@@ -275,8 +275,8 @@ export function TableSort({ data, headerData, updateTable }: TableSortProps, { s
                     color="grape"
                     position="right"
                     >
-                    <Mark className={classes.directiveMark}> words </Mark>
-                </Tooltip>
+                    <Mark className={classes.directiveMark}>words</Mark>
+                </Tooltip>{' '}
                  to see the description.
             </Text>
         </Alert>

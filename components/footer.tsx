@@ -209,7 +209,7 @@ export function FooterLinks() {
             </Container>
             <Container className={classes.afterFooter}>
                 <Text variant="gradient" gradient={{ from: "grape", to: "blue", deg: 200 }} size="sm">
-                    <p>Made with ❤️ in San Francisco</p>
+                    <p>Made in San Francisco</p>
                     © 2023 httpcolon.dev. All rights reserved.
                 </Text>
                 <Group spacing={10} className={classes.social} position="right" noWrap>

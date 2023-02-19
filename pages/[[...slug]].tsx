@@ -56,7 +56,8 @@ import {
 import { motion } from 'framer-motion';
 import { TableSort } from '../components/tablesort';
 import { FooterLinks } from '../components/footer';
-import {TaskCard} from "../components/taskcard";
+import { TaskCard } from '../components/taskcard';
+import { Explore } from '../components/explore';
 
 const useStyles = createStyles((theme, _params, getRef) => {
     const icon = getRef('icon');
@@ -259,7 +260,6 @@ export default function HomePage(props) {
     const [headerData, setHeaderData] = useState({});
     const [baseURL, setBaseURL] = useState<string>('');
     const [copyURL, setCopyURL] = useState<string>('');
-
     const router = useRouter();
     const [slug, setSlug] = useState(router.query.slug);
 
@@ -303,8 +303,8 @@ export default function HomePage(props) {
     };
 
     useEffect(() => {
-        reSlug();
-    }, []);
+        slug ? reSlug() : null;
+    }, [slug]);
 
     function reSlug() {
         const slug1 = router.query.slug;
@@ -469,11 +469,12 @@ export default function HomePage(props) {
                                             />
                                         </motion.div>
                                         <Text
-                                            size={36}
-                                            sx={{
+                                          size={36}
+                                          sx={{
                                                 fontFamily: 'Monaco, monospace',
                                             }}
-                                            variant="gradient" gradient={{ from: "grape", to: "blue", deg: 200 }}
+                                          variant="gradient"
+                                          gradient={{ from: 'grape', to: 'blue', deg: 200 }}
                                         >
                                             http:colon
                                         </Text>
@@ -495,11 +496,10 @@ export default function HomePage(props) {
 
                 <Analytics />
 
-                <Container>
+                { slug ? <Container>
                     <div className={classes.buttonContainer}>
                         {/* <Group position='left'> */}
-                            <div>
-                            </div>
+                            <div />
                             <div>
                                 <Button leftIcon={<IconPlus size={14} stroke={2} />} variant="light" color="grape" size="xs" onClick={goHome}>
                                     New URL
@@ -510,41 +510,43 @@ export default function HomePage(props) {
                         <Space h="md" />
                         <Container size={500}>
 
-                        <TaskCard
-                            status={response.status}
-                            statusMsg=""
-                            method={response.method}
-                            url={response.destination}
-                            latency={response.latency}
-                            timestamp={response.timestamp}
-                            copyURL={copyURL}
-                            refreshTable={refreshTable}
-                        />
+                         <TaskCard
+                           status={response.status}
+                           statusMsg=""
+                           method={response.method}
+                           url={response.destination}
+                           latency={response.latency}
+                           timestamp={response.timestamp}
+                           copyURL={copyURL}
+                           refreshTable={refreshTable}
+                         />
                         </Container>
 
                         <Space h="md" />
                     <div>
                         {!slug ? <Group position="center">
-                            <Alert
-                              icon={<IconInfoSquareRounded size={14} stroke={1.5} />}
-                              color="grape"
-                              variant="light"
-                            >
-                                <Text size="sm">
-                                    <strong>Tip:</strong> enter a URL to get started.
-                                </Text>
-                            </Alert>
+                            {/*<Alert*/}
+                            {/*  icon={<IconInfoSquareRounded size={14} stroke={1.5} />}*/}
+                            {/*  color="grape"*/}
+                            {/*  variant="light"*/}
+                            {/*>*/}
+                            {/*    <Text size="sm">*/}
+                            {/*        <strong>Tip:</strong> enter a URL to get started.*/}
+                            {/*    </Text>*/}
+                            {/*</Alert>*/}
                                  </Group> : null}
                         <Space h="md" />
                     </div>
                         <div>
-                            {loading ? <Group position="center">
-                                            <Loader color="grape" size="xl" />
-                                       </Group> :
-                                        <TableSort data={response.payload} headerData={headerData} updateTable={updateTable} /> }
+                           <TableSort data={response.payload} headerData={headerData} updateTable={updateTable} />
                         </div>
-
-                </Container>
+                         </Container> : <Container>
+                                            <Text size={36} weight="bold" variant="gradient" gradient={{ from: 'grape', to: 'blue' }}>
+                                                ✨Explore
+                                            </Text>
+                                            <Space h="xl" />
+                                            <Explore refreshTable={refreshTable} />
+                                        </Container> }
                 <FooterLinks />
 
             </AppShell>

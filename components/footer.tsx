@@ -1,5 +1,6 @@
-import {createStyles, Text, Container, ActionIcon, Group, Anchor, useMantineTheme} from '@mantine/core';
+import { createStyles, Text, Container, ActionIcon, Group, Anchor, useMantineTheme, Drawer } from '@mantine/core';
 import { IconBrandTwitter, IconBrandGithub, IconBrandInstagram } from '@tabler/icons';
+import { useState } from 'react';
 
 const useStyles = createStyles((theme) => ({
     footer: {
@@ -98,89 +99,87 @@ const useStyles = createStyles((theme) => ({
 
 }));
 
-const DATA =  [
+const DATA = [
         {
-            "title": "Cache Headers",
-            "links": [
+            title: 'Cache Headers',
+            links: [
                 {
-                    "label": "cache-control",
-                    "link": "#"
+                    label: 'cache-control',
+                    link: '#',
                 },
                 {
-                    "label": "expires",
-                    "link": "#"
+                    label: 'expires',
+                    link: '#',
                 },
                 {
-                    "label": "last-modified",
-                    "link": "#"
+                    label: 'last-modified',
+                    link: '#',
                 },
                 {
-                    "label": "etag",
-                    "link": "#"
-                }
-            ]
+                    label: 'etag',
+                    link: '#',
+                },
+            ],
         },
         {
-            "title": "Content Headers",
-            "links": [
+            title: 'Content Headers',
+            links: [
                 {
-                    "label": "content-type",
-                    "link": "#"
+                    label: 'content-type',
+                    link: '#',
                 },
                 {
-                    "label": "content-length",
-                    "link": "#"
+                    label: 'content-length',
+                    link: '#',
                 },
                 {
-                    "label": "content-encoding",
-                    "link": "#"
+                    label: 'content-encoding',
+                    link: '#',
                 },
                 {
-                    "label": "transfer-encoding",
-                    "link": "#"
-                }
-            ]
+                    label: 'transfer-encoding',
+                    link: '#',
+                },
+            ],
         },
         {
-            "title": "Security Headers",
-            "links": [
+            title: 'Security Headers',
+            links: [
                 {
-                    "label": "content-security-policy",
-                    "link": "#"
+                    label: 'content-security-policy',
+                    link: '#',
                 },
                 {
-                    "label": "x-frame-options",
-                    "link": "#"
+                    label: 'x-frame-options',
+                    link: '#',
                 },
                 {
-                    "label": "x-xss-protection",
-                    "link": "#"
+                    label: 'x-xss-protection',
+                    link: '#',
                 },
                 {
-                    "label": "x-content-type-options",
-                    "link": "#"
-                }
-            ]
-        }
+                    label: 'x-content-type-options',
+                    link: '#',
+                },
+            ],
+        },
     ];
 
 interface FooterLinksProps {
-    data: {
-        title: string;
-        links: { label: string; link: string }[];
-    }[];
+    setDrawerOpened: Function;
 }
 
-export function FooterLinks() {
+export function FooterLinks({ setDrawerOpened }: FooterLinksProps) {
     const { classes } = useStyles();
+
     const groups = DATA.map((group) => {
         const links = group.links.map((link, index) => (
             <Text<'a'>
-                key={index}
-                className={classes.link}
-                component="a"
-                href={link.link}
-                onClick={(event) => event.preventDefault()}
+              key={index}
+              className={classes.link}
+              component="a"
+              href={link.link}
+              onClick={() => setDrawerOpened(true)}
             >
                 {link.label}
             </Text>
@@ -188,7 +187,7 @@ export function FooterLinks() {
 
         return (
             <div className={classes.wrapper} key={group.title}>
-                <Text className={classes.title} variant="gradient" gradient={{ from: "grape", to: "blue", deg: 200 }}>{group.title}</Text>
+                <Text className={classes.title} variant="gradient" gradient={{ from: 'grape', to: 'blue', deg: 200 }}>{group.title}</Text>
                 {links}
             </div>
         );
@@ -198,10 +197,16 @@ export function FooterLinks() {
         <footer className={classes.footer}>
             <Container className={classes.inner}>
                 <div className={classes.logo}>
-                    <Text size="xl" weight={700} className={classes.title} variant="gradient" gradient={{ from: "grape", to: "blue", deg: 200 }}
-                        sx={{
+                    <Text
+                      size="xl"
+                      weight={700}
+                      className={classes.title}
+                      variant="gradient"
+                      gradient={{ from: 'grape', to: 'blue', deg: 200 }}
+                      sx={{
                         fontFamily: 'Monaco, monospace',
-                    }}>
+                    }}
+                    >
                         HTTP:COLON
                     </Text>
                     <Text size="xs" color="dimmed" className={classes.description}>
@@ -211,7 +216,7 @@ export function FooterLinks() {
                 <div className={classes.groups}>{groups}</div>
             </Container>
             <Container className={classes.afterFooter}>
-                <Text variant="gradient" gradient={{ from: "grape", to: "blue", deg: 200 }} size="sm">
+                <Text variant="gradient" gradient={{ from: 'grape', to: 'blue', deg: 200 }} size="sm">
                     Made in San Francisco
                     <br />
                     © 2023 httpcolon.dev. All rights reserved.

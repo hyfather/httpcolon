@@ -162,19 +162,19 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
   };
 
   const makeRows = () => {
-    console.log("makeRows", data, sortedData);
+    // console.log("makeRows", data, sortedData);
     if (data == null) {
         setRows([]);
         return;
     }
     const sData = sortData(data, { sortBy: null, reversed: reverseSortDirection, search });
-      console.log("makeRows2", data, sData);
+      // console.log("makeRows2", data, sData);
 
     setSortedData(sData);
 
-    console.log("makeRows3", sortedData);
+    // console.log("makeRows3", sortedData);
     const headerDB = headerMetaData;
-    console.log("headerDb", headerDB);
+    // console.log("headerDb", headerDB);
 
     if (sData != null && headerDB != null) {
       const rows_ = sData.map((row) => {
@@ -255,38 +255,6 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
 
   return (
     <ScrollArea>
-        {/*<Alert*/}
-        {/*    icon={<IconInfoSquareRounded size={20} stroke={1.5} />}*/}
-        {/*    // color=""*/}
-        {/*    variant={"light"}*/}
-        {/*    withCloseButton*/}
-        {/*    onClose={() => {*/}
-        {/*        console.log('todo: close');*/}
-        {/*    }}*/}
-        {/*>*/}
-        {/*    <Text size="sm">*/}
-        {/*        <strong>Tip:</strong> hover on{' '}*/}
-        {/*        <Tooltip*/}
-        {/*            label="just like"*/}
-        {/*            withArrow*/}
-        {/*            inline*/}
-        {/*            color="blue"*/}
-        {/*            position="left"*/}
-        {/*            withinPortal={false}>*/}
-        {/*                <Mark className={classes.headerMark}>highlighted</Mark>*/}
-        {/*        </Tooltip>{' '}*/}
-        {/*        <Tooltip*/}
-        {/*            label="this"*/}
-        {/*            withArrow*/}
-        {/*            inline*/}
-        {/*            color="grape"*/}
-        {/*            position="right"*/}
-        {/*            >*/}
-        {/*            <Mark className={classes.directiveMark}>words</Mark>*/}
-        {/*        </Tooltip>{' '}*/}
-        {/*         to see the description.*/}
-        {/*    </Text>*/}
-        {/*</Alert>*/}
         <Space h={20} />
       <TextInput
         placeholder="Search headers"

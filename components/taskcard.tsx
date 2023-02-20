@@ -12,9 +12,10 @@ import {
     CopyButton,
     Avatar,
     Space,
-    Divider, createStyles, Tooltip, Anchor,
+    Divider, createStyles, Tooltip, Anchor, Loader,
 } from '@mantine/core';
 import { IconCopy, IconEdit, IconLink, IconRefresh, IconUpload } from '@tabler/icons';
+import {useEffect, useState} from "react";
 
 interface TaskCardProps {
     url: string;
@@ -72,6 +73,12 @@ export function TaskCard({ url, status, statusMsg, latency, method, timestamp, c
 
     const strippedUrl = url ? url.replace(/(^\w+:|^)\/\//, '').split('?')[0] : '';
     const href = url ? `/${strippedUrl}` : '/';
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        status && setLoading(false);
+    }, [status]);
+
     return (
         <Card
           withBorder
@@ -99,15 +106,15 @@ export function TaskCard({ url, status, statusMsg, latency, method, timestamp, c
                     {clickable ? strippedUrl : url}
                 </Text>
 
-                <Avatar
+                {loading ? <Loader color="black" /> : <Avatar
                   src={`${url}/favicon.ico`}
                   size={clickable ? 'xs' : 'md'}
-                />
+                />}
 
             </Group>
             </Card.Section>
 
-            <Card.Section className={classes.section}>
+            {!loading && <Card.Section className={classes.section}>
                 <Space h="md" />
 
                 <Group position="left" spacing={5}>
@@ -162,8 +169,8 @@ export function TaskCard({ url, status, statusMsg, latency, method, timestamp, c
                   color={latency < 200 ? 'green' : latency < 600 ? 'yellow' : latency < 800 ? 'orange' : 'red'}
                   animate={clickable}
                 />
-            </Card.Section>
-            <Card.Section className={classes.section}>
+            </Card.Section>}
+            {!loading && <Card.Section className={classes.section}>
             <Group position="apart" mt="lg">
                 <Group>
                     <Badge
@@ -212,7 +219,8 @@ export function TaskCard({ url, status, statusMsg, latency, method, timestamp, c
                     </Popover>
                                </Group>}
             </Group>
-            </Card.Section>
+            </Card.Section>}
+
         </Card>
     );
 }

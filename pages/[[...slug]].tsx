@@ -50,7 +50,7 @@ import {
     keyframes,
     Space,
     useMantineTheme,
-    Loader, Anchor, Alert,
+    Loader, Anchor, Alert, Drawer,
 } from '@mantine/core';
 
 import { motion } from 'framer-motion';
@@ -58,8 +58,9 @@ import { TableSort } from '../components/tablesort';
 import { FooterLinks } from '../components/footer';
 import { TaskCard } from '../components/taskcard';
 import { Explore } from '../components/explore';
-import {ColonizeForm} from "../components/colonize";
-import {ColonNavbar} from "../components/navbar";
+import { ColonizeForm } from '../components/colonize';
+import { ColonNavbar } from '../components/navbar';
+import { ColonDocs } from '../components/docs';
 
 const useStyles = createStyles((theme, _params, getRef) => {
     const icon = getRef('icon');
@@ -265,6 +266,7 @@ export default function HomePage(props) {
     const [copyURL, setCopyURL] = useState<string>('');
     const router = useRouter();
     const [slug, setSlug] = useState(router.query.slug);
+    const [drawerOpened, setDrawerOpened] = useState(false);
 
     // const refreshURL = router.query["refresh"] ? "?refresh=true" : ""
 
@@ -403,11 +405,11 @@ export default function HomePage(props) {
         // copyButtonRef.current?.disabled = false;
     }
 
-    function ThemeSwitch(){
+    function ThemeSwitch() {
        return <SegmentedControl
-            value={colorScheme}
-            onChange={(value: 'light' | 'dark') => toggleColorScheme(value)}
-            data={[
+         value={colorScheme}
+         onChange={(value: 'light' | 'dark') => toggleColorScheme(value)}
+         data={[
                 {
                     value: 'light',
                     label: (
@@ -435,7 +437,7 @@ export default function HomePage(props) {
         <>
             <AppShell
               padding="lg"
-              navbar={slug && <ColonNavbar themeSwich={ThemeSwitch()} data={data} setResponse={setResponse} refreshActive={refreshActive} setRefreshActive={setRefreshActive} /> }
+              navbar={slug && <ColonNavbar themeSwich={ThemeSwitch()} data={data} setResponse={setResponse} refreshActive={refreshActive} setRefreshActive={setRefreshActive} />}
               header={<Header height={80} p="xs">
                                 <Group spacing="sm" position="apart">
                                     <Group spacing="sm">
@@ -503,8 +505,7 @@ export default function HomePage(props) {
 
                         <Space h="md" />
                     <div>
-                        {!slug ? <Group position="center">
-                                 </Group> : null}
+                        {!slug ? <Group position="center" /> : null}
                         <Space h="md" />
                     </div>
                         <div id="headers">
@@ -518,8 +519,12 @@ export default function HomePage(props) {
                     </Center>
                     <Space h="xl" />
                     <Space h="xl" />
-                                            <Text size={28} weight="bold" variant="gradient" gradient={{ from: 'grape', to: 'blue', deg: 100 }}
-                                                  sx={{
+                                            <Text
+                                              size={28}
+                                              weight="bold"
+                                              variant="gradient"
+                                              gradient={{ from: 'grape', to: 'blue', deg: 100 }}
+                                              sx={{
                                                       fontFamily: 'Monaco, monospace',
                                                   }}
                                             >
@@ -531,7 +536,19 @@ export default function HomePage(props) {
                                             <Space h="xl" />
                                             <Center>{ThemeSwitch()}</Center>
                                         </Container> }
-                <FooterLinks />
+
+                <Drawer
+                  opened={drawerOpened}
+                  onClose={() => setDrawerOpened(false)}
+                  title="HTTP Headers"
+                  padding="xl"
+                  size="xl"
+                  position="right"
+                >
+                    <ColonDocs headerMetaData={headerData} />
+                </Drawer>
+
+                <FooterLinks setDrawerOpened={setDrawerOpened} />
 
             </AppShell>
         </>

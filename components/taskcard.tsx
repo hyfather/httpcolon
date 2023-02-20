@@ -84,6 +84,7 @@ export function TaskCard({ url, status, statusMsg, latency, method, timestamp, c
           component={clickable ? 'a' : 'div'}
           href={clickable ? href : ''}
           className={classes.card}
+          shadow='md'
         >
 
             <Card.Section className={classes.sectionHeader} pt="sm">
@@ -100,7 +101,7 @@ export function TaskCard({ url, status, statusMsg, latency, method, timestamp, c
 
                 <Avatar
                   src={`${url}/favicon.ico`}
-                  size="xs"
+                  size={clickable ? 'xs' : 'md'}
                 />
 
             </Group>

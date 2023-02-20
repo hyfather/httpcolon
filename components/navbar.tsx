@@ -9,9 +9,9 @@ import {
     Progress,
     SegmentedControl,
     Space,
-    Stack
+    Stack, Text
 } from '@mantine/core';
-import {IconClock, IconMoon, IconSun} from '@tabler/icons';
+import {IconClock, IconEdit, IconMoon, IconSun} from '@tabler/icons';
 import GitHubButton from 'react-github-btn';
 import {useEffect, useState} from 'react';
 import {bool} from "prop-types";
@@ -159,19 +159,18 @@ export function ColonNavbar({ themeSwich, data, setResponse, refreshActive, setR
     return (<Navbar height="100%" width={{ sm: 300 }} p="md" className={classes.navbar}>
         <Navbar.Section grow>
             <Center>
-
-            <Container className={classes.linkTitle}>
-                <Badge
-                    radius="sm"
-                    size="sm"
-                    variant='outline'
-                    color='gray'
-                >
-                    {data.destination}
-                </Badge>
-            </Container>
+                <Container className={classes.linkTitle}>
+                    <Badge
+                        radius="sm"
+                        size="sm"
+                        variant='outline'
+                        color='gray'
+                    >
+                        {data.destination}
+                    </Badge>
+                </Container>
             </Center>
-            <Space h="sm"  />
+            <Space h="sm" />
             {navLinks}
         </Navbar.Section>
 

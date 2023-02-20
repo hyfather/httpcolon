@@ -435,49 +435,6 @@ export default function HomePage(props) {
         <>
             <AppShell
               padding="lg"
-              // navbar={ slug &&
-              //       <Navbar height="100%" width={{ sm: 300 }} p="md" className={classes.navbar}>
-              //       <Navbar.Section grow>
-              //           {navLinks}
-              //       </Navbar.Section>
-              //
-              //       <Navbar.Section className={classes.footer}>
-              //          <Center>
-              //              <Stack>
-              //
-              //                   <SegmentedControl
-              //                     value={colorScheme}
-              //                     onChange={(value: 'light' | 'dark') => toggleColorScheme(value)}
-              //                     data={[
-              //                           {
-              //                               value: 'light',
-              //                               label: (
-              //                                   <Center>
-              //                                       <IconSun size={16} stroke={1.5} />
-              //                                       {/* <Box ml={10}>Light</Box> */}
-              //                                   </Center>
-              //                               ),
-              //                           },
-              //                           {
-              //                               value: 'dark',
-              //                               label: (
-              //                                   <Center>
-              //                                       <IconMoon size={16} stroke={1.5} />
-              //                                       {/* <Box ml={10}>Dark</Box> */}
-              //                                   </Center>
-              //                               ),
-              //                           },
-              //                       ]}
-              //                   />
-              //                   <GitHubButton href="https://github.com/hyfather/httpcolon/tree/master/json" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" aria-label="Star hyfather/httpcolon on GitHub">
-              //                        Corrections
-              //                   </GitHubButton>
-              //              </Stack>
-              //
-              //          </Center>
-              //       </Navbar.Section>
-              //       </Navbar>
-              //   }
               navbar={slug && <ColonNavbar themeSwich={ThemeSwitch()} data={data} setResponse={setResponse} refreshActive={refreshActive} setRefreshActive={setRefreshActive} /> }
               header={<Header height={80} p="xs">
                                 <Group spacing="sm" position="apart">
@@ -557,19 +514,19 @@ export default function HomePage(props) {
                     <Space h="xl" />
                     <Space h="xl" />
                     <Center>
-                        <ColonizeForm setRedirect={setRedirect} />
+                        <ColonizeForm setRedirect={setRedirect} focus />
                     </Center>
                     <Space h="xl" />
                     <Space h="xl" />
-                                            <Text size={36} weight="bold" variant="gradient" gradient={{ from: 'grape', to: 'blue' }}
+                                            <Text size={28} weight="bold" variant="gradient" gradient={{ from: 'grape', to: 'blue', deg: 100 }}
                                                   sx={{
                                                       fontFamily: 'Monaco, monospace',
                                                   }}
                                             >
-                                                Explore ✨
+                                                ✨EXPLORE
                                             </Text>
                                             <Space h="xl" />
-                                            <Explore refreshTable={refreshTable} />
+                                            <Explore />
                                             <Space h="xl" />
                                             <Space h="xl" />
                                             <Center>{ThemeSwitch()}</Center>

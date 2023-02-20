@@ -74,7 +74,8 @@ interface ResponseDirective {
 interface TableSortProps {
   data: RowData[];
   updateTable: string;
-  headerData: HeaderData[];
+  headerMetaData: HeaderData[];
+  setHeaderMetadata: Function;
 }
 
 interface ThProps {
@@ -132,13 +133,13 @@ function sortData(
   );
 }
 
-export function TableSort({ data, headerData, updateTable }: TableSortProps, { sortField }: any) {
+export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable }: TableSortProps, { sortField }: any) {
   const [search, setSearch] = useState('');
-  const [sortedData, setSortedData] = useState(data);
+  const [sortedData, setSortedData] = useState([]);
   const [sortBy, setSortBy] = useState<keyof RowData | null>(sortField);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
   const [rows, setRows] = useState([]);
-  const [headerMetaData, setHeaderMetaData] = useState(headerData);
+  // const [headerMetaData, setHeaderMetaData] = useState(headerData);
   const { classes } = useStyles();
 
 //   const [refreshTable, setRefreshTable] = useState("");
@@ -147,6 +148,7 @@ export function TableSort({ data, headerData, updateTable }: TableSortProps, { s
     const reversed = field === sortBy ? !reverseSortDirection : false;
     setReverseSortDirection(reversed);
     setSortBy(field);
+    // console.log("disabled");
     // setSortedData(sortData(data, { sortBy: field, reversed, search }));
     makeRows();
   };
@@ -154,7 +156,8 @@ export function TableSort({ data, headerData, updateTable }: TableSortProps, { s
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget;
     setSearch(value);
-    // setSortedData(sortData(data, { sortBy, reversed: reverseSortDirection, search: value }));
+  console.log("disabled");
+      // setSortedData(sortData(data, { sortBy, reversed: reverseSortDirection, search: value }));
     makeRows();
   };
 
@@ -164,13 +167,17 @@ export function TableSort({ data, headerData, updateTable }: TableSortProps, { s
         setRows([]);
         return;
     }
-    setSortedData(sortData(data, { sortBy, reversed: reverseSortDirection, search: search }));
+    const sData = sortData(data, { sortBy: null, reversed: reverseSortDirection, search });
+      console.log("makeRows2", data, sData);
 
+    setSortedData(sData);
+
+    console.log("makeRows3", sortedData);
     const headerDB = headerMetaData;
     console.log("headerDb", headerDB);
 
-    if (sortedData != null && headerDB != null) {
-      const rows_ = sortedData.map((row) => {
+    if (sData != null && headerDB != null) {
+      const rows_ = sData.map((row) => {
             let dInfo;
             headerDB.forEach((d) => {
               if (d.header.toLowerCase() === row.header.toLowerCase()) {
@@ -244,42 +251,42 @@ export function TableSort({ data, headerData, updateTable }: TableSortProps, { s
   useEffect(() => {
     console.log("updating table");
     makeRows();
-  }, [updateTable, headerData]);
+  }, [data, updateTable, headerMetaData]);
 
   return (
     <ScrollArea>
-        <Alert
-            icon={<IconInfoSquareRounded size={20} stroke={1.5} />}
-            // color=""
-            variant={"light"}
-            withCloseButton
-            onClose={() => {
-                console.log('todo: close');
-            }}
-        >
-            <Text size="sm">
-                <strong>Tip:</strong> hover on{' '}
-                <Tooltip
-                    label="just like"
-                    withArrow
-                    inline
-                    color="blue"
-                    position="left"
-                    withinPortal={false}>
-                        <Mark className={classes.headerMark}>highlighted</Mark>
-                </Tooltip>{' '}
-                <Tooltip
-                    label="this"
-                    withArrow
-                    inline
-                    color="grape"
-                    position="right"
-                    >
-                    <Mark className={classes.directiveMark}>words</Mark>
-                </Tooltip>{' '}
-                 to see the description.
-            </Text>
-        </Alert>
+        {/*<Alert*/}
+        {/*    icon={<IconInfoSquareRounded size={20} stroke={1.5} />}*/}
+        {/*    // color=""*/}
+        {/*    variant={"light"}*/}
+        {/*    withCloseButton*/}
+        {/*    onClose={() => {*/}
+        {/*        console.log('todo: close');*/}
+        {/*    }}*/}
+        {/*>*/}
+        {/*    <Text size="sm">*/}
+        {/*        <strong>Tip:</strong> hover on{' '}*/}
+        {/*        <Tooltip*/}
+        {/*            label="just like"*/}
+        {/*            withArrow*/}
+        {/*            inline*/}
+        {/*            color="blue"*/}
+        {/*            position="left"*/}
+        {/*            withinPortal={false}>*/}
+        {/*                <Mark className={classes.headerMark}>highlighted</Mark>*/}
+        {/*        </Tooltip>{' '}*/}
+        {/*        <Tooltip*/}
+        {/*            label="this"*/}
+        {/*            withArrow*/}
+        {/*            inline*/}
+        {/*            color="grape"*/}
+        {/*            position="right"*/}
+        {/*            >*/}
+        {/*            <Mark className={classes.directiveMark}>words</Mark>*/}
+        {/*        </Tooltip>{' '}*/}
+        {/*         to see the description.*/}
+        {/*    </Text>*/}
+        {/*</Alert>*/}
         <Space h={20} />
       <TextInput
         placeholder="Search headers"

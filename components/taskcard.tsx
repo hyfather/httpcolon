@@ -12,7 +12,7 @@ import {
     CopyButton,
     Avatar,
     Space,
-    Divider,
+    Divider, createStyles, Tooltip,
 } from '@mantine/core';
 import {IconCopy, IconEdit, IconLink, IconRefresh, IconUpload} from '@tabler/icons';
 
@@ -29,9 +29,37 @@ interface TaskCardProps {
     refreshTable: Function;
 }
 
-export function TaskCard({ url, status, statusMsg, latency, method, timestamp, copyURL, refreshTable, hideRequestParams, clickable }: TaskCardProps) {
+const useStyles = createStyles((theme) => ({
+    card: {
+        backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+    },
 
-    const strippedUrl = url.replace(/(^\w+:|^)\/\//, '').split('?')[0];
+    section: {
+        borderBottom: `1px solid ${
+            theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]
+        }`,
+        paddingLeft: theme.spacing.md,
+        paddingRight: theme.spacing.md,
+        paddingBottom: theme.spacing.md,
+    },
+
+    like: {
+        color: theme.colors.red[6],
+    },
+
+    label: {
+        textTransform: 'uppercase',
+        fontSize: theme.fontSizes.xs,
+        fontWeight: 700,
+    },
+}));
+
+
+
+export function TaskCard({ url, status, statusMsg, latency, method, timestamp, copyURL, refreshTable, hideRequestParams, clickable }: TaskCardProps) {
+    const { classes, theme } = useStyles();
+
+    const strippedUrl = url ? url.replace(/(^\w+:|^)\/\//, '').split('?')[0] : '';
     const href = url ? `/${strippedUrl}` : '/';
     return (
         <Card
@@ -44,30 +72,13 @@ export function TaskCard({ url, status, statusMsg, latency, method, timestamp, c
               }}
           component={clickable ? 'a' : 'div'}
           href={clickable ? href : ''}
+          className={classes.card}
         >
+
+            <Card.Section className={classes.section} pt="sm">
             <Group position="apart">
                 {/*<IconUpload type="mark" size={28} />*/}
-                <Avatar
-                    src={`${url}/favicon.ico`}
-                    size="xs"
-                    >
-                </Avatar>
-                <Badge
-                  color={status == 200 ? 'green' : 'red'}
-                >{status} {statusMsg}</Badge>
-            </Group>
-            <Space h="sm" />
-
-            <Divider color="gray" size="xs" />
-
-            <Space h="xl" />
-            <Group>
-                <Badge color={method === 'GET' ? 'grape' : method === 'POST' ? 'pink' : method === 'PUT' ? 'orange' : 'red'} radius="xs" size="md" variant="light">
-                    {method}
-                </Badge>
-                {/*<Space h="sm" />*/}
-
-                <Text size="sm"
+                <Text size="md"
                       sx={{
                           fontFamily: 'Monaco, monospace',
                       }}
@@ -75,12 +86,58 @@ export function TaskCard({ url, status, statusMsg, latency, method, timestamp, c
                     {clickable ? strippedUrl : url}
                 </Text>
 
+                <Avatar
+                    src={`${url}/favicon.ico`}
+                    size="xs"
+                >
+                </Avatar>
+
+            </Group>
+            </Card.Section>
+            {/*<Space h="sm" />*/}
+
+            {/*<Divider color="gray" size="xs" />*/}
+
+            {/*<Space h="md" />*/}
+
+            <Card.Section className={classes.section}>
+                <Space h="md" />
+
+                <Group position="left" spacing={5}>
+                <Badge
+                    color={method === 'GET' ? 'grape' : method === 'POST' ? 'pink' : method === 'PUT' ? 'orange' : 'red'}
+                    radius="xs"
+                    size="md"
+                    variant={clickable ? 'light' : 'filled'}
+                >
+                    {method}
+                </Badge>
+                <Badge
+                    radius="xs"
+                    size="md"
+                    variant={clickable ? 'light' : 'filled'}
+                    color={status == 200 ? 'green' : 'red'}
+                >
+                    {status} {statusMsg}
+                </Badge>
+                <Badge
+                    radius="xs"
+                    size="md"
+                    variant={clickable ? 'light' : 'filled'}
+                    color={'blue'}
+                >
+                    356 KB
+                </Badge>
+
+                {/*<Space h="sm" />*/}
+
             </Group>
             {!hideRequestParams && <Container>
                                         <br />
                                         <Text lineClamp={40} size="xs" ><IconEdit size={12}></IconEdit>{' '}User-Agent: Mozilla/5.0 (compatible; http:colon; +https://httpcolon.dev)</Text>
                                         <Text lineClamp={40} size="xs" ><IconEdit size={12}></IconEdit>{' '}Accept-Encoding: gzip, deflate, br</Text>
                                    </Container>}
+
                 <Text color="dimmed" size="sm" mt="md">
                     Latency:{' '}
                     <Text
@@ -91,12 +148,14 @@ export function TaskCard({ url, status, statusMsg, latency, method, timestamp, c
                         {latency}ms
                     </Text>
                 </Text>
+
                 <Progress
                   value={(latency / 1000) * 100} mt={5}
                   color={latency < 200 ? 'green' : latency < 600 ? 'yellow' : latency < 800 ? 'orange' : 'red'}
                   animate={clickable}
                 />
-
+            </Card.Section>
+            <Card.Section className={classes.section}>
             <Group position="apart" mt="lg">
                 <Group>
                     <Button variant="light" color="grape" size="xs" disabled compact uppercase>
@@ -104,12 +163,12 @@ export function TaskCard({ url, status, statusMsg, latency, method, timestamp, c
                     </Button>
                 </Group>
                 {!clickable && <Group>
-                    <ActionIcon variant="default" onClick={refreshTable}>
+                    <ActionIcon variant="filled" onClick={refreshTable}>
                         <IconRefresh size={18} />
                     </ActionIcon>
                     <Popover width="auto" position="top" transition="pop" withArrow>
                         <Popover.Target>
-                            <ActionIcon variant="default">
+                            <ActionIcon variant="filled">
                                 <IconUpload size={18} />
                             </ActionIcon>
                         </Popover.Target>
@@ -125,6 +184,7 @@ export function TaskCard({ url, status, statusMsg, latency, method, timestamp, c
                     </Popover>
                 </Group>}
             </Group>
+            </Card.Section>
         </Card>
     );
 }

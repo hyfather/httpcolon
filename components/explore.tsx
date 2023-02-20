@@ -52,7 +52,7 @@ export function Explore({ refreshTable }: ExploreProps) {
             url: 'https://www.amazon.com',
             method: 'GET',
         },
-    ]; 
+    ];
 
     useEffect(() => {
         setBaseURL(window.location.origin);
@@ -80,7 +80,13 @@ export function Explore({ refreshTable }: ExploreProps) {
 
     return (
         <Container>
-            <SimpleGrid cols={3} spacing="xl">
+            <SimpleGrid cols={3} spacing="xl"
+            breakpoints={[
+                { maxWidth: 980, cols: 3, spacing: 'md' },
+                { maxWidth: 755, cols: 2, spacing: 'sm' },
+                { maxWidth: 600, cols: 1, spacing: 'sm' },
+            ]}
+            >
                 {exploreItems}
             </SimpleGrid>
         </Container>

@@ -58,6 +58,7 @@ import { TableSort } from '../components/tablesort';
 import { FooterLinks } from '../components/footer';
 import { TaskCard } from '../components/taskcard';
 import { Explore } from '../components/explore';
+import {ColonizeForm} from "../components/colonize";
 
 const useStyles = createStyles((theme, _params, getRef) => {
     const icon = getRef('icon');
@@ -271,6 +272,7 @@ export default function HomePage(props) {
         console.log('make api call to', encodedSlug);
 
         setLoading(true);
+        // TODO if (headerData.length === 0)
         fetch(dbURL)
             .then(response => response.json())
             .then(data => {
@@ -284,7 +286,7 @@ export default function HomePage(props) {
             .then(response => response.json())
             .then(data => {
                 console.log(`slug fetch: ${data.destination}`);
-                console.log(`slug data:${JSON.stringify(data)}`);
+                // console.log(`slug data:${JSON.stringify(data)}`);
 
                 setData(data);
                 setValue(data.destination);
@@ -293,7 +295,7 @@ export default function HomePage(props) {
                 setCopyURL(window.location.href.toString().replace('?refresh=true', ''));
                 const responsePayload = data.instances[data.instances.length - 1];
                 setResponse(responsePayload);
-                setUpdateTable(responsePayload.timestamp);
+                setUpdateTable(new Date().getTime().toString());
                 setActive(responsePayload.timestamp);
                 setLoading(false);
             }).catch((error) => {
@@ -393,6 +395,7 @@ export default function HomePage(props) {
         setResponse([]);
         setUpdateTable('');
         setCopyURL('');
+        setSlug('');
         inputRef.current?.focus();
         // copyButtonRef.current?.disabled = false;
     }
@@ -446,14 +449,6 @@ export default function HomePage(props) {
                     </Navbar>
                 }
               header={<Header height={80} p="xs">
-                            <form onSubmit={form.onSubmit((values) => {
-                                console.log('redirecting', inputValue);
-                                const strippedUrl = inputValue.replace(/(^\w+:|^)\/\//, '').split('?')[0];
-                                const redirectUrl = methodValue === 'GET' ? (`${baseURL}/${strippedUrl}?refresh=true`) : (`${baseURL}/${strippedUrl}?method=${methodValue}&refresh=true`);
-                                console.log(`redirectUrl: ${redirectUrl}/${methodValue}`);
-                                setRedirect(redirectUrl);
-                            })}
-                            >
                                 <Group spacing="sm" position="apart">
                                     <Group spacing="sm">
                                         <motion.div
@@ -466,6 +461,7 @@ export default function HomePage(props) {
                                               alt="it's me, http:colon"
                                               size="lg"
                                               radius="md"
+                                              onClick={goHome}
                                             />
                                         </motion.div>
                                         <Text
@@ -476,18 +472,13 @@ export default function HomePage(props) {
                                           variant="gradient"
                                           gradient={{ from: 'grape', to: 'blue', deg: 200 }}
                                         >
+                                            <span user-select="none">
                                             http:colon
+                                            </span>
                                         </Text>
                                     </Group>
-                                    <Group spacing="sm">
-                                        <NativeSelect variant="filled" color="grape" value={methodValue} data={['GET', 'POST', 'PUT', 'DELETE']} onChange={(event) => setMethodValue(event.currentTarget.value)} ref={methodRef} />
-                                        <TextInput className={classes.inputBox} icon={<IconWorld size={18} />} autoComplete="on" value={inputValue} onChange={handleTextInputChange} ref={inputRef} />
-                                        <Button type="submit" variant="gradient" gradient={{ from: theme.colors.blue[10], to: theme.colors.grape[7] }} ref={colonizeButtonRef}>
-                                            GO
-                                        </Button>
-                                    </Group>
+                                    {slug && <ColonizeForm setRedirect={setRedirect} />}
                                 </Group>
-                            </form>
                       </Header>}
               styles={(theme) => ({
                     main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
@@ -508,7 +499,7 @@ export default function HomePage(props) {
                         {/* </Group> */}
                     </div>
                         <Space h="md" />
-                        <Container size={500}>
+                        <Container size={600}>
 
                          <TaskCard
                            status={response.status}
@@ -525,24 +516,26 @@ export default function HomePage(props) {
                         <Space h="md" />
                     <div>
                         {!slug ? <Group position="center">
-                            {/*<Alert*/}
-                            {/*  icon={<IconInfoSquareRounded size={14} stroke={1.5} />}*/}
-                            {/*  color="grape"*/}
-                            {/*  variant="light"*/}
-                            {/*>*/}
-                            {/*    <Text size="sm">*/}
-                            {/*        <strong>Tip:</strong> enter a URL to get started.*/}
-                            {/*    </Text>*/}
-                            {/*</Alert>*/}
                                  </Group> : null}
                         <Space h="md" />
                     </div>
                         <div>
-                           <TableSort data={response.payload} headerData={headerData} updateTable={updateTable} />
+                           <TableSort data={response.payload} headerMetaData={headerData} setHeaderMetadata={setHeaderData} updateTable={updateTable} />
                         </div>
                          </Container> : <Container>
-                                            <Text size={36} weight="bold" variant="gradient" gradient={{ from: 'grape', to: 'blue' }}>
-                                                ✨Explore
+                    <Space h="xl" />
+                    <Space h="xl" />
+                    <Center>
+                        <ColonizeForm setRedirect={setRedirect} />
+                    </Center>
+                    <Space h="xl" />
+                    <Space h="xl" />
+                                            <Text size={36} weight="bold" variant="gradient" gradient={{ from: 'grape', to: 'blue' }}
+                                                  sx={{
+                                                      fontFamily: 'Monaco, monospace',
+                                                  }}
+                                            >
+                                                ✨ explore
                                             </Text>
                                             <Space h="xl" />
                                             <Explore refreshTable={refreshTable} />

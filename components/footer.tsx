@@ -188,7 +188,7 @@ export function FooterLinks() {
 
         return (
             <div className={classes.wrapper} key={group.title}>
-                <Text className={classes.title}>{group.title}</Text>
+                <Text className={classes.title} variant="gradient" gradient={{ from: "grape", to: "blue", deg: 200 }}>{group.title}</Text>
                 {links}
             </div>
         );
@@ -198,7 +198,10 @@ export function FooterLinks() {
         <footer className={classes.footer}>
             <Container className={classes.inner}>
                 <div className={classes.logo}>
-                    <Text size="xl" weight={700} className={classes.title}>
+                    <Text size="xl" weight={700} className={classes.title} variant="gradient" gradient={{ from: "grape", to: "blue", deg: 200 }}
+                        sx={{
+                        fontFamily: 'Monaco, monospace',
+                    }}>
                         HTTP:COLON
                     </Text>
                     <Text size="xs" color="dimmed" className={classes.description}>
@@ -209,7 +212,8 @@ export function FooterLinks() {
             </Container>
             <Container className={classes.afterFooter}>
                 <Text variant="gradient" gradient={{ from: "grape", to: "blue", deg: 200 }} size="sm">
-                    <p>Made in San Francisco</p>
+                    Made in San Francisco
+                    <br />
                     © 2023 httpcolon.dev. All rights reserved.
                 </Text>
                 <Group spacing={10} className={classes.social} position="right" noWrap>

@@ -504,7 +504,7 @@ export default function HomePage(props) {
                                           gradient={{ from: 'grape', to: 'blue', deg: 200 }}
                                         >
                                             <span user-select="none">
-                                            http:colon
+                                            HTTP:COLON
                                             </span>
                                         </Text>
                                     </Group>

@@ -59,6 +59,7 @@ import { FooterLinks } from '../components/footer';
 import { TaskCard } from '../components/taskcard';
 import { Explore } from '../components/explore';
 import {ColonizeForm} from "../components/colonize";
+import {ColonNavbar} from "../components/navbar";
 
 const useStyles = createStyles((theme, _params, getRef) => {
     const icon = getRef('icon');
@@ -251,6 +252,7 @@ export default function HomePage(props) {
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const { classes, cx } = useStyles();
     const [active, setActive] = useState('');
+    const [refreshActive, setRefreshActive] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
     const copyButtonRef = useRef<HTMLButtonElement>(null);
     const colonizeButtonRef = useRef<HTMLButtonElement>(null);
@@ -297,6 +299,7 @@ export default function HomePage(props) {
                 setResponse(responsePayload);
                 setUpdateTable(new Date().getTime().toString());
                 setActive(responsePayload.timestamp);
+                setRefreshActive(responsePayload.timestamp);
                 setLoading(false);
             }).catch((error) => {
                 setLoading(false);
@@ -400,54 +403,82 @@ export default function HomePage(props) {
         // copyButtonRef.current?.disabled = false;
     }
 
+    function ThemeSwitch(){
+       return <SegmentedControl
+            value={colorScheme}
+            onChange={(value: 'light' | 'dark') => toggleColorScheme(value)}
+            data={[
+                {
+                    value: 'light',
+                    label: (
+                        <Center>
+                            <IconSun size={16} stroke={1.5} />
+                            {/* <Box ml={10}>Light</Box> */}
+                        </Center>
+                    ),
+                },
+                {
+                    value: 'dark',
+                    label: (
+                        <Center>
+                            <IconMoon size={16} stroke={1.5} />
+                            {/* <Box ml={10}>Dark</Box> */}
+                        </Center>
+                    ),
+                },
+            ]}
+       />;
+    }
+
     // @ts-ignore
     return (
         <>
             <AppShell
               padding="lg"
-              navbar={ slug &&
-                    <Navbar height="100%" width={{ sm: 300 }} p="md" className={classes.navbar}>
-                    <Navbar.Section grow>
-                        {navLinks}
-                    </Navbar.Section>
-
-                    <Navbar.Section className={classes.footer}>
-                       <Center>
-                           <Stack>
-
-                                <SegmentedControl
-                                  value={colorScheme}
-                                  onChange={(value: 'light' | 'dark') => toggleColorScheme(value)}
-                                  data={[
-                                        {
-                                            value: 'light',
-                                            label: (
-                                                <Center>
-                                                    <IconSun size={16} stroke={1.5} />
-                                                    {/* <Box ml={10}>Light</Box> */}
-                                                </Center>
-                                            ),
-                                        },
-                                        {
-                                            value: 'dark',
-                                            label: (
-                                                <Center>
-                                                    <IconMoon size={16} stroke={1.5} />
-                                                    {/* <Box ml={10}>Dark</Box> */}
-                                                </Center>
-                                            ),
-                                        },
-                                    ]}
-                                />
-                                <GitHubButton href="https://github.com/hyfather/httpcolon/tree/master/json" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" aria-label="Star hyfather/httpcolon on GitHub">
-                                     Corrections
-                                </GitHubButton>
-                           </Stack>
-
-                       </Center>
-                    </Navbar.Section>
-                    </Navbar>
-                }
+              // navbar={ slug &&
+              //       <Navbar height="100%" width={{ sm: 300 }} p="md" className={classes.navbar}>
+              //       <Navbar.Section grow>
+              //           {navLinks}
+              //       </Navbar.Section>
+              //
+              //       <Navbar.Section className={classes.footer}>
+              //          <Center>
+              //              <Stack>
+              //
+              //                   <SegmentedControl
+              //                     value={colorScheme}
+              //                     onChange={(value: 'light' | 'dark') => toggleColorScheme(value)}
+              //                     data={[
+              //                           {
+              //                               value: 'light',
+              //                               label: (
+              //                                   <Center>
+              //                                       <IconSun size={16} stroke={1.5} />
+              //                                       {/* <Box ml={10}>Light</Box> */}
+              //                                   </Center>
+              //                               ),
+              //                           },
+              //                           {
+              //                               value: 'dark',
+              //                               label: (
+              //                                   <Center>
+              //                                       <IconMoon size={16} stroke={1.5} />
+              //                                       {/* <Box ml={10}>Dark</Box> */}
+              //                                   </Center>
+              //                               ),
+              //                           },
+              //                       ]}
+              //                   />
+              //                   <GitHubButton href="https://github.com/hyfather/httpcolon/tree/master/json" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" aria-label="Star hyfather/httpcolon on GitHub">
+              //                        Corrections
+              //                   </GitHubButton>
+              //              </Stack>
+              //
+              //          </Center>
+              //       </Navbar.Section>
+              //       </Navbar>
+              //   }
+              navbar={slug && <ColonNavbar themeSwich={ThemeSwitch()} data={data} setResponse={setResponse} refreshActive={refreshActive} setRefreshActive={setRefreshActive} /> }
               header={<Header height={80} p="xs">
                                 <Group spacing="sm" position="apart">
                                     <Group spacing="sm">
@@ -519,7 +550,7 @@ export default function HomePage(props) {
                                  </Group> : null}
                         <Space h="md" />
                     </div>
-                        <div>
+                        <div id="headers">
                            <TableSort data={response.payload} headerMetaData={headerData} setHeaderMetadata={setHeaderData} updateTable={updateTable} />
                         </div>
                          </Container> : <Container>
@@ -535,10 +566,13 @@ export default function HomePage(props) {
                                                       fontFamily: 'Monaco, monospace',
                                                   }}
                                             >
-                                                ✨ explore
+                                                Explore ✨
                                             </Text>
                                             <Space h="xl" />
                                             <Explore refreshTable={refreshTable} />
+                                            <Space h="xl" />
+                                            <Space h="xl" />
+                                            <Center>{ThemeSwitch()}</Center>
                                         </Container> }
                 <FooterLinks />
 

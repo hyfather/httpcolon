@@ -12,9 +12,9 @@ import {
     CopyButton,
     Avatar,
     Space,
-    Divider, createStyles, Tooltip,
+    Divider, createStyles, Tooltip, Anchor,
 } from '@mantine/core';
-import {IconCopy, IconEdit, IconLink, IconRefresh, IconUpload} from '@tabler/icons';
+import { IconCopy, IconEdit, IconLink, IconRefresh, IconUpload } from '@tabler/icons';
 
 interface TaskCardProps {
     url: string;
@@ -31,7 +31,18 @@ interface TaskCardProps {
 
 const useStyles = createStyles((theme) => ({
     card: {
-        backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+        // backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+        backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.grape[9], to: theme.colors.blue[9], deg: 200 }) : theme.fn.gradient({ from: theme.colors.grape[1], to: theme.colors.blue[1], deg: 200 }),
+    },
+
+    sectionHeader: {
+        backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.gray[7], to: theme.colors.gray[9], deg: 200 }) : theme.fn.gradient({ from: theme.colors.gray[3], to: theme.colors.gray[5], deg: 200 }),
+        borderBottom: `1px solid ${
+            theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]
+        }`,
+        paddingLeft: theme.spacing.md,
+        paddingRight: theme.spacing.md,
+        paddingBottom: theme.spacing.md,
     },
 
     section: {
@@ -54,10 +65,10 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-
-
 export function TaskCard({ url, status, statusMsg, latency, method, timestamp, copyURL, refreshTable, hideRequestParams, clickable }: TaskCardProps) {
     const { classes, theme } = useStyles();
+    const timestamp_ = new Date(timestamp);
+    const timestampLabel = timestamp_.getDay() === new Date().getDay() ? timestamp_.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric' }) : timestamp_.toLocaleString('en-US', { year: '2-digit', month: 'numeric', day: 'numeric' });
 
     const strippedUrl = url ? url.replace(/(^\w+:|^)\/\//, '').split('?')[0] : '';
     const href = url ? `/${strippedUrl}` : '/';
@@ -75,11 +86,12 @@ export function TaskCard({ url, status, statusMsg, latency, method, timestamp, c
           className={classes.card}
         >
 
-            <Card.Section className={classes.section} pt="sm">
+            <Card.Section className={classes.sectionHeader} pt="sm">
             <Group position="apart">
                 {/*<IconUpload type="mark" size={28} />*/}
-                <Text size="md"
-                      sx={{
+                <Text
+                  size="md"
+                  sx={{
                           fontFamily: 'Monaco, monospace',
                       }}
                 >
@@ -87,70 +99,65 @@ export function TaskCard({ url, status, statusMsg, latency, method, timestamp, c
                 </Text>
 
                 <Avatar
-                    src={`${url}/favicon.ico`}
-                    size="xs"
-                >
-                </Avatar>
+                  src={`${url}/favicon.ico`}
+                  size="xs"
+                />
 
             </Group>
             </Card.Section>
-            {/*<Space h="sm" />*/}
-
-            {/*<Divider color="gray" size="xs" />*/}
-
-            {/*<Space h="md" />*/}
 
             <Card.Section className={classes.section}>
                 <Space h="md" />
 
                 <Group position="left" spacing={5}>
                 <Badge
-                    color={method === 'GET' ? 'grape' : method === 'POST' ? 'pink' : method === 'PUT' ? 'orange' : 'red'}
-                    radius="xs"
-                    size="md"
-                    variant={clickable ? 'light' : 'filled'}
+                  color={status < 300 ? 'green' : status < 400 ? 'pink' : status < 500 ? 'orange' : 'red'}
+                  radius="xs"
+                  size="md"
+                  variant={clickable ? 'light' : 'filled'}
                 >
                     {method}
                 </Badge>
                 <Badge
-                    radius="xs"
-                    size="md"
-                    variant={clickable ? 'light' : 'filled'}
-                    color={status == 200 ? 'green' : 'red'}
+                  radius="xs"
+                  size="md"
+                  variant={clickable ? 'light' : 'filled'}
+                  color={status < 300 ? 'green' : status < 400 ? 'pink' : status < 500 ? 'orange' : 'red'}
                 >
                     {status} {statusMsg}
                 </Badge>
                 <Badge
-                    radius="xs"
-                    size="md"
-                    variant={clickable ? 'light' : 'filled'}
-                    color={'blue'}
+                  radius="xs"
+                  size="md"
+                  variant={clickable ? 'light' : 'filled'}
+                  color="blue"
                 >
                     356 KB
                 </Badge>
 
                 {/*<Space h="sm" />*/}
 
-            </Group>
+                </Group>
             {!hideRequestParams && <Container>
                                         <br />
-                                        <Text lineClamp={40} size="xs" ><IconEdit size={12}></IconEdit>{' '}User-Agent: Mozilla/5.0 (compatible; http:colon; +https://httpcolon.dev)</Text>
-                                        <Text lineClamp={40} size="xs" ><IconEdit size={12}></IconEdit>{' '}Accept-Encoding: gzip, deflate, br</Text>
+                                        <Text lineClamp={40} size="xs"><IconEdit size={12} />{' '}User-Agent: Mozilla/5.0 (compatible; http:colon; +https://httpcolon.dev)</Text>
+                                        <Text lineClamp={40} size="xs"><IconEdit size={12} />{' '}Accept-Encoding: gzip, deflate, br</Text>
                                    </Container>}
 
                 <Text color="dimmed" size="sm" mt="md">
                     Latency:{' '}
                     <Text
-                        span
-                        weight={500}
-                        sx={(theme) => ({ color: theme.colorScheme === 'dark' ? theme.white : theme.black })}
+                      span
+                      weight={500}
+                      sx={(theme) => ({ color: theme.colorScheme === 'dark' ? theme.white : theme.black })}
                     >
                         {latency}ms
                     </Text>
                 </Text>
 
                 <Progress
-                  value={(latency / 1000) * 100} mt={5}
+                  value={(latency / 1000) * 100}
+                  mt={5}
                   color={latency < 200 ? 'green' : latency < 600 ? 'yellow' : latency < 800 ? 'orange' : 'red'}
                   animate={clickable}
                 />
@@ -158,9 +165,29 @@ export function TaskCard({ url, status, statusMsg, latency, method, timestamp, c
             <Card.Section className={classes.section}>
             <Group position="apart" mt="lg">
                 <Group>
-                    <Button variant="light" color="grape" size="xs" disabled compact uppercase>
-                        {timestamp != null ? new Date(timestamp).toLocaleString() : ''}
-                    </Button>
+                    <Badge
+                      radius="xs"
+                      size="md"
+                      variant={clickable ? 'light' : 'filled'}
+                      color="gray"
+                      mt={4}
+                    >
+                        {clickable ? timestampLabel : timestamp_.toLocaleString()}
+                    </Badge>
+                    {!clickable &&
+                        <Anchor
+                          href="#headers"
+                        >
+                            <Badge
+                              radius="xs"
+                              size="md"
+                              variant={clickable ? 'light' : 'filled'}
+                              color="grape"
+                            >
+                                {15} Headers
+                            </Badge>
+                        </Anchor>
+                    }
                 </Group>
                 {!clickable && <Group>
                     <ActionIcon variant="filled" onClick={refreshTable}>
@@ -182,7 +209,7 @@ export function TaskCard({ url, status, statusMsg, latency, method, timestamp, c
                             </CopyButton>
                         </Popover.Dropdown>
                     </Popover>
-                </Group>}
+                               </Group>}
             </Group>
             </Card.Section>
         </Card>

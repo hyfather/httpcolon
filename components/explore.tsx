@@ -56,7 +56,8 @@ export function Explore({ refreshTable }: ExploreProps) {
 
     useEffect(() => {
         setBaseURL(window.location.origin);
-        if (inventory.length !== exploreItems.length) {
+        if (exploreItems.length === 0) {
+            console.log('generating exploreItems inventory', exploreItems);
             inventory.forEach((item) => {
                 const encodedSlug = base64Encode(item.url);
                 const slugURL = `${baseURL}/api/v1/colon?slug=${encodedSlug}&method=${item.method}`;

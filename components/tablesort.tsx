@@ -13,9 +13,7 @@ import {
     Code, Alert, Space
 } from '@mantine/core';
 import { keys } from '@mantine/utils';
-import { IconSelector, IconChevronDown, IconChevronUp, IconSearch, IconInfoSquareRounded } from '@tabler/icons';
-import { useForceUpdate } from '@mantine/hooks';
-import { ClassNames } from '@emotion/react';
+import { IconSelector, IconChevronDown, IconChevronUp, IconSearch } from '@tabler/icons';
 
 const useStyles = createStyles((theme) => ({
   th: {
@@ -76,6 +74,8 @@ interface TableSortProps {
   updateTable: string;
   headerMetaData: HeaderData[];
   setHeaderMetadata: Function;
+  setDrawerOpened: Function;
+  setDrawerFocus: Function;
 }
 
 interface ThProps {
@@ -133,7 +133,7 @@ function sortData(
   );
 }
 
-export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable }: TableSortProps, { sortField }: any) {
+export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable, setDrawerOpened, setDrawerFocus }: TableSortProps, { sortField }: any) {
   const [search, setSearch] = useState('');
   const [sortedData, setSortedData] = useState([]);
   const [sortBy, setSortBy] = useState<keyof RowData | null>(sortField);
@@ -198,7 +198,6 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
               // console.log('token', token);
               let tooltip;
               responseDirectives?.forEach((d) => {
-                // eslint-disable-next-line max-len
                 if (d.directive.length > 1 && d.directive.toLowerCase() === token.toLocaleLowerCase()) {
                   // console.log('found', token, d);
                   tooltip =
@@ -210,7 +209,7 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
                         color="grape"
                         width={250}
                       >
-                        <Mark className={classes.directiveMark}>
+                        <Mark className={classes.directiveMark} onClick={() => setDrawerOpened(true) && setDrawerFocus(row.header + '$' + d.directive)}>
                             {token}
                         </Mark>
                       </Tooltip>;
@@ -234,7 +233,7 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
                           color="blue"
                           position="right"
                           width={250}>
-                          <Mark className={classes.headerMark}>
+                          <Mark className={classes.headerMark} onClick={() => setDrawerOpened(true) && setDrawerFocus(row.header)}>
                                 {row.header}
                           </Mark>
                       </Tooltip>

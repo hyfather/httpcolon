@@ -1,4 +1,15 @@
-import { createStyles, Text, Container, ActionIcon, Group, Anchor, useMantineTheme, Drawer } from '@mantine/core';
+import {
+    createStyles,
+    Text,
+    Container,
+    ActionIcon,
+    Group,
+    Anchor,
+    useMantineTheme,
+    Drawer,
+    Badge,
+    Tooltip
+} from '@mantine/core';
 import { IconBrandTwitter, IconBrandGithub, IconBrandInstagram } from '@tabler/icons';
 import { useState } from 'react';
 
@@ -58,19 +69,20 @@ const useStyles = createStyles((theme) => ({
     link: {
         display: 'block',
         color: theme.colorScheme === 'dark' ? theme.colors.dark[1] : theme.colors.gray[6],
-        fontSize: theme.fontSizes.sm,
+        fontSize: theme.fontSizes.xs,
         paddingTop: 3,
         paddingBottom: 3,
 
         '&:hover': {
             textDecoration: 'underline',
+            backgroundColor: 'grape',
         },
     },
 
     title: {
-        fontSize: theme.fontSizes.lg,
+        fontSize: theme.fontSizes.sm,
         fontWeight: 700,
-        fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+        fontFamily: 'Monaco, monospace',
         marginBottom: theme.spacing.xs / 2,
         color: theme.colorScheme === 'dark' ? theme.white : theme.black,
     },
@@ -178,6 +190,9 @@ export function FooterLinks({ setDrawerOpened, setDrawerFocus }: FooterLinksProp
             <Text<'a'>
               key={index}
               className={classes.link}
+              sx={{
+                  fontFamily: 'Monaco, monospace',
+              }}
               component="a"
               onClick={() => setDrawerFocus(link.label) || setDrawerOpened(true)}
             >
@@ -187,7 +202,15 @@ export function FooterLinks({ setDrawerOpened, setDrawerFocus }: FooterLinksProp
 
         return (
             <div className={classes.wrapper} key={group.title}>
-                <Text className={classes.title} variant="gradient" gradient={{ from: 'grape', to: 'blue', deg: 200 }}>{group.title}</Text>
+                <Text
+                    className={classes.title}
+                    variant="gradient"
+                    gradient={{ from: 'grape', to: 'blue', deg: 200 }}
+                    sx={{
+                        fontFamily: 'Monaco, monospace',
+                    }}
+                >
+                    {group.title}</Text>
                 {links}
             </div>
         );
@@ -210,8 +233,17 @@ export function FooterLinks({ setDrawerOpened, setDrawerFocus }: FooterLinksProp
                         HTTP:COLON
                     </Text>
                     <Text size="xs" color="dimmed" className={classes.description}>
-                        The very best tool for HTTP headers
+                        The best tool for HTTP
                     </Text>
+                    <Tooltip color="gray" size="xs" label={"may crash your browser tab"} inline>
+                        <Badge
+                            color="gray"
+                            variant="outline"
+                            size="xs"
+                            radius="xs"
+                        >BETA</Badge>
+                    </Tooltip>
+
                 </div>
                 <div className={classes.groups}>{groups}</div>
             </Container>

@@ -19,6 +19,7 @@ import {
     IconSun,
     IconSwitchHorizontal,
     IconInfoSquareRounded,
+    IconBook,
 } from '@tabler/icons';
 import { Analytics } from '@vercel/analytics/react';
 
@@ -50,7 +51,7 @@ import {
     keyframes,
     Space,
     useMantineTheme,
-    Loader, Anchor, Alert, Drawer,
+    Loader, Anchor, Alert, Drawer, MediaQuery,
 } from '@mantine/core';
 
 import { motion } from 'framer-motion';
@@ -61,6 +62,7 @@ import { Explore } from '../components/explore';
 import { ColonizeForm } from '../components/colonize';
 import { ColonNavbar } from '../components/navbar';
 import { ColonDocs } from '../components/docs';
+import {ID_Continue} from "json5/lib/unicode";
 
 const useStyles = createStyles((theme, _params, getRef) => {
     const icon = getRef('icon');
@@ -415,6 +417,7 @@ export default function HomePage(props) {
        return <SegmentedControl
          value={colorScheme}
          onChange={(value: 'light' | 'dark') => toggleColorScheme(value)}
+         onClick={() => { setUpdateTable(new Date().getTime().toString()); }}
          data={[
                 {
                     value: 'light',
@@ -440,7 +443,6 @@ export default function HomePage(props) {
 
     // @ts-ignore
     return (
-        <>
             <AppShell
               padding="lg"
               navbar={slug && <ColonNavbar themeSwich={ThemeSwitch()} data={data} setResponse={setResponse} refreshActive={refreshActive} setRefreshActive={setRefreshActive} />}
@@ -473,7 +475,14 @@ export default function HomePage(props) {
                                             </span>
                                         </Text>
                                     </Group>
-                                    {slug && <ColonizeForm setRedirect={setRedirect} />}
+                                    {slug &&
+                                        <MediaQuery
+                                          query="(max-width: 1200px) and (min-width: 800px)"
+                                          styles={{ visibility: 'hidden' }}
+                                        >
+                                            <ColonizeForm setRedirect={setRedirect} focus={false} />
+                                        </MediaQuery>
+                                    }
                                 </Group>
                       </Header>}
               styles={(theme) => ({
@@ -485,14 +494,17 @@ export default function HomePage(props) {
 
                 { slug ? <Container>
                     <div className={classes.buttonContainer}>
-                        {/* <Group position='left'> */}
                             <div />
                             <div>
+                             <Group spacing="md">
+                                <Button leftIcon={<IconBook size={14} stroke={2} />} variant="light" color="grape" size="xs" onClick={() => setDrawerOpened(true)}>
+                                    Docs
+                                </Button>
                                 <Button leftIcon={<IconPlus size={14} stroke={2} />} variant="light" color="grape" size="xs" onClick={goHome}>
                                     New URL
                                 </Button>
+                             </Group>
                             </div>
-                        {/* </Group> */}
                     </div>
                         <Space h="md" />
                         <Container size={600}>
@@ -515,7 +527,7 @@ export default function HomePage(props) {
                         <Space h="md" />
                     </div>
                         <div id="headers">
-                           <TableSort data={response.payload} headerMetaData={headerData} setHeaderMetadata={setHeaderData} updateTable={updateTable} />
+                           <TableSort data={response.payload} headerMetaData={headerData} setHeaderMetadata={setHeaderData} updateTable={updateTable} setDrawerFocus={setDrawerFocus} setDrawerOpened={setDrawerOpened} />
                         </div>
                          </Container> : <Container>
                     <Space h="xl" />
@@ -547,19 +559,17 @@ export default function HomePage(props) {
                   className={classes.drawer}
                   opened={drawerOpened}
                   onClose={() => setDrawerOpened(false)}
-                  title="HTTP Headers"
                   padding="xl"
                   size="xl"
                   position="right"
-                  withOverlay={false}
-                  lockScroll={false}
+                  withCloseButton={false}
+                  // withOverlay={false}
+                  // lockScroll={false}
                 >
-                    <ColonDocs headerMetaData={headerData} focus={drawerFocus} />
+                    <ColonDocs headerMetaData={headerData} focus={drawerFocus} setDrawerOpened={setDrawerOpened}/>
                 </Drawer>
 
                 <FooterLinks setDrawerOpened={setDrawerOpened} setDrawerFocus={setDrawerFocus} />
 
-            </AppShell>
-        </>
-    );
+            </AppShell>);
 }

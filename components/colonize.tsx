@@ -20,7 +20,6 @@ import { useForm } from '@mantine/form';
 
 interface ColonizeProps {
     focus: boolean;
-    reset: string;
     setRedirect: Function;
 }
 
@@ -98,6 +97,5 @@ export function ColonizeForm({ setRedirect, focus }: ColonizeProps) {
                 </Button>
             </Group>
         </form>
-
     );
 }

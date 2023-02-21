@@ -129,7 +129,7 @@ export function ColonNavbar({ themeSwich, data, setResponse, refreshActive, setR
                             radius="sm"
                             size="xs"
                             variant={item.timestamp === active ? 'filled' : 'light'}
-                            color={item.status < 300 ? 'green' : item.status < 400 ? 'pink' : item.status < 500 ? 'orange' : 'red'}
+                            color={item.status < 300 ? 'green' : 'red'}
                         >
                             {item.method}
                         </Badge>

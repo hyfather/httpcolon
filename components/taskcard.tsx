@@ -176,7 +176,7 @@ export function TaskCard({ url, status, statusMsg, latency, method, timestamp, c
                     <Badge
                       radius="xs"
                       size="md"
-                      variant={clickable ? 'light' : 'filled'}
+                      variant={clickable ? 'outline' : 'filled'}
                       color="gray"
                       mt={4}
                     >
@@ -192,7 +192,7 @@ export function TaskCard({ url, status, statusMsg, latency, method, timestamp, c
                               variant={clickable ? 'light' : 'filled'}
                               color="grape"
                             >
-                                {15} Headers
+                                Headers
                             </Badge>
                         </Anchor>
                     }

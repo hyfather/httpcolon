@@ -167,9 +167,10 @@ const DATA = [
 
 interface FooterLinksProps {
     setDrawerOpened: Function;
+    setDrawerFocus: Function;
 }
 
-export function FooterLinks({ setDrawerOpened }: FooterLinksProps) {
+export function FooterLinks({ setDrawerOpened, setDrawerFocus }: FooterLinksProps) {
     const { classes } = useStyles();
 
     const groups = DATA.map((group) => {
@@ -178,8 +179,7 @@ export function FooterLinks({ setDrawerOpened }: FooterLinksProps) {
               key={index}
               className={classes.link}
               component="a"
-              href={link.link}
-              onClick={() => setDrawerOpened(true)}
+              onClick={() => setDrawerFocus(link.label) || setDrawerOpened(true)}
             >
                 {link.label}
             </Text>
@@ -219,7 +219,7 @@ export function FooterLinks({ setDrawerOpened }: FooterLinksProps) {
                 <Text variant="gradient" gradient={{ from: 'grape', to: 'blue', deg: 200 }} size="sm">
                     Made in San Francisco
                     <br />
-                    © 2023 httpcolon.dev. All rights reserved.
+                    © 2023 HTTP:COLON, all rights reserved.
                 </Text>
                 <Group spacing={10} className={classes.social} position="right" noWrap>
                         <Anchor href="https://twitter.com/nmungel" target="_blank">

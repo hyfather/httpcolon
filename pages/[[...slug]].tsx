@@ -72,6 +72,10 @@ const useStyles = createStyles((theme, _params, getRef) => {
                 }`,
         },
 
+        drawer: {
+            overflowY: 'auto',
+        },
+
         footer: {
             paddingTop: theme.spacing.md,
             marginBottom: 80,
@@ -267,6 +271,8 @@ export default function HomePage(props) {
     const router = useRouter();
     const [slug, setSlug] = useState(router.query.slug);
     const [drawerOpened, setDrawerOpened] = useState(false);
+    const [drawerFocus, setDrawerFocus] = useState('');
+
 
     // const refreshURL = router.query["refresh"] ? "?refresh=true" : ""
 
@@ -538,17 +544,20 @@ export default function HomePage(props) {
                                         </Container> }
 
                 <Drawer
+                  className={classes.drawer}
                   opened={drawerOpened}
                   onClose={() => setDrawerOpened(false)}
                   title="HTTP Headers"
                   padding="xl"
                   size="xl"
                   position="right"
+                  withOverlay={false}
+                  lockScroll={false}
                 >
-                    <ColonDocs headerMetaData={headerData} />
+                    <ColonDocs headerMetaData={headerData} focus={drawerFocus} />
                 </Drawer>
 
-                <FooterLinks setDrawerOpened={setDrawerOpened} />
+                <FooterLinks setDrawerOpened={setDrawerOpened} setDrawerFocus={setDrawerFocus} />
 
             </AppShell>
         </>

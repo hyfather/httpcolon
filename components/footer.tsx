@@ -8,10 +8,11 @@ import {
     useMantineTheme,
     Drawer,
     Badge,
-    Tooltip
+    Tooltip, Avatar
 } from '@mantine/core';
 import { IconBrandTwitter, IconBrandGithub, IconBrandInstagram } from '@tabler/icons';
 import { useState } from 'react';
+import {motion} from "framer-motion";
 
 const useStyles = createStyles((theme) => ({
     footer: {
@@ -247,21 +248,40 @@ export function FooterLinks({ setDrawerOpened, setDrawerFocus }: FooterLinksProp
                 </div>
                 <div className={classes.groups}>{groups}</div>
             </Container>
-            <Container className={classes.afterFooter}>
-                <Text variant="gradient" gradient={{ from: 'grape', to: 'blue', deg: 200 }} size="sm">
-                    Made in San Francisco
-                    <br />
-                    © 2023 HTTP:COLON, all rights reserved.
-                </Text>
+            <Group className={classes.afterFooter} position="apart">
+                <Group>
+
+                    <Text variant="gradient" gradient={{ from: 'grape', to: 'blue', deg: 200 }} size="sm">
+                        Made in San Francisco
+                        <br />
+                        © 2023 HTTP:COLON, all rights reserved.
+                    </Text>
+
+                </Group>
                 <Group spacing={10} className={classes.social} position="right" noWrap>
-                        <Anchor href="https://twitter.com/nmungel" target="_blank">
+                        <motion.div
+                            whileHover={{ scale: 2.2 }}
+                            whileTap={{ scale: 0.7, rotate: -90, borderRadius: '100%' }}
+                        >
+                            <Avatar
+                                className={classes.logo}
+                                src="/httpcolon.png"
+                                alt="it's me, http:colon"
+                                size="sm"
+                                radius="md"
+                                mb="3px"
+                                ml="5px"
+                            />
+                        </motion.div>
+
+                         <Anchor href="https://twitter.com/nmungel" target="_blank">
                             <IconBrandTwitter size={18} stroke={1.5} />
                         </Anchor>
                         <Anchor href="https://github.com/hyfather/httpcolon" target="_blank">
                             <IconBrandGithub size={18} stroke={1.5} />
                         </Anchor>
                 </Group>
-            </Container>
+            </Group>
         </footer>
     );
 }

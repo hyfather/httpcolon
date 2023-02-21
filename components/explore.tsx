@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import {Container, SimpleGrid, Space, Text} from '@mantine/core';
+import { Container, SimpleGrid, Space, Text } from '@mantine/core';
 import { TaskCard } from './taskcard';
+import {motion} from "framer-motion";
 
 
 function base64Encode(str) {
@@ -61,11 +62,27 @@ export function Explore() {
                 fetch(slugURL)
                     .then(response => response.json())
                     .then(data => {
-                        // console.log(`inv slug fetch: ${data.destination}`);
-                        // console.log(`inv slug data:${JSON.stringify(data)}`);
                         const cards = exploreItems;
-                        console.log("pushing", data.destination, data.instances[0].method, data.instances[0].latency, data.instances[0].status, data.instances[0].timestamp);
-                        cards.push(<TaskCard clickable hideRequestParams url={data.destination} method={data.instances[0].method} latency={data.instances[0].latency}  status={data.instances[0].status}  statusMsg={data.instances[0].statusText}  timestamp={data.instances[0].timestamp} copyURL={data.destination} />);
+                        const instance = data.instances[0];
+                        console.log('pushing', data.destination, data.instances[0].method, data.instances[0].latency, data.instances[0].status, data.instances[0].timestamp);
+                        // @ts-ignore
+                        cards.push(
+                            <motion.div
+                                whileHover={{ scale: 1.02 }}
+                            >
+                            <TaskCard
+                              clickable
+                              hideRequestParams
+                              url={data.destination}
+                              method={instance.method}
+                              latency={instance.latency}
+                              status={instance.status}
+                              statusMsg={instance.statusText}
+                              timestamp={instance.timestamp}
+                              copyURL={data.destination}
+                            />
+                            </motion.div>
+                        );
                         setExploreItems(cards);
                         console.log('cards', cards);
                     }).catch((error) => {
@@ -79,8 +96,10 @@ export function Explore() {
 
     return (
         <Container>
-            <SimpleGrid cols={3} spacing="xl"
-            breakpoints={[
+            <SimpleGrid
+              cols={3}
+              spacing="xl"
+              breakpoints={[
                 { maxWidth: 980, cols: 3, spacing: 'md' },
                 { maxWidth: 755, cols: 2, spacing: 'sm' },
                 { maxWidth: 600, cols: 1, spacing: 'sm' },

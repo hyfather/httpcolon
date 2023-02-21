@@ -211,7 +211,10 @@ const useStyles = createStyles((theme, _params, getRef) => {
         },
 
         logo: {
-            background: theme.fn.gradient({ from: theme.colors.grape[3], to: theme.colors.blue[3], deg: 200 }),
+            background: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.grape[3], to: theme.colors.blue[3], deg: 200 }) : theme.colors.gray[0],
+            borderStyle: 'solid',
+            borderWidth: theme.colorScheme === 'dark' ? '4px' : '1px',
+            borderImage: 'linear-gradient(45deg, #E599F7, #74C0FC) 1',
         },
     };
 });

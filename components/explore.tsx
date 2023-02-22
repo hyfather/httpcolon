@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Container, SimpleGrid, Space, Text } from '@mantine/core';
 import { TaskCard } from './taskcard';
-import {motion} from "framer-motion";
-
 
 function base64Encode(str) {
     const buffer = Buffer.from(str, 'utf-8');
@@ -53,45 +51,34 @@ export function Explore() {
 
     useEffect(() => {
         setBaseURL(window.location.origin);
-        if (exploreItems.length === 0) {
-            console.log('generating exploreItems inventory', exploreItems);
-            inventory.forEach((item) => {
+        const fetchData = async () => {
+            const results = [];
+            for (const item of inventory) {
                 const encodedSlug = base64Encode(item.url);
                 const slugURL = `${baseURL}/api/v1/colon?slug=${encodedSlug}&method=${item.method}`;
-                console.log('make api call to', item.url);
-                fetch(slugURL)
-                    .then(response => response.json())
-                    .then(data => {
-                        const cards = exploreItems;
-                        const instance = data.instances[0];
-                        console.log('pushing', data.destination, data.instances[0].method, data.instances[0].latency, data.instances[0].status, data.instances[0].timestamp);
-                        // @ts-ignore
-                        cards.push(
-                            <motion.div
-                                whileHover={{ scale: 1.02 }}
-                            >
-                            <TaskCard
-                              clickable
-                              hideRequestParams
-                              url={data.destination}
-                              method={instance.method}
-                              latency={instance.latency}
-                              status={instance.status}
-                              statusMsg={instance.statusText}
-                              timestamp={instance.timestamp}
-                              copyURL={data.destination}
-                            />
-                            </motion.div>
-                        );
-                        setExploreItems(cards);
-                        console.log('cards', cards);
-                    }).catch((error) => {
-                    console.error('Error:', error);
-                });
-            });
-        } else {
-            console.log('exploreItems already generated', exploreItems);
-        }
+
+                const response = await fetch(slugURL);
+                const data = await response.json();
+                const instance = data.instances[data.instances.length - 1];
+                console.log('pushing', data.destination, data.instances[0].method, data.instances[0].latency, data.instances[0].status, data.instances[0].timestamp);
+                // @ts-ignore
+                results.push(
+                        <TaskCard
+                            clickable
+                            hideRequestParams
+                            url={data.destination}
+                            method={instance.method}
+                            latency={instance.latency}
+                            status={instance.status}
+                            statusMsg={instance.statusText}
+                            timestamp={instance.timestamp}
+                            copyURL={data.destination}
+                        />
+                );
+            };
+            setExploreItems(results);
+        };
+        fetchData();
     }, []);
 
     return (

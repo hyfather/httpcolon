@@ -25,8 +25,19 @@ const useStyles = createStyles((theme) => ({
 
     activeHeader: {
         padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
-        backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.grape[9], to: theme.colors.blue[9], deg: 200 }) : theme.fn.gradient({ from: theme.colors.grape[1], to: theme.colors.blue[1], deg: 200 }),
+        backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.grape[9], to: theme.colors.blue[9], deg: 200 }) : theme.fn.gradient({ from: theme.colors.blue[1], to: theme.colors.blue[2], deg: 225 }),
     },
+
+    inactiveDirective: {
+        padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
+        // backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.grape[9], to: theme.colors.blue[9], deg: 200 }) : theme.fn.gradient({ from: theme.colors.grape[1], to: theme.colors.blue[1], deg: 10 }),
+    },
+
+    activeDirective: {
+        padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
+        backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.grape[9], to: theme.colors.blue[9], deg: 200 }) : theme.fn.gradient({ from: theme.colors.grape[1], to: theme.colors.grape[2], deg: 225 }),
+    },
+
 
 }));
 
@@ -45,10 +56,12 @@ interface ResponseDirective {
 interface ColonDocsProps {
     headerMetaData: HeaderData[];
     focus: string;
+
+    setFocus: Function;
     setDrawerOpened: Function;
 }
 
-export function ColonDocs({ headerMetaData, focus, setDrawerOpened }: ColonDocsProps) {
+export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: ColonDocsProps) {
     const [rows, setRows] = useState([]);
     const [innerFocus, setInnerFocus] = useState('');
     const { classes } = useStyles();
@@ -73,13 +86,14 @@ export function ColonDocs({ headerMetaData, focus, setDrawerOpened }: ColonDocsP
                 } else {
                     toFocus = focus;
                 }
-                const inFocus = header.header.toLowerCase() === toFocus.toLowerCase();
+                const toFocusMatchers = toFocus.toLowerCase().split('$');
+                const inFocusHeader = header.header.toLowerCase() === toFocusMatchers[0];
 
                 return (
                     <Container
                       key={header.header}
-                      className={inFocus ? classes.activeHeader : classes.inactiveHeader}
-                      // ref={inFocus ? focusRef : noFocusRef}
+                      className={inFocusHeader ? classes.activeHeader : classes.inactiveHeader}
+                      // ref={inFocusHeader ? focusRef : noFocusRef}
                     >
                         <Group position="right" mt="md" mb="sm">
                             {setDrawerOpened && <ActionIcon
@@ -87,36 +101,40 @@ export function ColonDocs({ headerMetaData, focus, setDrawerOpened }: ColonDocsP
                                 onClick={(e) => {
                                     e.preventDefault();
                                     setDrawerOpened(false);
-                                    setInnerFocus(header.header);
+                                    setInnerFocus(header.header + '$');
                                 }}
                             >
                                 <IconX size={12} />
-                            </ActionIcon>}
+                                                </ActionIcon>}
                         </Group>
 
                         <h2> {header.header} </h2>
                     <p> {header.description} </p>
                     <h3> Response Directives </h3>
                     {responseDirectives ? <ul>
-                            {responseDirectives.map((directive) => (
-                                <li key={directive.directive}>
+                            {responseDirectives.map((directive) => {
+                                // console.log("directive", directive, directive.directive.toLowerCase(), toFocusMatchers[1], directive.directive.toLowerCase() === toFocusMatchers[1]);
+                                return <li key={directive.directive}
+                                    className={inFocusHeader && directive.directive.toLowerCase() === toFocusMatchers[1] ? classes.activeDirective : classes.inactiveDirective}
+                                >
                                     <h4> {directive.directive} </h4>
                                     <p> {directive.description} </p>
                                     <p> {directive.details} </p>
-                                </li>
-                            ))}
+                                       </li>;
+                            })}
                                           </ul>
                     : 'No response directives'}
                     <Divider size="xs" />
                     <Group position="right" mt="md" mb="sm">
                         <ActionIcon
                           variant="filled"
+                          size="xs"
                           onClick={(e) => {
                               e.preventDefault();
-                            setFocus(header.header);
+                            setInnerFocus(header.header + '$host');
                         }}
                         >
-                            <IconUpload size={18} />
+                            <IconUpload size={10} />
                         </ActionIcon>
                     </Group>
                     </Container>);
@@ -126,13 +144,14 @@ export function ColonDocs({ headerMetaData, focus, setDrawerOpened }: ColonDocsP
         }
     };
 
+
     useEffect(() => {
         console.log('updating docs', focus);
         makeRows();
-        if (focus != null && focusRef.current != null) {
-            focusRef.current.scrollIntoView();
-            console.log('scrolling to', focusRef.current);
-        }
+        // if (focus != null && focusRef.current != null) {
+        //     focusRef.current.scrollIntoView();
+        //     console.log('scrolling to', focusRef.current);
+        // }
     }, [headerMetaData, focus]);
 
     useEffect(() => {

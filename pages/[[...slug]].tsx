@@ -1,57 +1,29 @@
 import { useState, useRef, SetStateAction, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import GitHubButton from 'react-github-btn';
 import { useForm } from '@mantine/form';
 import {
-    IconSelector,
-    IconChevronLeft,
-    IconChevronRight,
-    IconSearch,
-    IconRefresh,
-    IconLink,
     IconClock,
     IconPlus,
-    IconShare,
-    IconWorld,
-    IconCopy,
     IconMoon,
-    IconSquarePlus,
     IconSun,
-    IconSwitchHorizontal,
-    IconInfoSquareRounded,
     IconBook,
 } from '@tabler/icons';
 import { Analytics } from '@vercel/analytics/react';
 
 import {
     AppShell,
-    Navbar,
     Header,
-    Code,
     Button,
-    Card,
     Avatar,
-    TextInput,
-    Stack,
-    CopyButton,
     Group,
-    Grid,
     Text,
-    ScrollArea,
-    ActionIcon,
-    Popover,
     createStyles, SegmentedControl,
     Center,
-    NativeSelect,
     useMantineColorScheme,
-    Image,
-    Select,
     Container,
-    Mark,
-    keyframes,
     Space,
     useMantineTheme,
-    Loader, Anchor, Alert, Drawer, MediaQuery,
+    Drawer, MediaQuery,
 } from '@mantine/core';
 
 import { motion } from 'framer-motion';
@@ -62,7 +34,6 @@ import { Explore } from '../components/explore';
 import { ColonizeForm } from '../components/colonize';
 import { ColonNavbar } from '../components/navbar';
 import { ColonDocs } from '../components/docs';
-import {ID_Continue} from "json5/lib/unicode";
 
 const useStyles = createStyles((theme, _params, getRef) => {
     const icon = getRef('icon');
@@ -277,7 +248,6 @@ export default function HomePage(props) {
     const [slug, setSlug] = useState(router.query.slug);
     const [drawerOpened, setDrawerOpened] = useState(false);
     const [drawerFocus, setDrawerFocus] = useState('');
-
 
     // const refreshURL = router.query["refresh"] ? "?refresh=true" : ""
 
@@ -569,7 +539,7 @@ export default function HomePage(props) {
                   // withOverlay={false}
                   // lockScroll={false}
                 >
-                    <ColonDocs headerMetaData={headerData} focus={drawerFocus} setDrawerOpened={setDrawerOpened}/>
+                    <ColonDocs headerMetaData={headerData} focus={drawerFocus} setFocus={setDrawerFocus} setDrawerOpened={setDrawerOpened}/>
                 </Drawer>
 
                 <FooterLinks setDrawerOpened={setDrawerOpened} setDrawerFocus={setDrawerFocus} />

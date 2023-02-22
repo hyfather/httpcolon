@@ -233,7 +233,11 @@ export function FooterLinks({ setDrawerOpened, setDrawerFocus }: FooterLinksProp
                     >
                         HTTP:COLON
                     </Text>
-                    <Text size="xs" color="dimmed" className={classes.description}>
+                    <Text size="xs" color="dimmed" className={classes.description}
+                          sx={{
+                              fontFamily: 'Monaco, monospace',
+                          }}
+                    >
                         The best tool for HTTP
                     </Text>
                     <Tooltip color="gray" size="xs" label={"may crash your browser tab"} inline>
@@ -251,10 +255,10 @@ export function FooterLinks({ setDrawerOpened, setDrawerFocus }: FooterLinksProp
             <Group className={classes.afterFooter} position="apart">
                 <Group ml="20px">
 
-                    <Text variant="gradient" gradient={{ from: 'grape', to: 'blue', deg: 200 }} size="sm">
+                    <Text variant="gradient" gradient={{ from: 'grape', to: 'blue', deg: 200 }} size="xs">
                         © 2023 HTTP:COLON
                         <br />
-                        All rights reserved // Made in San Francisco
+                        All rights reserved ✨ Made in San Francisco
                     </Text>
 
                 </Group>

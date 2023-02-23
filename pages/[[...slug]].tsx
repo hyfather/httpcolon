@@ -324,8 +324,8 @@ export default function HomePage(props) {
         }
     }
 
-    async function reSlugTo(str){
-        await router.push(`/${str}`);
+    async function reSlugTo(slug: string, method: string) {
+        await router.push(`/${slug}` + (method ? `?method=${method}` : ''));
         reSlug();
     }
 
@@ -515,15 +515,15 @@ export default function HomePage(props) {
                                     <TextInputWithEditButton value={eValue} onSubmit={reSlugTo} />
                                 </td>
                             </tr>
-                            <tr className={classes.tableRow}>
-                                    <td className={classes.tableKey}>URL:</td>
-                                    <td className={classes.tableValue}>
-                                        <TextInput
-                                            value={response.destination}
-                                            onChange={(event) => setValue(event.currentTarget.value)}
-                                        />
-                                    </td>
-                                </tr>
+                            {/*<tr className={classes.tableRow}>*/}
+                            {/*        <td className={classes.tableKey}>URL:</td>*/}
+                            {/*        <td className={classes.tableValue}>*/}
+                            {/*            <TextInput*/}
+                            {/*                value={response.destination}*/}
+                            {/*                onChange={(event) => setValue(event.currentTarget.value)}*/}
+                            {/*            />*/}
+                            {/*        </td>*/}
+                            {/*    </tr>*/}
                                 <tr className={classes.tableRow}>
                                     <td className={classes.tableKey}>METHOD:</td>
                                     <td className={classes.tableValue}>

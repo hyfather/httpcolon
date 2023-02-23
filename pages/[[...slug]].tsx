@@ -23,7 +23,7 @@ import {
     Container,
     Space,
     useMantineTheme,
-    Drawer, MediaQuery,
+    Drawer, MediaQuery, Badge, TextInput,
 } from '@mantine/core';
 
 import { motion } from 'framer-motion';
@@ -34,6 +34,7 @@ import { Explore } from '../components/explore';
 import { ColonizeForm } from '../components/colonize';
 import { ColonNavbar } from '../components/navbar';
 import { ColonDocs } from '../components/docs';
+import TextInputWithEditButton from "../components/masthead";
 
 const useStyles = createStyles((theme, _params, getRef) => {
     const icon = getRef('icon');
@@ -104,6 +105,23 @@ const useStyles = createStyles((theme, _params, getRef) => {
                     color: theme.fn.variant({ variant: 'light', color: 'grape' }).color,
                 },
             },
+        },
+
+        tableRow: {
+            padding: theme.spacing.xl,
+            margin: theme.spacing.xl,
+        },
+
+        tableKey: {
+            textAlign: 'right',
+            fontFamily: 'Monaco, monospace',
+            fontSize: theme.fontSizes.xs,
+        },
+
+        tableValue: {
+            // textAlign: 'right',
+            fontFamily: 'Monaco, monospace',
+            fontSize: theme.fontSizes.sm,
         },
 
         card: {
@@ -248,13 +266,13 @@ export default function HomePage(props) {
     const [slug, setSlug] = useState(router.query.slug);
     const [drawerOpened, setDrawerOpened] = useState(false);
     const [drawerFocus, setDrawerFocus] = useState('');
-
+    const [eValue, setEValue] = useState('');
     // const refreshURL = router.query["refresh"] ? "?refresh=true" : ""
 
     const makeAPICall = (encodedSlug: string, decodedMethod: string) => {
         const dbURL = `${baseURL}/api/v1/database`;
         const slugURL = `${baseURL}/api/v1/colon?slug=${encodedSlug}&method=${decodedMethod}&refresh=1`;
-        console.log('make api call to', encodedSlug);
+        console.log('make api call to', slugURL);
 
         setLoading(true);
         // TODO if (headerData.length === 0)
@@ -275,6 +293,7 @@ export default function HomePage(props) {
 
                 setData(data);
                 setValue(data.destination);
+                setEValue(data.destination);
                 setInputValue(data.destination);
                 setSlugLoader(1);
                 setCopyURL(window.location.href.toString().replace('?refresh=true', ''));
@@ -292,7 +311,9 @@ export default function HomePage(props) {
 
     useEffect(() => {
         slug ? reSlug() : null;
-    }, []);
+    }, [router.query.slug]);
+
+
 
     function reSlug() {
         const slug1 = router.query.slug;
@@ -303,11 +324,16 @@ export default function HomePage(props) {
         }
     }
 
-    function refreshTable(event) {
-        event.preventDefault();
-        console.log('refresh table');
+    async function reSlugTo(str){
+        await router.push(`/${str}`);
         reSlug();
     }
+
+    // function refreshTable(event) {
+    //     event.preventDefault();
+    //     console.log('refresh table');
+    //     reSlug();
+    // }
 
     function refreshNavBar() {
         console.log('refresh navbar');
@@ -481,17 +507,79 @@ export default function HomePage(props) {
                     </div>
                         <Space h="md" />
                         <Container size={600}>
+                            <table>
+                            <tbody>
+                            <tr className={classes.tableRow}>
+                                <td className={classes.tableKey}>URL:</td>
+                                <td className={classes.tableValue}>
+                                    <TextInputWithEditButton value={eValue} onSubmit={reSlugTo} />
+                                </td>
+                            </tr>
+                            <tr className={classes.tableRow}>
+                                    <td className={classes.tableKey}>URL:</td>
+                                    <td className={classes.tableValue}>
+                                        <TextInput
+                                            value={response.destination}
+                                            onChange={(event) => setValue(event.currentTarget.value)}
+                                        />
+                                    </td>
+                                </tr>
+                                <tr className={classes.tableRow}>
+                                    <td className={classes.tableKey}>METHOD:</td>
+                                    <td className={classes.tableValue}>
+                                        <Badge
+                                            color={response.status < 300 ? 'green' : response.status < 400 ? 'yellow' : 'red'}
+                                            radius="xs"
+                                            size="md"
+                                            variant='filled'
+                                        >
+                                            {response.method}
+                                        </Badge>
+                                    </td>
+                                </tr>
+                                <tr className={classes.tableRow}>
+                                    <td className={classes.tableKey}>STATUS:</td>
+                                    <td className={classes.tableValue}>
+                                        <Badge
+                                            color={response.status < 300 ? 'green' : response.status < 400 ? 'yellow' : 'red'}
+                                            radius="xs"
+                                            size="md"
+                                            variant='dot'
+                                        >
+                                            {response.status} {response.statusText}
+                                        </Badge>
+                                    </td>
+                                </tr>
+                                <tr className={classes.tableRow}>
+                                    <td className={classes.tableKey}>LATENCY:</td>
+                                    <td className={classes.tableValue}>
+                                        <Badge
+                                            color={response.latency < 200 ? 'green' : response.latency < 600 ? 'yellow' : 'red'}
+                                            radius="xs"
+                                            size="md"
+                                            variant='dot'
+                                        >
+                                            {response.latency ? (response.latency > 1000 ? response.latency / 1000 + ' sec' : response.latency + ' ms' ) : 'N/A'}
+                                        </Badge>
+                                    </td>
+                                </tr>
+                                <tr className={classes.tableRow}>
+                                    <td className={classes.tableKey}>TIMESTAMP:</td>
+                                    <td className={classes.tableValue}>{new Date(response.timestamp).toLocaleString()}</td>
+                                </tr>
+                            </tbody>
+                            </table>
 
-                         <TaskCard
-                           status={response.status}
-                           statusMsg={response.statusText}
-                           method={response.method}
-                           url={response.destination}
-                           latency={response.latency}
-                           timestamp={response.timestamp}
-                           copyURL={copyURL}
-                           refreshTable={refreshTable}
-                         />
+                         {/*<TaskCard*/}
+                         {/*  status={response.status}*/}
+                         {/*  statusMsg={response.statusText}*/}
+                         {/*  method={response.method}*/}
+                         {/*  url={response.destination}*/}
+                         {/*  latency={response.latency}*/}
+                         {/*  timestamp={response.timestamp}*/}
+                         {/*  copyURL={copyURL}*/}
+                         {/*  refreshTable={refreshTable}*/}
+                         {/*/>*/}
                         </Container>
 
                         <Space h="md" />

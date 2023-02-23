@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Container, SimpleGrid, Space, Text } from '@mantine/core';
+import { Container, SimpleGrid, Space, Text, Transition } from '@mantine/core';
 import { TaskCard } from './taskcard';
 
 function base64Encode(str) {
@@ -10,6 +10,7 @@ function base64Encode(str) {
 export function Explore() {
     const [exploreItems, setExploreItems] = useState([]);
     const [baseURL, setBaseURL] = useState<string>('');
+    const [mounted, setMounted] = useState(false);
 
     console.log('explore');
     const inventory = [
@@ -63,7 +64,7 @@ export function Explore() {
                 console.log('pushing', data.destination, data.instances[0].method, data.instances[0].latency, data.instances[0].status, data.instances[0].timestamp);
                 // @ts-ignore
                 results.push(
-                        <TaskCard
+                    <TaskCard
                             clickable
                             hideRequestParams
                             url={data.destination}
@@ -74,10 +75,12 @@ export function Explore() {
                             timestamp={instance.timestamp}
                             copyURL={data.destination}
                         />
+
                 );
-            };
+            }
             setExploreItems(results);
         };
+        setMounted(true);
         fetchData();
     }, []);
 
@@ -92,7 +95,10 @@ export function Explore() {
                 { maxWidth: 600, cols: 1, spacing: 'sm' },
             ]}
             >
-                {exploreItems}
+                {/*<Transition mounted={exploreItems.length > 0} transition="fade" duration={400} timingFunction="ease">*/}
+                    {exploreItems}
+                {/*</Transition>*/}
+
             </SimpleGrid>
         </Container>
     );

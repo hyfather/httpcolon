@@ -39,7 +39,7 @@ export default async function handler(req, res) {
     }
     const urlRegexHard = /^(?:https?:\/\/)?[\w.-]+\.[a-zA-Z]{2,20}(?:\/[\w\.-]*)*\/?$/;
     if (!urlRegexHard.test(decodedSlug)) {
-        console.error('Invalid URL');
+        console.error('Still, invalid URL, aborting');
         res.status(400).json({ error: 'Invalid URL' });
         return;
     }

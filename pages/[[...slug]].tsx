@@ -6,7 +6,7 @@ import {
     IconPlus,
     IconMoon,
     IconSun,
-    IconBook,
+    IconBook, IconEdit,
 } from '@tabler/icons';
 import { Analytics } from '@vercel/analytics/react';
 
@@ -23,7 +23,7 @@ import {
     Container,
     Space,
     useMantineTheme,
-    Drawer, MediaQuery, Badge, TextInput,
+    Drawer, MediaQuery, Badge, TextInput, ActionIcon,
 } from '@mantine/core';
 
 import { motion } from 'framer-motion';
@@ -34,7 +34,7 @@ import { Explore } from '../components/explore';
 import { ColonizeForm } from '../components/colonize';
 import { ColonNavbar } from '../components/navbar';
 import { ColonDocs } from '../components/docs';
-import TextInputWithEditButton from "../components/masthead";
+import ColonizeFormV2, { ColonizeMethodForm } from '../components/masthead';
 
 const useStyles = createStyles((theme, _params, getRef) => {
     const icon = getRef('icon');
@@ -115,7 +115,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
         tableKey: {
             textAlign: 'right',
             fontFamily: 'Monaco, monospace',
-            fontSize: theme.fontSizes.xs,
+            fontSize: theme.fontSizes.md,
         },
 
         tableValue: {
@@ -267,6 +267,7 @@ export default function HomePage(props) {
     const [drawerOpened, setDrawerOpened] = useState(false);
     const [drawerFocus, setDrawerFocus] = useState('');
     const [eValue, setEValue] = useState('');
+    const [colonizeFormEditable, setColonizeFormEditable] = useState(false);
     // const refreshURL = router.query["refresh"] ? "?refresh=true" : ""
 
     const makeAPICall = (encodedSlug: string, decodedMethod: string) => {
@@ -313,8 +314,6 @@ export default function HomePage(props) {
         slug ? reSlug() : null;
     }, [router.query.slug]);
 
-
-
     function reSlug() {
         const slug1 = router.query.slug;
         if (slug1) {
@@ -325,7 +324,7 @@ export default function HomePage(props) {
     }
 
     async function reSlugTo(slug: string, method: string) {
-        await router.push(`/${slug}` + (method ? `?method=${method}` : ''));
+        await router.push(`/${slug}${method ? `?method=${method}` : ''}`);
         reSlug();
     }
 
@@ -506,65 +505,62 @@ export default function HomePage(props) {
                             </div>
                     </div>
                         <Space h="md" />
-                        <Container size={600}>
+                        <Container >
                             <table>
                             <tbody>
                             <tr className={classes.tableRow}>
-                                <td className={classes.tableKey}>URL:</td>
+                                <td className={classes.tableKey}>URL</td>
                                 <td className={classes.tableValue}>
-                                    <TextInputWithEditButton value={eValue} onSubmit={reSlugTo} />
+                                    <ColonizeFormV2 value={eValue} method={response.method} onSubmit={reSlugTo} isEditing={colonizeFormEditable} setIsEditing={setColonizeFormEditable} />
                                 </td>
                             </tr>
-                            {/*<tr className={classes.tableRow}>*/}
-                            {/*        <td className={classes.tableKey}>URL:</td>*/}
-                            {/*        <td className={classes.tableValue}>*/}
-                            {/*            <TextInput*/}
-                            {/*                value={response.destination}*/}
-                            {/*                onChange={(event) => setValue(event.currentTarget.value)}*/}
-                            {/*            />*/}
-                            {/*        </td>*/}
-                            {/*    </tr>*/}
                                 <tr className={classes.tableRow}>
-                                    <td className={classes.tableKey}>METHOD:</td>
+                                    <td className={classes.tableKey}>METHOD</td>
                                     <td className={classes.tableValue}>
+                                        {/*<ColonizeMethodForm value={eValue} method={response.method} onSubmit={reSlugTo} />*/}
+                                        <Group spacing="xs">
                                         <Badge
-                                            color={response.status < 300 ? 'green' : response.status < 400 ? 'yellow' : 'red'}
-                                            radius="xs"
-                                            size="md"
-                                            variant='filled'
+                                          color={response.status < 300 ? 'green' : response.status < 400 ? 'yellow' : 'red'}
+                                          radius="xs"
+                                          size="md"
+                                          variant="filled"
                                         >
                                             {response.method}
                                         </Badge>
+                                        {!colonizeFormEditable && <ActionIcon onClick={() => setColonizeFormEditable(true)} color="grape" variant="outline" size="xs">
+                                            <IconEdit size={12} stroke={2} />
+                                        </ActionIcon>}
+                                        </Group>
                                     </td>
                                 </tr>
                                 <tr className={classes.tableRow}>
-                                    <td className={classes.tableKey}>STATUS:</td>
+                                    <td className={classes.tableKey}>STATUS</td>
                                     <td className={classes.tableValue}>
                                         <Badge
-                                            color={response.status < 300 ? 'green' : response.status < 400 ? 'yellow' : 'red'}
-                                            radius="xs"
-                                            size="md"
-                                            variant='dot'
+                                          color={response.status < 300 ? 'green' : response.status < 400 ? 'yellow' : 'red'}
+                                          radius="xs"
+                                          size="md"
+                                          variant="dot"
                                         >
                                             {response.status} {response.statusText}
                                         </Badge>
                                     </td>
                                 </tr>
                                 <tr className={classes.tableRow}>
-                                    <td className={classes.tableKey}>LATENCY:</td>
+                                    <td className={classes.tableKey}>LATENCY</td>
                                     <td className={classes.tableValue}>
                                         <Badge
-                                            color={response.latency < 200 ? 'green' : response.latency < 600 ? 'yellow' : 'red'}
-                                            radius="xs"
-                                            size="md"
-                                            variant='dot'
+                                          color={response.latency < 200 ? 'green' : response.latency < 600 ? 'yellow' : 'red'}
+                                          radius="xs"
+                                          size="md"
+                                          variant="dot"
                                         >
-                                            {response.latency ? (response.latency > 1000 ? response.latency / 1000 + ' sec' : response.latency + ' ms' ) : 'N/A'}
+                                            {response.latency ? (response.latency > 1000 ? `${response.latency / 1000} sec` : `${response.latency} ms`) : 'N/A'}
                                         </Badge>
                                     </td>
                                 </tr>
                                 <tr className={classes.tableRow}>
-                                    <td className={classes.tableKey}>TIMESTAMP:</td>
+                                    <td className={classes.tableKey}>TIMESTAMP </td>
                                     <td className={classes.tableValue}>{new Date(response.timestamp).toLocaleString()}</td>
                                 </tr>
                             </tbody>
@@ -627,7 +623,7 @@ export default function HomePage(props) {
                   // withOverlay={false}
                   // lockScroll={false}
                 >
-                    <ColonDocs headerMetaData={headerData} focus={drawerFocus} setFocus={setDrawerFocus} setDrawerOpened={setDrawerOpened}/>
+                    <ColonDocs headerMetaData={headerData} focus={drawerFocus} setFocus={setDrawerFocus} setDrawerOpened={setDrawerOpened} />
                 </Drawer>
 
                 <FooterLinks setDrawerOpened={setDrawerOpened} setDrawerFocus={setDrawerFocus} />

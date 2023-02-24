@@ -1,6 +1,7 @@
-import React, { createRef, useRef, useState } from 'react';
-import { ActionIcon, Button, createStyles, Group, NativeSelect, TextInput } from '@mantine/core';
-import {IconDownload, IconEdit, IconWorld, IconWorldLatitude, IconX} from '@tabler/icons';
+import React, {createRef, useEffect, useRef, useState} from 'react';
+import { ActionIcon, Button, Container, createStyles, Group, NativeSelect, TextInput } from '@mantine/core';
+import { IconArrowForward, IconCheck, IconDownload, IconEdit, IconWorld, IconWorldLatitude, IconX } from '@tabler/icons';
+import {useForm} from "@mantine/form";
 
 const useStyles = createStyles((theme, _params, getRef) => ({
         header: {
@@ -15,21 +16,21 @@ const useStyles = createStyles((theme, _params, getRef) => ({
         },
     }));
 
-function TextInputWithEditButton({ value, method, onSubmit }) {
-    const [isEditing, setIsEditing] = useState(false);
+function ColonizeFormV2({ value, method, onSubmit, isEditing, setIsEditing }) {
     const [inputValue, setInputValue] = useState(value);
     const { classes, theme } = useStyles();
     const InputRef = useRef<HTMLInputElement>(null);
     const [methodValue, setMethodValue] = useState(method || 'GET');
+    const form = useForm({initialValues: { url: '', method: '' }});
 
     function handleEditClick() {
-        setIsEditing(true);
         setInputValue(value);
         InputRef.current?.focus();
     }
 
     function handleSubmitClick() {
-        onSubmit(inputValue, methodValue);
+        const strippedUrl = (inputValue || value).replace(/(^\w+:|^)\/\//, '').split('?')[0];
+        onSubmit(strippedUrl, methodValue || method);
         setIsEditing(false);
     }
 
@@ -39,14 +40,27 @@ function TextInputWithEditButton({ value, method, onSubmit }) {
         setMethodValue(method);
     }
 
-
     function handleInputChange(event) {
         setInputValue(event.target.value);
     }
 
+    useEffect(() => {
+        if (isEditing) {
+            handleEditClick();
+        }
+    }, [isEditing]);
+
     if (isEditing) {
         return (
             <div>
+                <form onSubmit={form.onSubmit((values) => {
+                    console.log('reslugging', inputValue);
+                    const strippedUrl = inputValue.replace(/(^\w+:|^)\/\//, '').split('?')[0];
+                    setInputValue(strippedUrl);
+                    setIsEditing(false);
+                    onSubmit(strippedUrl, methodValue || method);
+                })}
+                >
                 <Group spacing="xs">
                     <TextInput
                       size="xs"
@@ -55,16 +69,18 @@ function TextInputWithEditButton({ value, method, onSubmit }) {
                       onChange={handleInputChange}
                       ref={InputRef}
                       rightSection={
-                            <ActionIcon onClick={backOut} size="xs" variant="outline" color="grape">
+                        <Container>
+                          <ActionIcon onClick={backOut} size="xs" variant="outline" color="gray">
                                 <IconX size={12} />
-                            </ActionIcon>}
+                          </ActionIcon>
+                        </Container>}
                     />
                     <NativeSelect size="xs" variant="filled" value={methodValue} data={['GET', 'POST', 'PUT', 'DELETE']} onChange={(event) => event.currentTarget.value && setMethodValue(event.currentTarget.value)} />
-                    <Button size="xs" type="submit" variant="gradient" gradient={{ from: theme.colors.blue[10], to: theme.colors.grape[7] }} onClick={handleSubmitClick}>
+                    <Button size="xs" type="submit" variant="gradient" gradient={{ from: theme.colors.blue[10], to: theme.colors.grape[7] }}>
                         GO
                     </Button>
-
                 </Group>
+                </form>
             </div>
         );
     }
@@ -74,13 +90,13 @@ function TextInputWithEditButton({ value, method, onSubmit }) {
                     <TextInput
                       size="xs"
                       type="text"
-                      value={value}
+                      value={inputValue || value}
                       readOnly
                       color="grape"
                       rightSection={
-                            <ActionIcon onClick={handleEditClick} size="xs" variant="outline" color="grape">
-                                <IconEdit size={12} />
-                            </ActionIcon>}
+                                <ActionIcon onClick={() => setIsEditing(true)} size="xs" variant="outline" color="grape">
+                                    <IconEdit size={12} />
+                                </ActionIcon>}
                     />
                 </Group>
 
@@ -88,4 +104,4 @@ function TextInputWithEditButton({ value, method, onSubmit }) {
         );
 }
 
-export default TextInputWithEditButton;
+export default ColonizeFormV2;

@@ -477,14 +477,14 @@ export default function HomePage(props) {
               styles={(theme) => ({
                   main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
               })}
-              navbar={<Transition mounted={navOpened} transition="slide-right" duration={400} timingFunction="ease">
+              navbar={<Transition mounted={navOpened} transition="slide-right" duration={0} timingFunction="ease">
                   {(styles) =>
                       <ColonNavbar style={styles} themeSwich={ThemeSwitch()} hidden={!slug} data={data} setResponse={setResponse} refreshActive={refreshActive} setRefreshActive={setRefreshActive} />
                   }
                       </Transition>}
               aside={<Transition mounted={drawerOpened} transition="slide-left" duration={400} timingFunction="ease">
                           {(styles) =>
-                          <Aside style={styles} p="md" hiddenBreakpoint="sm" hidden={!drawerOpened} width={{ sm: 300, lg: 500 }}>
+                          <Aside style={styles} p="md" hiddenBreakpoint="sm" hidden={!drawerOpened} width={{ sm: 300, lg: 400 }}>
                               <ColonDocs headerMetaData={headerData} focus={drawerFocus} setFocus={setDrawerFocus} setDrawerOpened={setDrawerOpened} />
                           </Aside> }
                      </Transition>}
@@ -527,47 +527,46 @@ export default function HomePage(props) {
                                     }
                                 </Group>
                       </Header>}
-              // footer={<FooterLinks setDrawerOpened={setDrawerOpened} setDrawerFocus={setDrawerFocus} />}
             >
 
                 <Analytics />
 
+                {slug ? <Group position="apart">
+                    <Group>
+                        <Button
+                          leftIcon={navOpened ? <IconX size={14} stroke={2} /> : <IconHistory size={14} stroke={2} />}
+                          variant="light"
+                          color={navOpened ? 'gray' : 'grape'}
+                          size="xs"
+                          onClick={() => toggleNav()}
+                        >
+                            History
+                        </Button>
+                    </Group>
+                    <Group position="right">
+                        <Button
+                          leftIcon={<IconPlus size={14} stroke={2} />}
+                          variant="light"
+                          color="grape"
+                          size="xs"
+                          onClick={goHome}
+                        >
+                            New URL
+                        </Button>
+                        <Button
+                          leftIcon={drawerOpened ? <IconX size={14} stroke={2} /> : <IconBook size={14} stroke={2} />}
+                          variant="light"
+                          color={drawerOpened ? 'gray' : 'grape'}
+                          size="xs"
+                          onClick={() => toggleDocs()}
+                        >
+                            Docs
+                        </Button>
+                    </Group>
+                        </Group> : <Group position="apart"> </Group>}
+
                 { slug ? <Container>
-                    <div>
-                                <Group position="apart">
-                                    <Group>
-                                    <Button
-                                      leftIcon={navOpened ? <IconX size={14} stroke={2} /> : <IconHistory size={14} stroke={2} />}
-                                      variant="light"
-                                      color={navOpened ? 'gray' : 'grape'}
-                                      size="xs"
-                                      onClick={() => toggleNav()}
-                                    >
-                                        History
-                                    </Button>
-                                    </Group>
-                                        <Group position="right">
-                                            <Button
-                                              leftIcon={<IconPlus size={14} stroke={2} />}
-                                              variant="light"
-                                              color="grape"
-                                              size="xs"
-                                              onClick={goHome}
-                                            >
-                                                New URL
-                                            </Button>
-                                            <Button
-                                            leftIcon={drawerOpened ? <IconX size={14} stroke={2} /> : <IconBook size={14} stroke={2} />}
-                                              variant="light"
-                                              color={drawerOpened ? 'gray' : 'grape'}
-                                              size="xs"
-                                              onClick={() => toggleDocs()}
-                                            >
-                                                Docs
-                                            </Button>
-                                        </Group>
-                                </Group>
-                    </div>
+                    <div />
                         <Space h="md" />
                         <Container>
                             <table>

@@ -268,7 +268,7 @@ export default function HomePage(props) {
     const [drawerFocus, setDrawerFocus] = useState('');
     const [eValue, setEValue] = useState('');
     const [colonizeFormEditable, setColonizeFormEditable] = useState(false);
-    const [navOpened, setNavOpened] = useState(true);
+    const [navOpened, setNavOpened] = useState(false);
     // const refreshURL = router.query["refresh"] ? "?refresh=true" : ""
 
     function openDocs() {

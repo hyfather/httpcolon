@@ -10,9 +10,10 @@ import {
     TextInput,
     Mark,
     Tooltip,
-    Code, Alert, Space, Container, Divider, ActionIcon,
+    Code, Alert, Space, Container, Divider, ActionIcon, Title,
 } from '@mantine/core';
-import {IconCross, IconEdit, IconRefresh, IconUpload, IconX} from '@tabler/icons';
+import { IconCross, IconEdit, IconRefresh, IconUpload, IconX } from '@tabler/icons';
+import { directive } from '@babel/types';
 
 const useStyles = createStyles((theme) => ({
 
@@ -30,15 +31,15 @@ const useStyles = createStyles((theme) => ({
 
     inactiveDirective: {
         padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
-        // backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.grape[9], to: theme.colors.blue[9], deg: 200 }) : theme.fn.gradient({ from: theme.colors.grape[1], to: theme.colors.blue[1], deg: 10 }),
+        '&:hover': {
+            backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.grape[9], to: theme.colors.blue[9], deg: 20 }) : theme.fn.gradient({ from: theme.colors.blue[1], to: theme.colors.grape[2], deg: 225 }),
+        },
     },
 
     activeDirective: {
         padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
-        backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.grape[9], to: theme.colors.blue[9], deg: 200 }) : theme.fn.gradient({ from: theme.colors.grape[1], to: theme.colors.grape[2], deg: 225 }),
+        backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.grape[8], to: theme.colors.blue[8], deg: 20 }) : theme.fn.gradient({ from: theme.colors.grape[1], to: theme.colors.grape[2], deg: 225 }),
     },
-
-
 }));
 
 interface HeaderData {
@@ -64,7 +65,7 @@ interface ColonDocsProps {
 export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: ColonDocsProps) {
     const [rows, setRows] = useState([]);
     const [innerFocus, setInnerFocus] = useState('');
-    const { classes } = useStyles();
+    const { classes, theme } = useStyles();
     const focusRef = useRef<HTMLElement>(null);
     const noFocusRef = useRef<HTMLElement>(null);
 
@@ -89,61 +90,72 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
                 const toFocusMatchers = toFocus.toLowerCase().split('$');
                 const inFocusHeader = header.header.toLowerCase() === toFocusMatchers[0];
 
-                return (
-                    <Container
-                      key={header.header}
-                      className={inFocusHeader ? classes.activeHeader : classes.inactiveHeader}
-                      // ref={inFocusHeader ? focusRef : noFocusRef}
-                    >
-                        <Group position="right" mt="md" mb="sm">
-                            {setDrawerOpened && <ActionIcon
-                                variant="outline"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    setDrawerOpened(false);
-                                    setInnerFocus(header.header + '$');
-                                }}
-                            >
-                                <IconX size={12} />
-                                                </ActionIcon>}
-                        </Group>
-
-                        <h2> {header.header} </h2>
-                    <p> {header.description} </p>
-                    <h3> Response Directives </h3>
-                    {responseDirectives ? <ul>
-                            {responseDirectives.map((directive) => {
-                                // console.log("directive", directive, directive.directive.toLowerCase(), toFocusMatchers[1], directive.directive.toLowerCase() === toFocusMatchers[1]);
-                                return <li key={directive.directive}
-                                    className={inFocusHeader && directive.directive.toLowerCase() === toFocusMatchers[1] ? classes.activeDirective : classes.inactiveDirective}
-                                >
-                                    <h4> {directive.directive} </h4>
-                                    <p> {directive.description} </p>
-                                    <p> {directive.details} </p>
-                                       </li>;
-                            })}
-                                          </ul>
-                    : 'No response directives'}
-                    <Divider size="xs" />
+                return <Container
+                  key={header.header}
+                  className={inFocusHeader ? classes.activeHeader : classes.inactiveHeader}
+                  // ref={inFocusHeader ? focusRef : noFocusRef}
+                >
                     <Group position="right" mt="md" mb="sm">
-                        <ActionIcon
-                          variant="filled"
-                          size="xs"
+                        {setDrawerOpened && <ActionIcon
+                          variant="outline"
                           onClick={(e) => {
-                              e.preventDefault();
-                            setInnerFocus(header.header + '$host');
-                        }}
+                                e.preventDefault();
+                                setDrawerOpened(false);
+                                setInnerFocus(`${header.header}$`);
+                            }}
                         >
-                            <IconUpload size={10} />
-                        </ActionIcon>
+                            <IconX size={12} />
+                                            </ActionIcon>}
                     </Group>
-                    </Container>);
+
+                    <Title size={24}> {header.header} </Title>
+                    <Space h="xs" />
+                <Text size="sm"> {header.description} </Text>
+                    <Space h="sm" />
+                {responseDirectives ?
+                    <div>
+                    <Title size="sm" gradient={{ from: theme.colors.gray[5], to: theme.colors.gray[9] }}> Response Directives </Title>
+                    <div>
+                        {responseDirectives.map((directive) =>
+                             <div
+                               key={directive.directive}
+                               className={inFocusHeader && directive.directive.toLowerCase() === toFocusMatchers[1] ? classes.activeDirective : classes.inactiveDirective}
+                               onClick={(e) => {
+                                   e.preventDefault();
+                                   console.log("directive", directive, directive.directive.toLowerCase(), header, directive.directive.toLowerCase() === toFocusMatchers[1]);
+                                    setInnerFocus(`${header.header}$${directive.directive.toLowerCase()}`);
+                                   // setInnerFocus(header.header + '$' + directive ? directive.directive : '');
+                               }}
+                             >
+                                <Title size="md"> {directive.directive} </Title>
+                                <Space h="xs" />
+                                <Text size="xs"> {directive.description} </Text>
+                                <Text size="xs"> {directive.details} </Text>
+                                <Divider size="xs" color="gray" />
+                             </div>
+                        )}
+                    </div>
+                    </div>
+                : 'No response directives'}
+                <Divider size="xs" />
+                <Group position="right" mt="md" mb="sm">
+                    <ActionIcon
+                      variant="filled"
+                      size="xs"
+                      onClick={(e) => {
+                          e.preventDefault();
+                        setInnerFocus(`${header.header}$host`);
+                    }}
+                    >
+                        <IconUpload size={10} />
+                    </ActionIcon>
+                </Group>
+                       </Container>;
             });
             console.log('rows_', rows_);
             setRows(rows_);
         }
     };
-
 
     useEffect(() => {
         console.log('updating docs', focus);

@@ -6,7 +6,7 @@ import {
     IconPlus,
     IconMoon,
     IconSun,
-    IconBook, IconEdit,
+    IconBook, IconEdit, IconHistory, IconCross, IconX,
 } from '@tabler/icons';
 import { Analytics } from '@vercel/analytics/react';
 
@@ -23,7 +23,7 @@ import {
     Container,
     Space,
     useMantineTheme,
-    Drawer, MediaQuery, Badge, TextInput, ActionIcon,
+    Drawer, MediaQuery, Badge, TextInput, ActionIcon, Aside, Transition,
 } from '@mantine/core';
 
 import { motion } from 'framer-motion';
@@ -268,7 +268,36 @@ export default function HomePage(props) {
     const [drawerFocus, setDrawerFocus] = useState('');
     const [eValue, setEValue] = useState('');
     const [colonizeFormEditable, setColonizeFormEditable] = useState(false);
+    const [navOpened, setNavOpened] = useState(true);
     // const refreshURL = router.query["refresh"] ? "?refresh=true" : ""
+
+    function openDocs() {
+        if (navOpened) {
+            setNavOpened(false);
+        }
+        setDrawerOpened(true);
+    }
+
+    function openNav() {
+        if (drawerOpened) {
+            setDrawerOpened(false);
+        }
+        setNavOpened(true);
+    }
+
+    function toggleDocs() {
+        if (navOpened && !drawerOpened) {
+            setNavOpened(false);
+        }
+        setDrawerOpened(!drawerOpened);
+    }
+
+    function toggleNav() {
+        if (drawerOpened && !navOpened) {
+            setDrawerOpened(false);
+        }
+        setNavOpened(!navOpened);
+    }
 
     const makeAPICall = (encodedSlug: string, decodedMethod: string) => {
         const dbURL = `${baseURL}/api/v1/database`;
@@ -443,7 +472,22 @@ export default function HomePage(props) {
     return (
             <AppShell
               padding="lg"
-              navbar={slug && <ColonNavbar themeSwich={ThemeSwitch()} data={data} setResponse={setResponse} refreshActive={refreshActive} setRefreshActive={setRefreshActive} />}
+              layout="alt"
+              fixed
+              styles={(theme) => ({
+                  main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
+              })}
+              navbar={<Transition mounted={navOpened} transition="slide-right" duration={400} timingFunction="ease">
+                  {(styles) =>
+                      <ColonNavbar style={styles} themeSwich={ThemeSwitch()} hidden={!slug} data={data} setResponse={setResponse} refreshActive={refreshActive} setRefreshActive={setRefreshActive} />
+                  }
+                      </Transition>}
+              aside={<Transition mounted={drawerOpened} transition="slide-left" duration={400} timingFunction="ease">
+                          {(styles) =>
+                          <Aside style={styles} p="md" hiddenBreakpoint="sm" hidden={!drawerOpened} width={{ sm: 300, lg: 500 }}>
+                              <ColonDocs headerMetaData={headerData} focus={drawerFocus} setFocus={setDrawerFocus} setDrawerOpened={setDrawerOpened} />
+                          </Aside> }
+                     </Transition>}
               header={<Header height={80} p="xs">
                                 <Group spacing="sm" position="apart">
                                     <Group spacing="sm">
@@ -483,29 +527,49 @@ export default function HomePage(props) {
                                     }
                                 </Group>
                       </Header>}
-              styles={(theme) => ({
-                    main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
-                })}
+              // footer={<FooterLinks setDrawerOpened={setDrawerOpened} setDrawerFocus={setDrawerFocus} />}
             >
 
                 <Analytics />
 
                 { slug ? <Container>
-                    <div className={classes.buttonContainer}>
-                            <div />
-                            <div>
-                             <Group spacing="md">
-                                <Button leftIcon={<IconBook size={14} stroke={2} />} variant="light" color="grape" size="xs" onClick={() => setDrawerOpened(true)}>
-                                    Docs
-                                </Button>
-                                <Button leftIcon={<IconPlus size={14} stroke={2} />} variant="light" color="grape" size="xs" onClick={goHome}>
-                                    New URL
-                                </Button>
-                             </Group>
-                            </div>
+                    <div>
+                                <Group position="apart">
+                                    <Group>
+                                    <Button
+                                      leftIcon={navOpened ? <IconX size={14} stroke={2} /> : <IconHistory size={14} stroke={2} />}
+                                      variant="light"
+                                      color={navOpened ? 'gray' : 'grape'}
+                                      size="xs"
+                                      onClick={() => toggleNav()}
+                                    >
+                                        History
+                                    </Button>
+                                    </Group>
+                                        <Group position="right">
+                                            <Button
+                                              leftIcon={<IconPlus size={14} stroke={2} />}
+                                              variant="light"
+                                              color="grape"
+                                              size="xs"
+                                              onClick={goHome}
+                                            >
+                                                New URL
+                                            </Button>
+                                            <Button
+                                            leftIcon={drawerOpened ? <IconX size={14} stroke={2} /> : <IconBook size={14} stroke={2} />}
+                                              variant="light"
+                                              color={drawerOpened ? 'gray' : 'grape'}
+                                              size="xs"
+                                              onClick={() => toggleDocs()}
+                                            >
+                                                Docs
+                                            </Button>
+                                        </Group>
+                                </Group>
                     </div>
                         <Space h="md" />
-                        <Container >
+                        <Container>
                             <table>
                             <tbody>
                             <tr className={classes.tableRow}>
@@ -529,7 +593,7 @@ export default function HomePage(props) {
                                         </Badge>
                                         {!colonizeFormEditable && <ActionIcon onClick={() => setColonizeFormEditable(true)} color="grape" variant="outline" size="xs">
                                             <IconEdit size={12} stroke={2} />
-                                        </ActionIcon>}
+                                                                  </ActionIcon>}
                                         </Group>
                                     </td>
                                 </tr>
@@ -612,19 +676,19 @@ export default function HomePage(props) {
                                             <Center>{ThemeSwitch()}</Center>
                                         </Container> }
 
-                <Drawer
-                  className={classes.drawer}
-                  opened={drawerOpened}
-                  onClose={() => setDrawerOpened(false)}
-                  padding="xl"
-                  size="xl"
-                  position="right"
-                  withCloseButton={false}
-                  // withOverlay={false}
-                  // lockScroll={false}
-                >
-                    <ColonDocs headerMetaData={headerData} focus={drawerFocus} setFocus={setDrawerFocus} setDrawerOpened={setDrawerOpened} />
-                </Drawer>
+                {/*<Drawer*/}
+                {/*  className={classes.drawer}*/}
+                {/*  opened={drawerOpened}*/}
+                {/*  onClose={() => setDrawerOpened(false)}*/}
+                {/*  padding="xl"*/}
+                {/*  size="xl"*/}
+                {/*  position="right"*/}
+                {/*  withCloseButton={false}*/}
+                {/*  // withOverlay={false}*/}
+                {/*  // lockScroll={false}*/}
+                {/*>*/}
+                {/*    /!*<ColonDocs headerMetaData={headerData} focus={drawerFocus} setFocus={setDrawerFocus} setDrawerOpened={setDrawerOpened} />*!/*/}
+                {/*</Drawer>*/}
 
                 <FooterLinks setDrawerOpened={setDrawerOpened} setDrawerFocus={setDrawerFocus} />
 

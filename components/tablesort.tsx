@@ -10,7 +10,7 @@ import {
     TextInput,
     Mark,
     Tooltip,
-    Code, Alert, Space
+    Code, Alert, Space,
 } from '@mantine/core';
 import { keys } from '@mantine/utils';
 import { IconSelector, IconChevronDown, IconChevronUp, IconSearch } from '@tabler/icons';
@@ -156,7 +156,7 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget;
     setSearch(value);
-  console.log("disabled");
+  console.log('disabled');
       // setSortedData(sortData(data, { sortBy, reversed: reverseSortDirection, search: value }));
     makeRows();
   };
@@ -209,7 +209,15 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
                         color="grape"
                         width={250}
                       >
-                        <Mark className={classes.directiveMark} onClick={() => setDrawerOpened(true) && setDrawerFocus(row.header + '$' + d.directive)}>
+                        <Mark
+                          className={classes.directiveMark}
+                          onClick={(event) => {
+                            event.preventDefault();
+                              console.log('--> foo', `${row.header.toLowerCase()}$${d.directive.toLowerCase()}`);
+                              setDrawerOpened(true);
+                              setDrawerFocus(`${row.header.toLowerCase()}$${d.directive.toLowerCase()}`);
+                        }}
+                        >
                             {token}
                         </Mark>
                       </Tooltip>;
@@ -226,18 +234,27 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
                 <tr key={row.header}>
                   <td><Code>
                       <Tooltip
-                          label={dInfo["description"]}
-                          withArrow
-                          inline
-                          multiline
-                          color="blue"
-                          position="right"
-                          width={250}>
-                          <Mark className={classes.headerMark} onClick={() => setDrawerOpened(true) && setDrawerFocus(row.header)}>
+                        label={dInfo.description}
+                        withArrow
+                        inline
+                        multiline
+                        color="blue"
+                        position="right"
+                        width={250}
+                      >
+                          <Mark
+                            className={classes.headerMark}
+                            onClick={(event) => {
+                                  event.preventDefault();
+                                  console.log('--> foo', `${row.header.toLowerCase()}$`);
+                                  setDrawerOpened(true);
+                                  setDrawerFocus(`${row.header.toLowerCase()}$`);
+                              }}
+                          >
                                 {row.header}
                           </Mark>
                       </Tooltip>
-                  </Code>
+                      </Code>
                   </td>
                   <td><Code>{markedUp}</Code></td>
                 </tr>);
@@ -248,7 +265,7 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
   };
 
   useEffect(() => {
-    console.log("updating table");
+    console.log('updating table');
     makeRows();
   }, [data, updateTable, headerMetaData]);
 
@@ -266,7 +283,7 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
       <Table
         horizontalSpacing="md"
         verticalSpacing="xs"
-        highlightOnHover={true}
+        highlightOnHover
         sx={{ tableLayout: 'fixed', minWidth: 700 }}
       >
         <thead>
@@ -292,8 +309,7 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
             rows
           ) : (
             <tr>
-              <td colSpan="auto">
-              </td>
+              <td colSpan="auto" />
             </tr>
           )}
         </tbody>

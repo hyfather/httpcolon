@@ -482,7 +482,7 @@ export default function HomePage(props) {
                       <ColonNavbar style={styles} themeSwich={ThemeSwitch()} hidden={!slug} data={data} setResponse={setResponse} refreshActive={refreshActive} setRefreshActive={setRefreshActive} />
                   }
                       </Transition>}
-              aside={<Transition mounted={drawerOpened} transition="slide-left" duration={400} timingFunction="ease">
+              aside={<Transition mounted={drawerOpened} transition="slide-left" duration={0} timingFunction="ease">
                           {(styles) =>
                           <Aside style={styles} p="md" hiddenBreakpoint="sm" hidden={!drawerOpened} width={{ sm: 300, lg: 400 }}>
                               <ColonDocs headerMetaData={headerData} focus={drawerFocus} setFocus={setDrawerFocus} setDrawerOpened={setDrawerOpened} />

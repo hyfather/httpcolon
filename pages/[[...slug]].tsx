@@ -491,21 +491,23 @@ export default function HomePage(props) {
               header={<Header height={80} p="xs">
                                 <Group spacing="sm" position="apart">
                                     <Group spacing="sm">
-                                        <motion.div
-                                          whileHover={{ scale: 1.2, rotate: 90 }}
-                                          whileTap={{ scale: 0.7, rotate: -90, borderRadius: '100%' }}
-                                        >
-                                            <Avatar
-                                              className={classes.logo}
-                                              src="/httpcolon.png"
-                                              alt="it's me, http:colon"
-                                              size="lg"
-                                              radius="md"
-                                              onClick={goHome}
-                                            />
-                                        </motion.div>
+                                        {/*<motion.div*/}
+                                        {/*  whileHover={{ scale: 1.2, rotate: 90 }}*/}
+                                        {/*  whileTap={{ scale: 0.7, rotate: -90, borderRadius: '100%' }}*/}
+                                        {/*>*/}
+                                        {/*    <Avatar*/}
+                                        {/*      className={classes.logo}*/}
+                                        {/*      src="/httpcolon.png"*/}
+                                        {/*      alt="it's me, http:colon"*/}
+                                        {/*      size="lg"*/}
+                                        {/*      radius="md"*/}
+                                        {/*      onClick={goHome}*/}
+                                        {/*    />*/}
+                                        {/*</motion.div>*/}
                                         <Text
+                                            ml="sm"
                                           size={36}
+                                          onClick={goHome}
                                           sx={{
                                                 fontFamily: 'Monaco, monospace',
                                             }}
@@ -516,14 +518,16 @@ export default function HomePage(props) {
                                             HTTP:COLON
                                             </span>
                                         </Text>
+                                        <Badge
+                                            color="gray"
+                                            variant="outline"
+                                            size="xs"
+                                            radius="xs"
+                                        >BETA</Badge>
+
                                     </Group>
                                     {slug &&
-                                        <MediaQuery
-                                          query="(max-width: 1200px) and (min-width: 800px)"
-                                          styles={{ visibility: 'hidden' }}
-                                        >
-                                            <ColonizeForm setRedirect={setRedirect} focus={false} />
-                                        </MediaQuery>
+                                        <ColonizeForm setRedirect={setRedirect} focus={false} />
                                     }
                                 </Group>
                       </Header>}

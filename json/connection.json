@@ -1,5 +1,5 @@
 {
-  "header": "Connection",
+  "header": "connection",
   "description": "The Connection header controls whether or not the network connection stays open after the current transaction finishes.",
   "response-directives": [
     {

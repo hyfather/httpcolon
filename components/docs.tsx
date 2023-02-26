@@ -10,10 +10,11 @@ import {
     TextInput,
     Mark,
     Tooltip,
-    Code, Alert, Space, Container, Divider, ActionIcon, Title,
+    Code, Alert, Space, Container, Divider, ActionIcon, Title, Badge,
 } from '@mantine/core';
-import { IconCross, IconEdit, IconRefresh, IconUpload, IconX } from '@tabler/icons';
+import {IconCross, IconEdit, IconPin, IconRefresh, IconUpload, IconX} from '@tabler/icons';
 import { directive } from '@babel/types';
+import {all} from "deepmerge";
 
 const useStyles = createStyles((theme) => ({
 
@@ -26,19 +27,28 @@ const useStyles = createStyles((theme) => ({
 
     activeHeader: {
         padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
-        backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.grape[9], to: theme.colors.blue[9], deg: 200 }) : theme.fn.gradient({ from: theme.colors.blue[1], to: theme.colors.blue[2], deg: 225 }),
+        backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.gray[8], to: theme.colors.gray[9], deg: 200 }) : theme.fn.gradient({ from: theme.colors.gray[1], to: theme.colors.gray[2], deg: 225 }),
+        h1: {
+            color: theme.colorScheme === 'dark' ? theme.colors.blue[1] : theme.colors.blue[8],
+        },
     },
 
     inactiveDirective: {
         padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
+        border: '1px solid transparent',
         '&:hover': {
-            backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.grape[9], to: theme.colors.blue[9], deg: 20 }) : theme.fn.gradient({ from: theme.colors.blue[1], to: theme.colors.grape[2], deg: 225 }),
+            border: `1px solid ${theme.colors.gray[5]}`,
+            borderRadius: 5,
+            // backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.grape[9], to: theme.colors.blue[9], deg: 20 }) : theme.fn.gradient({ from: theme.colors.gray[2], to: theme.colors.gray[1], deg: 225 }),
         },
     },
 
     activeDirective: {
         padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
-        backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.grape[8], to: theme.colors.blue[8], deg: 20 }) : theme.fn.gradient({ from: theme.colors.grape[1], to: theme.colors.grape[2], deg: 225 }),
+        border: `1px solid ${theme.colors.blue[8]}`,
+        borderRadius: 5,
+        backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.gray[9], to: theme.colors.gray[8], deg: 200 }) : theme.fn.gradient({ from: theme.colors.gray[1], to: theme.colors.gray[3], deg: 45 }),
+        // backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.grape[8], to: theme.colors.blue[8], deg: 20 }) : theme.fn.gradient({ from: theme.colors.blue[2], to: theme.colors.blue[1], deg: 225 }),
     },
 }));
 
@@ -66,16 +76,13 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
     const [rows, setRows] = useState([]);
     const { classes, theme } = useStyles();
     const [lastFocus, setLastFocus] = useState('');
-    const noFocusRef = useRef<HTMLElement>(null);
     const allRefs = {};
 
     if (headerMetaData != null && headerMetaData.length > 0) {
         if (headerMetaData.length !== Object.keys(allRefs).length) {
             headerMetaData.forEach((header) => {
-                console.log('making ref for header', header.header);
                 allRefs[header.header.toLowerCase()] = useRef<HTMLElement>(null);
                 header['response-directives'].forEach((directive) => {
-                    console.log('making ref for directive', `${header.header.toLowerCase()}$${directive.directive.toLowerCase()}`);
                     allRefs[`${header.header.toLowerCase()}$${directive.directive.toLowerCase()}`] = useRef<HTMLElement>(null);
                 });
             });
@@ -92,13 +99,10 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
 
         if (headerDB != null) {
             const rows_ = headerDB.map((header) => {
-                // console.log("header", header, header['response-directives']);
                 const responseDirectives = header['response-directives'];
                 const toFocus = focus;
                 const focusHeader = focus.toLowerCase().split('$')[0];
                 const focusDirective = toFocus.toLowerCase().split('$')[1];
-                const directiveInFocus = focusDirective != null && focusDirective !== '';
-                const inFocusHeader = header.header.toLowerCase() === focusHeader;
 
                 return <Container
                   ref={allRefs[header.header]}
@@ -107,23 +111,14 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
                   key={header.header}
                 >
                     <Group position="right" mt="md" mb="sm">
-                        {setDrawerOpened && <ActionIcon
-                          variant="outline"
-                          onClick={(e) => {
-                                e.preventDefault();
-                                setDrawerOpened(false);
-                            }}
-                        >
-                                                <IconX size={12} />
-                                            </ActionIcon>}
+
                     </Group>
 
                     <div
                       key={header.header}
                       onClick={(e) => {
                             e.preventDefault();
-                            console.log('directive', directive, directive.directive.toLowerCase(), header, directive.directive.toLowerCase() === focusHeader[1]);
-                            setFocus(`${header.header}$${directive.directive.toLowerCase()}`);
+                            setFocus(`${header.header}$}`);
                         }}
                     >
 
@@ -134,11 +129,15 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
                     <Text size="sm"> {header.description} </Text>
                     <Space h="sm" />
                   </div>
-                {responseDirectives ?
+                {responseDirectives.length > 0 ?
                     <div>
                     <Title size="sm" gradient={{ from: theme.colors.gray[5], to: theme.colors.gray[9] }}> Response Directives </Title>
+                        <Space h="xs" />
                     <div>
                         {responseDirectives.map((directive) => {
+                            if (directive == null || directive.directive == null) {
+                                return <div />;
+                            }
                              const inFocusDirective = directive.directive.toLowerCase() === focusDirective;
                              return <div
                                key={directive.directive}
@@ -146,33 +145,49 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
                                className={classes.inactiveDirective}
                                onClick={(e) => {
                                    e.preventDefault();
-                                   console.log('directive', directive, directive.directive.toLowerCase(), header, directive.directive.toLowerCase() === focusHeader[1]);
-                                    setFocus(`${header.header.toLowerCase()}$${directive.directive.toLowerCase()}`);
+                                   // console.log('directive', directive, directive.directive.toLowerCase(), header, directive.directive.toLowerCase() === focusHeader[1]);
+                                   if (directive != null && directive.directive != null) {
+                                       setFocus(`${header.header.toLowerCase()}$${directive.directive.toLowerCase()}`);
+                                   }
                                  }}
                              >
-                                <Title size="md"> {directive.directive} </Title>
+                                 <Badge
+                                     color="blue"
+                                     variant="filled"
+                                     radius="sm"
+                                 >{directive.directive}</Badge>
                                 <Space h="xs" />
                                 <Text size="xs"> {directive.description} </Text>
                                 <Text size="xs"> {directive.details} </Text>
-                                <Divider size="xs" color="gray" />
                                     </div>;
                             }
                         )}
                     </div>
                     </div>
-                : 'No response directives'}
+                : ''}
                 <Divider size="xs" />
-                <Group position="right" mt="md" mb="sm">
+                <Group position="right" mt="md" mb="sm" spacing="xs">
                     <ActionIcon
                       variant="filled"
                       size="xs"
                       onClick={(e) => {
                           e.preventDefault();
-                        setFocus(`${header.header}$`);
+                        setFocus(`${header.header.toLowerCase()}$`);
                     }}
                     >
-                        <IconUpload size={10} />
+                        <IconPin size={10} />
                     </ActionIcon>
+                    <ActionIcon
+                        variant="filled"
+                        size="xs"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setDrawerOpened(false);
+                        }}
+                    >
+                        <IconX size={10} />
+                    </ActionIcon>
+
                 </Group>
                        </Container>;
             });
@@ -184,21 +199,22 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
     useEffect(() => {
         console.log('updating docs');
         makeRows();
-        setLastFocus('cache-control$private');
     }, [headerMetaData]);
 
     function setClass(refString: string, className: string) {
-        const ref = allRefs[refString.toLowerCase()];
+        console.log("setting class", refString, className, allRefs[refString.toLowerCase()]);
+
+        const ref = allRefs[refString?.toLowerCase()];
         if (ref != null && ref.current != null) {
             ref.current.className = className;
         }
     }
 
-    useEffect(() => {
+    function focusAndScroll() {
         const [header, directive] = focus.split('$');
         const [lastHeader, lastDirective] = lastFocus.split('$');
 
-        console.log('focus', focus, header, directive, lastDirective);
+        console.log('focusz', focus, header, directive, lastDirective);
         if (header != null && header !== '') {
             setClass(lastHeader, classes.inactiveHeader);
             setClass(header, classes.activeHeader);
@@ -221,6 +237,12 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
             }
             setLastFocus(focus);
         }
+    }
+
+    useEffect(() => {
+       if (focus !== lastFocus) {
+           focusAndScroll();
+       }
     }, [focus]);
 
     return (<ScrollArea>

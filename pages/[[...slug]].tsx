@@ -269,7 +269,6 @@ export default function HomePage(props) {
     const [eValue, setEValue] = useState('');
     const [colonizeFormEditable, setColonizeFormEditable] = useState(false);
     const [navOpened, setNavOpened] = useState(false);
-    // const refreshURL = router.query["refresh"] ? "?refresh=true" : ""
 
     function openDocs() {
         if (navOpened) {
@@ -301,7 +300,7 @@ export default function HomePage(props) {
 
     const makeAPICall = (encodedSlug: string, decodedMethod: string) => {
         const dbURL = `${baseURL}/api/v1/database`;
-        const slugURL = `${baseURL}/api/v1/colon?slug=${encodedSlug}&method=${decodedMethod}&refresh=1`;
+        const slugURL = `${baseURL}/api/v1/colon?slug=${encodedSlug}&method=${decodedMethod}`;
         console.log('make api call to', slugURL);
 
         setLoading(true);

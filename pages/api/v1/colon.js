@@ -14,10 +14,6 @@ export default async function handler(req, res) {
     const refresh = req.query["refresh"];
 
     console.log("slug: ", slug);
-    // const slugs = slug[0].split(",");
-    // let uniqSlug = slugs.join("_");
-    // const url = "https://" + slugs.join("/");
-    // console.log("uniqSlug: ", uniqSlug);
 
     if(slug == null) {
         res.status(200).json({ id: "Enter URL", destination: "Plz"});
@@ -29,7 +25,6 @@ export default async function handler(req, res) {
 
     console.log('encodedSlug:', encodedSlug);
     console.log('decodedSlug:', decodedSlug);
-
 
     // Validate that it's a valid URL
     const urlRegexEasy = /^(http|https):\/\/[^ "]+$/;
@@ -49,6 +44,9 @@ export default async function handler(req, res) {
 
     let uniqSlug = hash;
 
+    if (!refresh) {
+        res.setHeader('Cache-Control', 's-maxage=86400')
+    }
     const data = await getKey(uniqSlug);
     if(data == null || refresh != null){
         console.log("creating entry", uniqSlug, decodedSlug);

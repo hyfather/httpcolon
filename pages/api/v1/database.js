@@ -4,6 +4,7 @@ import path from "path";
 export default async function handler(req, res) {
     const data = await makeDatabase();
     // console.log("returning database", data);
+    res.setHeader('Cache-Control', 's-maxage=86400')
     res.status(200).json(data);
 }
 

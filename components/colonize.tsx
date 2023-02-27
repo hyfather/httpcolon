@@ -78,7 +78,7 @@ export function ColonizeForm({ setRedirect, focus }: ColonizeProps) {
         <form onSubmit={form.onSubmit((values) => {
             console.log('redirecting', inputValue);
             const strippedUrl = inputValue.replace(/(^\w+:|^)\/\//, '').split('?')[0];
-            const redirectUrl = methodValue === 'GET' ? (`${baseURL}/${strippedUrl}?refresh=true`) : (`${baseURL}/${strippedUrl}?method=${methodValue}&refresh=true`);
+            const redirectUrl = methodValue === 'GET' ? (`${baseURL}/${strippedUrl}`) : (`${baseURL}/${strippedUrl}?method=${methodValue}`);
             console.log(`redirectUrl: ${redirectUrl}/${methodValue}`);
             setRedirect(redirectUrl);
         })}

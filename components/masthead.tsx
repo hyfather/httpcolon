@@ -63,11 +63,12 @@ function ColonizeFormV2({ value, method, onSubmit, isEditing, setIsEditing }) {
                 >
                 <Group spacing="xs">
                     <TextInput
-                      size="xs"
+                      size="sm"
                       type="text"
                       value={inputValue}
                       onChange={handleInputChange}
                       ref={InputRef}
+                      icon={<IconWorld size={18} />}
                       rightSection={
                         <Container>
                           <ActionIcon onClick={backOut} size="xs" variant="outline" color="gray">
@@ -75,8 +76,8 @@ function ColonizeFormV2({ value, method, onSubmit, isEditing, setIsEditing }) {
                           </ActionIcon>
                         </Container>}
                     />
-                    <NativeSelect size="xs" variant="filled" value={methodValue} data={['GET', 'POST', 'PUT', 'DELETE']} onChange={(event) => event.currentTarget.value && setMethodValue(event.currentTarget.value)} />
-                    <Button size="xs" type="submit" variant="gradient" gradient={{ from: theme.colors.blue[10], to: theme.colors.grape[7] }}>
+                    <NativeSelect size="sm" variant="filled" value={methodValue} data={['GET', 'POST', 'PUT', 'DELETE']} onChange={(event) => event.currentTarget.value && setMethodValue(event.currentTarget.value)} />
+                    <Button size="sm" type="submit" variant="gradient" gradient={{ from: theme.colors.blue[10], to: theme.colors.grape[7] }}>
                         GO
                     </Button>
                 </Group>
@@ -88,11 +89,13 @@ function ColonizeFormV2({ value, method, onSubmit, isEditing, setIsEditing }) {
             <div>
                 <Group spacing="xs">
                     <TextInput
-                      size="xs"
+                      size="sm"
                       type="text"
                       value={inputValue || value}
                       readOnly
                       color="grape"
+                      variant="filled"
+                      icon={<IconWorld size={18} />}
                       rightSection={
                                 <ActionIcon onClick={() => setIsEditing(true)} size="xs" variant="outline" color="grape">
                                     <IconEdit size={12} />

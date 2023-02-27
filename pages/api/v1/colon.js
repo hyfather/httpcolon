@@ -45,7 +45,7 @@ export default async function handler(req, res) {
     let uniqSlug = hash;
 
     if (!refresh) {
-        res.setHeader('Cache-Control', 's-maxage=86400')
+        res.setHeader('Cache-Control', 's-maxage=86400, max-age=86400, public');
     }
     const data = await getKey(uniqSlug);
     if(data == null || refresh != null){

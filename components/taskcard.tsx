@@ -33,7 +33,7 @@ interface TaskCardProps {
 const useStyles = createStyles((theme) => ({
     card: {
         // backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
-        backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.grape[9], to: theme.colors.blue[9], deg: 200 }) : theme.fn.gradient({ from: theme.colors.grape[1], to: theme.colors.blue[1], deg: 200 }),
+        backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.grape[9], to: theme.colors.blue[9], deg: 200 }) : theme.fn.gradient({ from: theme.colors.gray[1], to: theme.colors.gray[2], deg: 200 }),
     },
 
     sectionHeader: {

@@ -6,7 +6,7 @@ import {
     IconPlus,
     IconMoon,
     IconSun,
-    IconBook, IconEdit, IconHistory, IconCross, IconX,
+    IconBook, IconEdit, IconHistory, IconCross, IconX, IconRefresh,
 } from '@tabler/icons';
 import { Analytics } from '@vercel/analytics/react';
 
@@ -23,8 +23,10 @@ import {
     Container,
     Space,
     useMantineTheme,
-    Drawer, MediaQuery, Badge, TextInput, ActionIcon, Aside, Transition,
+    Drawer, MediaQuery, Badge, TextInput, ActionIcon, Aside, Transition, Tooltip,
 } from '@mantine/core';
+import { format } from 'timeago.js';
+
 
 import { motion } from 'framer-motion';
 import { TableSort } from '../components/tablesort';
@@ -298,9 +300,9 @@ export default function HomePage(props) {
         setNavOpened(!navOpened);
     }
 
-    const makeAPICall = (encodedSlug: string, decodedMethod: string) => {
+    const makeAPICall = (encodedSlug: string, decodedMethod: string, refresh: boolean) => {
         const dbURL = `${baseURL}/api/v1/database`;
-        const slugURL = `${baseURL}/api/v1/colon?slug=${encodedSlug}&method=${decodedMethod}`;
+        const slugURL = `${baseURL}/api/v1/colon?slug=${encodedSlug}&method=${decodedMethod}${refresh ? '&refresh=true' : ''}`;
         console.log('make api call to', slugURL);
 
         setLoading(true);
@@ -346,7 +348,7 @@ export default function HomePage(props) {
         const slug1 = router.query.slug;
         if (slug1) {
             const encodedSlug = base64Encode(slug1.toString());
-            makeAPICall(encodedSlug, router.query.method ? router.query.method.toString() : 'GET');
+            makeAPICall(encodedSlug, router.query.method ? router.query.method.toString() : 'GET', true);
             refreshNavBar();
         }
     }
@@ -356,18 +358,14 @@ export default function HomePage(props) {
         reSlug();
     }
 
-    // function refreshTable(event) {
-    //     event.preventDefault();
-    //     console.log('refresh table');
-    //     reSlug();
-    // }
+    function refreshTable() {
+        console.log('refresh table');
+        reSlug();
+    }
 
     function refreshNavBar() {
-        console.log('refresh navbar');
         if (data != null && data.instances != null) {
-            console.log('refresh navbar 2');
             const instances = data.instances.slice().reverse();
-            console.log('setting active', instances[0].timestamp, instances);
 
             const _links = instances.map((item) => {
                 const timestamp = new Date(item.timestamp);
@@ -589,7 +587,7 @@ export default function HomePage(props) {
                                           color={response.status < 300 ? 'green' : response.status < 400 ? 'yellow' : 'red'}
                                           radius="xs"
                                           size="md"
-                                          variant="filled"
+                                          variant="dot"
                                         >
                                             {response.method}
                                         </Badge>
@@ -627,7 +625,28 @@ export default function HomePage(props) {
                                 </tr>
                                 <tr className={classes.tableRow}>
                                     <td className={classes.tableKey}>TIMESTAMP </td>
-                                    <td className={classes.tableValue}>{new Date(response.timestamp).toLocaleString()}</td>
+                                    <td className={classes.tableValue}>
+                                        <Group spacing="xs">
+                                        <Tooltip
+                                            label={new Date(response.timestamp).toLocaleString()}
+                                            position="right"
+                                            withArrow
+                                            color="gray"
+                                        >
+                                            <Badge
+                                                color='gray'
+                                                radius="sm"
+                                                size="md"
+                                                variant="dot"
+                                            >
+                                                { format(response.timestamp) }
+                                            </Badge>
+                                        </Tooltip>
+                                        <ActionIcon onClick={() => refreshTable()} color="gray" variant="outline" size="xs">
+                                            <IconRefresh size={12} stroke={2} />
+                                        </ActionIcon>
+                                        </Group>
+                                    </td>
                                 </tr>
                             </tbody>
                             </table>

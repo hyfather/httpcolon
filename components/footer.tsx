@@ -35,6 +35,13 @@ const useStyles = createStyles((theme) => ({
         },
     },
 
+    logoborder: {
+        background: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.grape[3], to: theme.colors.blue[3], deg: 200 }) : theme.colors.gray[0],
+        borderStyle: 'solid',
+        borderWidth: theme.colorScheme === 'dark' ? '4px' : '1px',
+        borderImage: 'linear-gradient(45deg, #E599F7, #74C0FC) 1',
+    },
+
     description: {
         marginTop: 5,
 
@@ -221,8 +228,18 @@ export function FooterLinks({ setDrawerOpened, setDrawerFocus }: FooterLinksProp
         <footer className={classes.footer}>
             <Container className={classes.inner}>
                 <div className={classes.logo}>
+                    <Group spacing="xs">
+                    <Avatar
+                        className={classes.logoborder}
+                        src="/httpcolon3.png"
+                        alt="it's me, http:colon"
+                        size="sm"
+                        >
+                    </Avatar>
+
                     <Text
                       size="xl"
+                      mt={8}
                       weight={700}
                       className={classes.title}
                       variant="gradient"
@@ -233,6 +250,9 @@ export function FooterLinks({ setDrawerOpened, setDrawerFocus }: FooterLinksProp
                     >
                         HTTP:COLON
                     </Text>
+
+                    </Group>
+
                     <Text size="xs" color="dimmed" className={classes.description}
                           sx={{
                               fontFamily: 'Monaco, monospace',

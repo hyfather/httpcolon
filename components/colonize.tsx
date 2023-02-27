@@ -21,6 +21,7 @@ import { useForm } from '@mantine/form';
 interface ColonizeProps {
     focus: boolean;
     setRedirect: Function;
+    onSubmit: Function;
 }
 
 const useStyles = createStyles((theme) => ({
@@ -56,7 +57,7 @@ const INTERESTING_URLS = [
 function placeholderURL() {
     return INTERESTING_URLS[Math.floor(Math.random() * INTERESTING_URLS.length)];
 }
-export function ColonizeForm({ setRedirect, focus }: ColonizeProps) {
+export function ColonizeForm({ setRedirect, focus, onSubmit }: ColonizeProps) {
     const [inputValue, setInputValue] = useState('');
     const [methodValue, setMethodValue] = useState('GET');
     const [baseURL, setBaseURL] = useState<string>('');
@@ -78,9 +79,14 @@ export function ColonizeForm({ setRedirect, focus }: ColonizeProps) {
         <form onSubmit={form.onSubmit((values) => {
             console.log('redirecting', inputValue);
             const strippedUrl = inputValue.replace(/(^\w+:|^)\/\//, '').split('?')[0];
-            const redirectUrl = methodValue === 'GET' ? (`${baseURL}/${strippedUrl}`) : (`${baseURL}/${strippedUrl}?method=${methodValue}`);
-            console.log(`redirectUrl: ${redirectUrl}/${methodValue}`);
-            setRedirect(redirectUrl);
+            if (onSubmit != null) {
+                setInputValue(strippedUrl);
+                onSubmit(strippedUrl, methodValue);
+            } else {
+                const redirectUrl = methodValue === 'GET' ? (`${baseURL}/${strippedUrl}`) : (`${baseURL}/${strippedUrl}?method=${methodValue}`);
+                console.log(`redirectUrl: ${redirectUrl}/${methodValue}`);
+                setRedirect(redirectUrl);
+            }
         })}
         >
             <Group spacing="sm">

@@ -346,6 +346,7 @@ export default function HomePage(props) {
 
     function reSlug() {
         const slug1 = router.query.slug;
+        setSlug(slug1);
         if (slug1) {
             const encodedSlug = base64Encode(slug1.toString());
             makeAPICall(encodedSlug, router.query.method ? router.query.method.toString() : 'GET', true);
@@ -492,14 +493,14 @@ export default function HomePage(props) {
                                         {/*  whileHover={{ scale: 1.2, rotate: 90 }}*/}
                                         {/*  whileTap={{ scale: 0.7, rotate: -90, borderRadius: '100%' }}*/}
                                         {/*>*/}
-                                        {/*    <Avatar*/}
-                                        {/*      className={classes.logo}*/}
-                                        {/*      src="/httpcolon.png"*/}
-                                        {/*      alt="it's me, http:colon"*/}
-                                        {/*      size="lg"*/}
-                                        {/*      radius="md"*/}
-                                        {/*      onClick={goHome}*/}
-                                        {/*    />*/}
+                                            <Avatar
+                                              className={classes.logo}
+                                              src="/httpcolon3.png"
+                                              alt="it's me, http:colon"
+                                              size="lg"
+                                              radius="md"
+                                              onClick={goHome}
+                                            />
                                         {/*</motion.div>*/}
                                         <Text
                                             ml="sm"
@@ -520,11 +521,12 @@ export default function HomePage(props) {
                                             variant="outline"
                                             size="xs"
                                             radius="xs"
+                                            mt={15}
                                         >BETA</Badge>
 
                                     </Group>
                                     {slug &&
-                                        <ColonizeForm setRedirect={setRedirect} focus={false} />
+                                        <ColonizeForm setRedirect={setRedirect} focus={false} onSubmit={reSlugTo} />
                                     }
                                 </Group>
                       </Header>}
@@ -675,7 +677,7 @@ export default function HomePage(props) {
                     <Space h="xl" />
                     <Space h="xl" />
                     <Center>
-                        <ColonizeForm setRedirect={setRedirect} focus />
+                        <ColonizeForm setRedirect={setRedirect} focus onSubmit={null} />
                     </Center>
                     <Space h="xl" />
                     <Space h="xl" />

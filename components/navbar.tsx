@@ -15,6 +15,7 @@ import {IconClock, IconEdit, IconMoon, IconSun} from '@tabler/icons';
 import GitHubButton from 'react-github-btn';
 import {useEffect, useState} from 'react';
 import {bool} from "prop-types";
+import { format } from 'timeago.js';
 
 interface ColonNavbarProps {
     navLinks: [];
@@ -103,8 +104,6 @@ export function ColonNavbar({ themeSwich, data, setResponse, refreshActive, setR
             console.log('setting active', instances[0].timestamp, instances);
 
             const _links = instances.map((item) => {
-                const timestamp = new Date(item.timestamp);
-                const timestampLabel = timestamp.getDay() === new Date().getDay() ? timestamp.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric' }) : timestamp.toLocaleString('en-US', { year: '2-digit', month: 'numeric', day: 'numeric' });
                 return <Anchor
                     className={item.timestamp === active ? classes.linkActive : classes.link}
                     key={item.timestamp}
@@ -118,12 +117,12 @@ export function ColonNavbar({ themeSwich, data, setResponse, refreshActive, setR
                 >
                     <Group position="apart">
                         <Badge
-                            radius="xs"
-                            size="md"
+                            radius="sm"
+                            size="xs"
                             variant={item.timestamp === active ? 'filled' : 'light'}
                             color='gray'
                         >
-                            {timestampLabel}
+                            {format(item.timestamp)}
                         </Badge>
                         <Badge
                             radius="sm"

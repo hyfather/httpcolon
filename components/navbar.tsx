@@ -1,4 +1,5 @@
 import {
+    ActionIcon,
     Anchor,
     Badge,
     Center,
@@ -11,7 +12,7 @@ import {
     Space,
     Stack, Text
 } from '@mantine/core';
-import {IconClock, IconEdit, IconMoon, IconSun} from '@tabler/icons';
+import {IconClock, IconEdit, IconMoon, IconSun, IconX} from '@tabler/icons';
 import GitHubButton from 'react-github-btn';
 import {useEffect, useState} from 'react';
 import {bool} from "prop-types";
@@ -27,13 +28,14 @@ interface ColonNavbarProps {
 
     setRefreshActive: Function,
 
+    setNavOpened: Function,
 }
 
 const useStyles = createStyles((theme, _params, getRef) => {
     const icon = getRef('icon');
     return {
                 navbar: {
-                    zIndex: 'unset',
+                    zIndex: 1,
                 },
 
                 footer: {
@@ -90,7 +92,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
     };
     });
 
-export function ColonNavbar({ themeSwich, data, setResponse, refreshActive, setRefreshActive }: ColonNavbarProps) {
+export function ColonNavbar({ themeSwich, data, setResponse, refreshActive, setRefreshActive, setNavOpened }: ColonNavbarProps) {
     const { classes, themes } = useStyles();
     const [navLinks, setNavLinks] = useState([]);
     const [active, setActive] = useState('');
@@ -160,7 +162,7 @@ export function ColonNavbar({ themeSwich, data, setResponse, refreshActive, setR
     return (<Navbar height="100%" width={{ sm: 300 }} p="md" className={classes.navbar}>
         <Navbar.Section grow>
             <Center>
-                <Container className={classes.linkTitle}>
+                <Container className={classes.linkTitle} mt={10}>
                     <Badge
                         radius="sm"
                         size="sm"
@@ -169,6 +171,14 @@ export function ColonNavbar({ themeSwich, data, setResponse, refreshActive, setR
                     >
                         {data.destination}
                     </Badge>
+                    <ActionIcon
+                        onClick={() => setNavOpened(false)}
+                        size="xs"
+                        variant="filled"
+                        ml={10}
+                        >
+                        <IconX size={14} stroke={2} />
+                    </ActionIcon>
                 </Container>
             </Center>
             <Space h="sm" />

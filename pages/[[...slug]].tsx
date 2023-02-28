@@ -23,7 +23,7 @@ import {
     Container,
     Space,
     useMantineTheme,
-    Drawer, MediaQuery, Badge, TextInput, ActionIcon, Aside, Transition, Tooltip,
+    Drawer, MediaQuery, Badge, TextInput, ActionIcon, Aside, Transition, Tooltip, Loader,
 } from '@mantine/core';
 import { format } from 'timeago.js';
 
@@ -207,6 +207,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
             borderStyle: 'solid',
             borderWidth: theme.colorScheme === 'dark' ? '1px' : '1px',
             borderImage: 'linear-gradient(45deg, #E599F7, #74C0FC) 1',
+            zIndex: 999,
         },
     };
 });
@@ -351,6 +352,7 @@ export default function HomePage(props) {
         if (slug1) {
             const encodedSlug = base64Encode(slug1.toString());
             makeAPICall(encodedSlug, router.query.method ? router.query.method.toString() : 'GET', true);
+            setEValue(slug1.toString());
             refreshNavBar();
         }
     }
@@ -478,7 +480,7 @@ export default function HomePage(props) {
               })}
               navbar={<Transition mounted={navOpened && !!slug} transition="slide-right" duration={0} timingFunction="ease">
                   {(styles) =>
-                      <ColonNavbar style={styles} themeSwich={ThemeSwitch()} hidden={!slug} data={data} setResponse={setResponse} refreshActive={refreshActive} setRefreshActive={setRefreshActive} />
+                      <ColonNavbar style={styles} themeSwich={ThemeSwitch()} hidden={!slug} data={data} setResponse={setResponse} refreshActive={refreshActive} setRefreshActive={setRefreshActive} setNavOpened={setNavOpened} />
                   }
                       </Transition>}
               aside={<Transition mounted={drawerOpened} transition="slide-left" duration={0} timingFunction="ease">
@@ -516,7 +518,7 @@ export default function HomePage(props) {
                                             variant="outline"
                                             size="xs"
                                             radius="sm"
-                                            mt={10}
+                                            mt={11}
                                         >BETA</Badge>
 
                                     </Group>
@@ -533,18 +535,18 @@ export default function HomePage(props) {
 
                 <Analytics />
 
-                {slug ? <Group position="apart">
-                    <Group>
-                        <Button
-                            mt={10}
-                          leftIcon={navOpened ? <IconX size={14} stroke={2} /> : <IconHistory size={14} stroke={2} />}
+                {slug ? <Group position="apart" mt={10}>
+                    <Group
+                    >
+                        {!navOpened && <Button
+                          leftIcon={<IconHistory size={14} stroke={2} />}
                           variant="light"
-                          color={navOpened ? 'gray' : 'grape'}
+                          color="grape"
                           size="xs"
                           onClick={() => toggleNav()}
                         >
                             History
-                        </Button>
+                        </Button>}
                     </Group>
                     <Group position="right">
                         <Button
@@ -572,12 +574,14 @@ export default function HomePage(props) {
                     <div />
                         <Space h="md" />
                         <Container>
+                            {!response.status && <Center> <Loader color="gray" /> </Center>}
                             <table>
+                        {!!response.status &&
                             <tbody>
                             <tr className={classes.tableRow}>
                                 <td className={classes.tableKey}>URL</td>
                                 <td className={classes.tableValue}>
-                                    <ColonizeFormV2 value={eValue} method={response.method} onSubmit={reSlugTo} isEditing={colonizeFormEditable} setIsEditing={setColonizeFormEditable} />
+                                    <ColonizeFormV2 inputValue={eValue} setInputValue={setEValue} method={response.method} onSubmit={reSlugTo} isEditing={colonizeFormEditable} setIsEditing={setColonizeFormEditable} />
                                 </td>
                             </tr>
                                 <tr className={classes.tableRow}>
@@ -650,7 +654,7 @@ export default function HomePage(props) {
                                         </Group>
                                     </td>
                                 </tr>
-                            </tbody>
+                            </tbody>}
                             </table>
 
                          {/*<TaskCard*/}
@@ -671,7 +675,7 @@ export default function HomePage(props) {
                         <Space h="md" />
                     </div>
                         <div id="headers">
-                           <TableSort data={response.payload} headerMetaData={headerData} setHeaderMetadata={setHeaderData} updateTable={updateTable} setDrawerFocus={setDrawerFocus} setDrawerOpened={setDrawerOpened} />
+                            {!!response.payload && <TableSort data={response.payload} headerMetaData={headerData} setHeaderMetadata={setHeaderData} updateTable={updateTable} setDrawerFocus={setDrawerFocus} setDrawerOpened={setDrawerOpened} />}
                         </div>
                          </Container> : <Container>
                     <Space h="xl" />

@@ -16,34 +16,34 @@ const useStyles = createStyles((theme, _params, getRef) => ({
         },
     }));
 
-function ColonizeFormV2({ value, method, onSubmit, isEditing, setIsEditing }) {
-    const [inputValue, setInputValue] = useState(value);
+function ColonizeFormV2({ inputValue, method, onSubmit, isEditing, setIsEditing, setInputValue }) {
+    // const [inputValue, setInputValue] = useState(value);
     const { classes, theme } = useStyles();
     const InputRef = useRef<HTMLInputElement>(null);
     const [methodValue, setMethodValue] = useState(method || 'GET');
     const form = useForm({initialValues: { url: '', method: '' }});
 
     function handleEditClick() {
-        setInputValue(value);
+        // setInputValue(value);
         InputRef.current?.focus();
     }
 
     function handleSubmitClick() {
-        const strippedUrl = (inputValue || value).replace(/(^\w+:|^)\/\//, '').split('?')[0];
+        const strippedUrl = inputValue.replace(/(^\w+:|^)\/\//, '').split('?')[0];
         onSubmit(strippedUrl, methodValue || method);
         setIsEditing(false);
     }
 
     function backOut() {
         setIsEditing(false);
-        setInputValue(value);
+        // setInputValue(value);
         setMethodValue(method);
     }
 
     function handleInputChange(event) {
         setInputValue(event.target.value);
     }
-
+    
     useEffect(() => {
         if (isEditing) {
             handleEditClick();
@@ -91,7 +91,7 @@ function ColonizeFormV2({ value, method, onSubmit, isEditing, setIsEditing }) {
                     <TextInput
                       size="sm"
                       type="text"
-                      value={inputValue || value}
+                      value={inputValue}
                       readOnly
                       color="grape"
                       variant="filled"

@@ -6,9 +6,9 @@ import {
     Group,
     Anchor,
     useMantineTheme,
-    Drawer,
+    Stack,
     Badge,
-    Tooltip, Avatar
+    Tooltip, Avatar, MediaQuery, Space
 } from '@mantine/core';
 import { IconBrandTwitter, IconBrandGithub, IconBrandInstagram } from '@tabler/icons';
 import { useState } from 'react';
@@ -65,7 +65,7 @@ const useStyles = createStyles((theme) => ({
         display: 'flex',
         flexWrap: 'wrap',
 
-        [theme.fn.smallerThan('sm')]: {
+        [theme.fn.smallerThan('md')]: {
             display: 'none',
         },
     },
@@ -202,7 +202,10 @@ export function FooterLinks({ setDrawerOpened, setDrawerFocus }: FooterLinksProp
                   fontFamily: 'Monaco, monospace',
               }}
               component="a"
-              onClick={() => setDrawerFocus(link.label) || setDrawerOpened(true)}
+              onClick={() => {
+                  setDrawerOpened(true);
+                  setDrawerFocus(link.label);
+              }}
             >
                 {link.label}
             </Text>
@@ -271,17 +274,19 @@ export function FooterLinks({ setDrawerOpened, setDrawerFocus }: FooterLinksProp
 
                 </div>
                 <div className={classes.groups}>{groups}</div>
+
             </Container>
             <Group className={classes.afterFooter} position="apart">
-                <Group ml="20px">
-
+                <Stack ml="20px">
                     <Text variant="gradient" gradient={{ from: 'grape', to: 'blue', deg: 200 }} size="xs">
-                        © 2023 HTTP:COLON
-                        <br />
-                        All rights reserved ✨ Made in San Francisco
+                        © 2023 HTTP:COLON // All rights reserved
                     </Text>
 
-                </Group>
+                    <Text variant="gradient" gradient={{ from: 'grape', to: 'blue', deg: 200 }} size="xs">
+                        ✨ Made in San Francisco
+                    </Text>
+
+                </Stack>
                 <Group spacing={10} className={classes.social} position="right" noWrap mr="20px">
                          <Anchor href="https://twitter.com/nmungel" target="_blank">
                             <IconBrandTwitter size={18} stroke={1.5} />

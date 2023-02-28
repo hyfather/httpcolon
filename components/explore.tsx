@@ -91,14 +91,11 @@ export function Explore() {
               spacing="xl"
               breakpoints={[
                 { maxWidth: 980, cols: 3, spacing: 'md' },
-                { maxWidth: 755, cols: 2, spacing: 'sm' },
+                { maxWidth: 920, cols: 2, spacing: 'md' },
                 { maxWidth: 600, cols: 1, spacing: 'sm' },
             ]}
             >
-                {/*<Transition mounted={exploreItems.length > 0} transition="fade" duration={400} timingFunction="ease">*/}
                     {exploreItems}
-                {/*</Transition>*/}
-
             </SimpleGrid>
         </Container>
     );

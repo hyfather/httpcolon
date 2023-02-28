@@ -90,15 +90,17 @@ export function ColonizeForm({ setRedirect, focus, onSubmit }: ColonizeProps) {
         })}
         >
             <Group spacing="sm">
-                <NativeSelect variant="filled" value={methodValue} data={['GET', 'POST', 'PUT', 'DELETE']} onChange={(event) => event.currentTarget.value && setMethodValue(event.currentTarget.value)} />
+                <NativeSelect size="xs" variant="filled" value={methodValue} data={['GET', 'POST', 'PUT', 'DELETE']} onChange={(event) => event.currentTarget.value && setMethodValue(event.currentTarget.value)} />
                 <TextInput
                     placeholder={placeHolder}
-                    className={classes.inputBox}
-                    icon={<IconWorld size={18} />}
+                    // className={classes.inputBox}
+                    width={{ sm: 200, lg: 400 }}
+                    icon={<IconWorld size={12} />}
+                    size="xs"
                     autoComplete="on"
                     value={inputValue}
                     onChange={(event) => setInputValue(event.target.value)} ref={inputRef} />
-                <Button type="submit" variant="gradient" gradient={{ from: theme.colors.blue[10], to: theme.colors.grape[7] }}>
+                <Button size="xs" type="submit" variant="gradient" gradient={{ from: theme.colors.blue[10], to: theme.colors.grape[7] }}>
                     GO
                 </Button>
             </Group>

@@ -60,7 +60,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
 
                 link: {
                     ...theme.fn.focusStyles(),
-                    display: 'flex',
+                    display: 'block',
                     alignItems: 'center',
                     textDecoration: 'none',
                     fontSize: theme.fontSizes.sm,
@@ -77,7 +77,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
 
                 linkActive: {
                     ...theme.fn.focusStyles(),
-                    display: 'flex',
+                    display: 'block',
                     alignItems: 'center',
                     textDecoration: 'none',
                     fontSize: theme.fontSizes.sm,
@@ -116,6 +116,24 @@ export function ColonNavbar({ themeSwich, data, setResponse, refreshActive, setR
                     }}
                 >
                     <Group position="apart">
+                        <Group>
+                            <Badge
+                                radius="sm"
+                                size="xs"
+                                variant={item.timestamp === active ? 'filled' : 'light'}
+                                color={item.status < 300 ? 'green' : 'red'}
+                            >
+                                {item.method}
+                            </Badge>
+                            <Badge
+                                radius="sm"
+                                size="xs"
+                                variant={item.timestamp === active ? 'filled' : 'light'}
+                                color={item.latency < 200 ? 'green' : item.latency < 600 ? 'yellow' : item.latency < 800 ? 'orange' : 'red'}
+                            >
+                                {item.latency} ms
+                            </Badge>
+                        </Group>
                         <Badge
                             radius="sm"
                             size="xs"
@@ -123,22 +141,6 @@ export function ColonNavbar({ themeSwich, data, setResponse, refreshActive, setR
                             color='gray'
                         >
                             {format(item.timestamp)}
-                        </Badge>
-                        <Badge
-                            radius="sm"
-                            size="xs"
-                            variant={item.timestamp === active ? 'filled' : 'light'}
-                            color={item.status < 300 ? 'green' : 'red'}
-                        >
-                            {item.method}
-                        </Badge>
-                        <Badge
-                            radius="sm"
-                            size="xs"
-                            variant={item.timestamp === active ? 'filled' : 'light'}
-                            color={item.latency < 200 ? 'green' : item.latency < 600 ? 'yellow' : item.latency < 800 ? 'orange' : 'red'}
-                        >
-                            {item.latency} ms
                         </Badge>
                     </Group>
                  </Anchor>;

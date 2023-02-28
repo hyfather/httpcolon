@@ -16,6 +16,8 @@ import {
 } from '@mantine/core';
 import { IconCopy, IconEdit, IconLink, IconRefresh, IconUpload } from '@tabler/icons';
 import {useEffect, useState} from "react";
+import { format } from 'timeago.js';
+
 
 interface TaskCardProps {
     url: string;
@@ -69,7 +71,6 @@ const useStyles = createStyles((theme) => ({
 export function TaskCard({ url, status, statusMsg, latency, method, timestamp, copyURL, refreshTable, hideRequestParams, clickable }: TaskCardProps) {
     const { classes, theme } = useStyles();
     const timestamp_ = new Date(timestamp);
-    const timestampLabel = timestamp_.getDay() === new Date().getDay() ? timestamp_.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric' }) : timestamp_.toLocaleString('en-US', { year: '2-digit', month: 'numeric', day: 'numeric' });
 
     const strippedUrl = url ? url.replace(/(^\w+:|^)\/\//, '').split('?')[0] : '';
     const href = url ? `/${strippedUrl}` : '/';
@@ -180,7 +181,7 @@ export function TaskCard({ url, status, statusMsg, latency, method, timestamp, c
                       color="gray"
                       mt={4}
                     >
-                        {clickable ? timestampLabel : timestamp_.toLocaleString()}
+                        {format(timestamp_)}
                     </Badge>
                     {!clickable &&
                         <Anchor

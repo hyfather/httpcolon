@@ -46,6 +46,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
             marginBottom: theme.spacing.md * 1.5,
             borderBottom: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2]
                 }`,
+            backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.gray[7], to: theme.colors.gray[9], deg: 200 }) : theme.fn.gradient({ from: theme.colors.gray[0], to: theme.colors.grape[0], deg: 0 }),
         },
 
         drawer: {
@@ -475,7 +476,7 @@ export default function HomePage(props) {
               styles={(theme) => ({
                   main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
               })}
-              navbar={<Transition mounted={navOpened} transition="slide-right" duration={0} timingFunction="ease">
+              navbar={<Transition mounted={navOpened && !!slug} transition="slide-right" duration={0} timingFunction="ease">
                   {(styles) =>
                       <ColonNavbar style={styles} themeSwich={ThemeSwitch()} hidden={!slug} data={data} setResponse={setResponse} refreshActive={refreshActive} setRefreshActive={setRefreshActive} />
                   }
@@ -486,13 +487,9 @@ export default function HomePage(props) {
                               <ColonDocs headerMetaData={headerData} focus={drawerFocus} setFocus={setDrawerFocus} setDrawerOpened={setDrawerOpened} />
                           </Aside> }
                      </Transition>}
-              header={<Header height={80} p="xs">
-                                <Group spacing="sm" position="apart">
-                                    <Group spacing="sm">
-                                        {/*<motion.div*/}
-                                        {/*  whileHover={{ scale: 1.2, rotate: 90 }}*/}
-                                        {/*  whileTap={{ scale: 0.7, rotate: -90, borderRadius: '100%' }}*/}
-                                        {/*>*/}
+              header={<Header height={50} p="xs" className={classes.header}>
+                                <Group spacing="sm" position="apart" >
+                                    <Group spacing="sm" align="vertical">
                                             <Avatar
                                               className={classes.logo}
                                               src="/httpcolon3.png"
@@ -501,13 +498,11 @@ export default function HomePage(props) {
                                               radius="md"
                                               onClick={goHome}
                                             />
-                                        {/*</motion.div>*/}
                                         <Text
-                                            ml="sm"
-                                          size={36}
-                                          onClick={goHome}
+                                          size={24}
                                           sx={{
                                                 fontFamily: 'Monaco, monospace',
+                                                fontWeight: 600,
                                             }}
                                           variant="gradient"
                                           gradient={{ from: 'grape', to: 'blue', deg: 200 }}
@@ -520,13 +515,17 @@ export default function HomePage(props) {
                                             color="gray"
                                             variant="outline"
                                             size="xs"
-                                            radius="xs"
-                                            mt={15}
+                                            radius="sm"
+                                            mt={10}
                                         >BETA</Badge>
 
                                     </Group>
                                     {slug &&
-                                        <ColonizeForm setRedirect={setRedirect} focus={false} onSubmit={reSlugTo} />
+                                        <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
+                                            <Group position="right" mt={-25}>
+                                                <ColonizeForm setRedirect={setRedirect} focus={false} onSubmit={reSlugTo} />
+                                            </Group>
+                                        </MediaQuery>
                                     }
                                 </Group>
                       </Header>}
@@ -537,6 +536,7 @@ export default function HomePage(props) {
                 {slug ? <Group position="apart">
                     <Group>
                         <Button
+                            mt={10}
                           leftIcon={navOpened ? <IconX size={14} stroke={2} /> : <IconHistory size={14} stroke={2} />}
                           variant="light"
                           color={navOpened ? 'gray' : 'grape'}
@@ -587,7 +587,7 @@ export default function HomePage(props) {
                                         <Group spacing="xs">
                                         <Badge
                                           color={response.status < 300 ? 'green' : response.status < 400 ? 'yellow' : 'red'}
-                                          radius="xs"
+                                          radius="sm"
                                           size="md"
                                           variant="dot"
                                         >
@@ -604,7 +604,7 @@ export default function HomePage(props) {
                                     <td className={classes.tableValue}>
                                         <Badge
                                           color={response.status < 300 ? 'green' : response.status < 400 ? 'yellow' : 'red'}
-                                          radius="xs"
+                                          radius="sm"
                                           size="md"
                                           variant="dot"
                                         >
@@ -617,7 +617,7 @@ export default function HomePage(props) {
                                     <td className={classes.tableValue}>
                                         <Badge
                                           color={response.latency < 200 ? 'green' : response.latency < 600 ? 'yellow' : 'red'}
-                                          radius="xs"
+                                          radius="sm"
                                           size="md"
                                           variant="dot"
                                         >
@@ -644,7 +644,7 @@ export default function HomePage(props) {
                                                 { format(response.timestamp) }
                                             </Badge>
                                         </Tooltip>
-                                        <ActionIcon onClick={() => refreshTable()} color="gray" variant="outline" size="xs">
+                                        <ActionIcon onClick={() => refreshTable()} color="green" variant="outline" size="xs">
                                             <IconRefresh size={12} stroke={2} />
                                         </ActionIcon>
                                         </Group>
@@ -698,20 +698,6 @@ export default function HomePage(props) {
                                             <Space h="xl" />
                                             <Center>{ThemeSwitch()}</Center>
                                         </Container> }
-
-                {/*<Drawer*/}
-                {/*  className={classes.drawer}*/}
-                {/*  opened={drawerOpened}*/}
-                {/*  onClose={() => setDrawerOpened(false)}*/}
-                {/*  padding="xl"*/}
-                {/*  size="xl"*/}
-                {/*  position="right"*/}
-                {/*  withCloseButton={false}*/}
-                {/*  // withOverlay={false}*/}
-                {/*  // lockScroll={false}*/}
-                {/*>*/}
-                {/*    /!*<ColonDocs headerMetaData={headerData} focus={drawerFocus} setFocus={setDrawerFocus} setDrawerOpened={setDrawerOpened} />*!/*/}
-                {/*</Drawer>*/}
 
                 <FooterLinks setDrawerOpened={setDrawerOpened} setDrawerFocus={setDrawerFocus} />
 

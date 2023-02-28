@@ -46,7 +46,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
             marginBottom: theme.spacing.md * 1.5,
             borderBottom: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2]
                 }`,
-            backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.gray[7], to: theme.colors.gray[9], deg: 200 }) : theme.fn.gradient({ from: theme.colors.gray[0], to: theme.colors.grape[0], deg: 0 }),
+            backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.dark[7], to: theme.colors.dark[6], deg: 0 }) : theme.fn.gradient({ from: theme.colors.gray[0], to: theme.colors.grape[0], deg: 20 }),
         },
 
         drawer: {
@@ -205,7 +205,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
         logo: {
             background: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.grape[3], to: theme.colors.blue[3], deg: 200 }) : theme.colors.gray[0],
             borderStyle: 'solid',
-            borderWidth: theme.colorScheme === 'dark' ? '4px' : '1px',
+            borderWidth: theme.colorScheme === 'dark' ? '1px' : '1px',
             borderImage: 'linear-gradient(45deg, #E599F7, #74C0FC) 1',
         },
     };
@@ -495,7 +495,7 @@ export default function HomePage(props) {
                                               src="/httpcolon3.png"
                                               alt="it's me, http:colon"
                                               size="lg"
-                                              radius="md"
+                                              radius={0}
                                               onClick={goHome}
                                             />
                                         <Text

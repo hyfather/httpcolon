@@ -1,6 +1,11 @@
 import React, {createRef, useEffect, useRef, useState} from 'react';
 import { ActionIcon, Button, Container, createStyles, Group, NativeSelect, TextInput } from '@mantine/core';
-import { IconArrowForward, IconCheck, IconDownload, IconEdit, IconWorld, IconWorldLatitude, IconX } from '@tabler/icons';
+import {
+    IconCodeCircle,
+    IconEdit,
+    IconWorld,
+    IconX
+} from '@tabler/icons';
 import {useForm} from "@mantine/form";
 
 const useStyles = createStyles((theme, _params, getRef) => ({
@@ -43,7 +48,7 @@ function ColonizeFormV2({ inputValue, method, onSubmit, isEditing, setIsEditing,
     function handleInputChange(event) {
         setInputValue(event.target.value);
     }
-    
+
     useEffect(() => {
         if (isEditing) {
             handleEditClick();
@@ -76,7 +81,9 @@ function ColonizeFormV2({ inputValue, method, onSubmit, isEditing, setIsEditing,
                           </ActionIcon>
                         </Container>}
                     />
-                    <NativeSelect size="sm" variant="filled" value={methodValue} data={['GET', 'POST', 'PUT', 'DELETE']} onChange={(event) => event.currentTarget.value && setMethodValue(event.currentTarget.value)} />
+                    <NativeSelect size="sm"
+                                  icon={<IconCodeCircle size={18} />}
+                                  variant="filled" value={methodValue} data={['GET', 'POST', 'PUT', 'DELETE']} onChange={(event) => event.currentTarget.value && setMethodValue(event.currentTarget.value)} />
                     <Button size="sm" type="submit" variant="gradient" gradient={{ from: theme.colors.blue[10], to: theme.colors.grape[7] }}>
                         GO
                     </Button>

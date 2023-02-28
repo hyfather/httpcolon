@@ -6,7 +6,12 @@ import {
     IconPlus,
     IconMoon,
     IconSun,
-    IconBook, IconEdit, IconHistory, IconCross, IconX, IconRefresh,
+    IconBook,
+    IconEdit,
+    IconHistory,
+    IconX,
+    IconRefresh,
+    IconCodeCircle,
 } from '@tabler/icons';
 import { Analytics } from '@vercel/analytics/react';
 
@@ -23,7 +28,7 @@ import {
     Container,
     Space,
     useMantineTheme,
-    Drawer, MediaQuery, Badge, TextInput, ActionIcon, Aside, Transition, Tooltip, Loader,
+    Drawer, MediaQuery, Badge, TextInput, ActionIcon, Aside, Transition, Tooltip, Loader, Select,
 } from '@mantine/core';
 import { format } from 'timeago.js';
 
@@ -587,19 +592,23 @@ export default function HomePage(props) {
                                 <tr className={classes.tableRow}>
                                     <td className={classes.tableKey}>METHOD</td>
                                     <td className={classes.tableValue}>
-                                        {/*<ColonizeMethodForm value={eValue} method={response.method} onSubmit={reSlugTo} />*/}
                                         <Group spacing="xs">
-                                        <Badge
-                                          color={response.status < 300 ? 'green' : response.status < 400 ? 'yellow' : 'red'}
-                                          radius="sm"
-                                          size="md"
-                                          variant="dot"
-                                        >
-                                            {response.method}
-                                        </Badge>
-                                        {!colonizeFormEditable && <ActionIcon onClick={() => setColonizeFormEditable(true)} color="grape" variant="outline" size="xs">
-                                            <IconEdit size={12} stroke={2} />
-                                                                  </ActionIcon>}
+                                            <Select
+                                                placeholder={response.method}
+                                                readOnly
+                                                variant="filled"
+                                                defaultChecked={response.method}
+                                                icon={<IconCodeCircle size={18} stroke={2} />}
+                                                rightSection={colonizeFormEditable ? <IconEdit size={12} stroke={2} /> : <ActionIcon onClick={() => setColonizeFormEditable(true)} color="grape" variant="outline" size="xs">
+                                                    <IconEdit size={12} stroke={2} />
+                                                </ActionIcon>}
+                                                data={[
+                                                    { value: 'GET', label: 'GET' },
+                                                    { value: 'POST', label: 'POST' },
+                                                    { value: 'PUT', label: 'PUT' },
+                                                    { value: 'DELETE', label: 'DELETE' },
+                                                ]}
+                                            />
                                         </Group>
                                     </td>
                                 </tr>

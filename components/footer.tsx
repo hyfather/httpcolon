@@ -242,7 +242,7 @@ export function FooterLinks({ setDrawerOpened, setDrawerFocus }: FooterLinksProp
 
                     <Text
                       size="xl"
-                      mt={8}
+                      mt={0}
                       weight={700}
                       className={classes.title}
                       variant="gradient"
@@ -253,22 +253,24 @@ export function FooterLinks({ setDrawerOpened, setDrawerFocus }: FooterLinksProp
                     >
                         HTTP:COLON
                     </Text>
+                        <Text size="xs" color="dimmed" className={classes.description}
+                              sx={{
+                                  fontFamily: 'Monaco, monospace',
+                              }}
+                              mt={-5}
+                              ml={0}
+                        >
+                            The best tool for HTTP
+                        </Text>
 
                     </Group>
 
-                    <Text size="xs" color="dimmed" className={classes.description}
-                          sx={{
-                              fontFamily: 'Monaco, monospace',
-                          }}
-                    >
-                        The best tool for HTTP
-                    </Text>
                     <Tooltip color="gray" size="xs" label={"may crash your browser tab"} inline>
                         <Badge
                             color="gray"
                             variant="outline"
                             size="xs"
-                            radius="xs"
+                            radius="sm"
                         >BETA</Badge>
                     </Tooltip>
 
@@ -278,14 +280,12 @@ export function FooterLinks({ setDrawerOpened, setDrawerFocus }: FooterLinksProp
             </Container>
             <Group className={classes.afterFooter} position="apart">
                 <Stack ml="20px">
-                    <Text variant="gradient" gradient={{ from: 'grape', to: 'blue', deg: 200 }} size="xs">
+                    <Text variant="gradient" gradient={{ from: 'grape', to: 'blue', deg: 200 }} size={10}>
                         © 2023 HTTP:COLON // All rights reserved
                     </Text>
-
-                    <Text variant="gradient" gradient={{ from: 'grape', to: 'blue', deg: 200 }} size="xs">
+                    <Text variant="gradient" gradient={{ from: 'grape', to: 'blue', deg: 200 }} size={10} mt={-15} ml={40}>
                         ✨ Made in San Francisco
                     </Text>
-
                 </Stack>
                 <Group spacing={10} className={classes.social} position="right" noWrap mr="20px">
                          <Anchor href="https://twitter.com/nmungel" target="_blank">

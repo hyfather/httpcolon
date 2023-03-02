@@ -21,3 +21,6 @@ Tooltips and descriptions for headers and directives are located [here](https://
 - `jest:watch` – starts jest watch
 - `test` – runs `jest`, `prettier:check`, `lint` and `typecheck` scripts
 
+----
+
+<img src="https://github.com/hyfather/httpcolon/blob/master/public/httpcolon.png" width="200px" height="200px"/>

@@ -694,22 +694,10 @@ export default function HomePage(props) {
                     </Center>
                     <Space h="xl" />
                     <Space h="xl" />
-                                            <Text
-                                              size={28}
-                                              weight="bold"
-                                              variant="gradient"
-                                              gradient={{ from: 'grape', to: 'blue', deg: 100 }}
-                                              sx={{
-                                                      fontFamily: 'Monaco, monospace',
-                                                  }}
-                                            >
-                                                ✨EXPLORE
-                                            </Text>
-                                            <Space h="xl" />
-                                            <Explore />
-                                            <Space h="xl" />
-                                            <Space h="xl" />
-                                            <Center>{ThemeSwitch()}</Center>
+                    <Explore />
+                    <Space h="xl" />
+                    <Space h="xl" />
+                    <Center>{ThemeSwitch()}</Center>
                                         </Container> }
 
                 <FooterLinks setDrawerOpened={setDrawerOpened} setDrawerFocus={setDrawerFocus} />

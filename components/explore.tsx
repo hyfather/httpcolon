@@ -25,8 +25,8 @@ export function Explore() {
             method: 'GET',
         },
         {
-            url: 'https://www.instagram.com',
-            method: 'POST',
+            url: 'https://www.github.com',
+            method: 'GET',
         },
         {
             url: 'https://www.cloudflare.com',
@@ -86,17 +86,32 @@ export function Explore() {
 
     return (
         <Container>
-            <SimpleGrid
-              cols={3}
-              spacing="xl"
-              breakpoints={[
-                { maxWidth: 980, cols: 3, spacing: 'md' },
-                { maxWidth: 920, cols: 2, spacing: 'md' },
-                { maxWidth: 600, cols: 1, spacing: 'sm' },
-            ]}
+            {exploreItems.length > 0 && <Text
+                size={28}
+                weight="bold"
+                variant="gradient"
+                gradient={{ from: 'grape', to: 'blue', deg: 100 }}
+                sx={{
+                    fontFamily: 'Monaco, monospace',
+                }}
             >
+                ✨EXPLORE
+            </Text>}
+            <Space h="xl" />
+            <Container>
+                <SimpleGrid
+                  cols={3}
+                  spacing="xl"
+                  breakpoints={[
+                    { maxWidth: 980, cols: 3, spacing: 'md' },
+                    { maxWidth: 920, cols: 2, spacing: 'md' },
+                    { maxWidth: 600, cols: 1, spacing: 'sm' },
+                ]}
+                >
                     {exploreItems}
-            </SimpleGrid>
+                </SimpleGrid>
+            </Container>
         </Container>
+
     );
 }

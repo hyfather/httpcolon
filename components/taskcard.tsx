@@ -14,7 +14,7 @@ import {
     Space,
     Divider, createStyles, Tooltip, Anchor, Loader,
 } from '@mantine/core';
-import { IconCopy, IconEdit, IconLink, IconRefresh, IconUpload } from '@tabler/icons';
+import {IconCopy, IconEdit, IconLink, IconRefresh, IconSettings, IconUpload, IconWorld} from '@tabler/icons';
 import {useEffect, useState} from "react";
 import { format } from 'timeago.js';
 
@@ -110,7 +110,9 @@ export function TaskCard({ url, status, statusMsg, latency, method, timestamp, c
                 {loading ? <Loader color="black" /> : <Avatar
                   src={`${url}/favicon.ico`}
                   size={clickable ? 'xs' : 'md'}
-                />}
+                >
+                    <IconWorld size={clickable ? 12 : 16} />
+                </Avatar>}
 
             </Group>
             </Card.Section>

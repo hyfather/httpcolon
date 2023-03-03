@@ -544,10 +544,11 @@ export default function HomePage(props) {
                     <Group
                     >
                         {!navOpened && <Button
-                          leftIcon={<IconHistory size={14} stroke={2} />}
-                          variant="light"
+                          leftIcon={<IconHistory size={18} stroke={2} />}
+                          variant="outline"
                           color="grape"
-                          size="xs"
+                          size="sm"
+                          compact
                           onClick={() => toggleNav()}
                         >
                             History
@@ -555,19 +556,21 @@ export default function HomePage(props) {
                     </Group>
                     <Group position="right">
                         <Button
-                          leftIcon={<IconPlus size={14} stroke={2} />}
-                          variant="light"
+                          leftIcon={<IconPlus size={18} stroke={2} />}
+                          variant="outline"
                           color="grape"
-                          size="xs"
+                          size="sm"
+                          compact
                           onClick={goHome}
                         >
                             New URL
                         </Button>
                         <Button
-                          leftIcon={drawerOpened ? <IconX size={14} stroke={2} /> : <IconBook size={14} stroke={2} />}
-                          variant="light"
+                          leftIcon={drawerOpened ? <IconX size={18} stroke={2} /> : <IconBook size={18} stroke={2} />}
+                          variant="outline"
                           color={drawerOpened ? 'gray' : 'grape'}
-                          size="xs"
+                          size="sm"
+                          compact
                           onClick={() => toggleDocs()}
                         >
                             Docs

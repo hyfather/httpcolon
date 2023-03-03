@@ -2,6 +2,7 @@ import {
     ActionIcon,
     Anchor,
     Badge,
+    Button,
     Center,
     Container,
     createStyles,
@@ -12,7 +13,7 @@ import {
     Space,
     Stack, Text
 } from '@mantine/core';
-import {IconClock, IconEdit, IconMoon, IconSun, IconX} from '@tabler/icons';
+import {IconBrandGithub, IconClock, IconEdit, IconMoon, IconSun, IconX} from '@tabler/icons';
 import GitHubButton from 'react-github-btn';
 import {useEffect, useState} from 'react';
 import {bool} from "prop-types";
@@ -189,9 +190,18 @@ export function ColonNavbar({ themeSwich, data, setResponse, refreshActive, setR
             <Center>
                 <Stack>
                     {themeSwich}
-                    <GitHubButton href="https://github.com/hyfather/httpcolon/tree/master/json" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" aria-label="Star hyfather/httpcolon on GitHub">
-                        Corrections
-                    </GitHubButton>
+                    <Anchor href="https://github.com/hyfather/httpcolon/tree/master/json" target="_blank" rel="noopener noreferrer">
+                    <Button
+                    variant="outline"
+                    color="dark"
+                    size="sm"
+                    compact
+                    leftIcon={
+                        <IconBrandGithub size={18} stroke={2} color="black" />}
+                    >
+                         Corrections
+                    </Button>
+                    </Anchor>
                 </Stack>
             </Center>
         </Navbar.Section>

@@ -17,6 +17,7 @@ import {
 import { IconCopy, IconEdit, IconLink, IconRefresh, IconUpload, IconWorld } from '@tabler/icons';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from '@mantine/form';
+import {useEventListener} from "@mantine/hooks";
 
 interface ColonizeProps {
     focus: boolean;
@@ -57,12 +58,13 @@ const INTERESTING_URLS = [
 function placeholderURL() {
     return INTERESTING_URLS[Math.floor(Math.random() * INTERESTING_URLS.length)];
 }
+
 export function ColonizeForm({ setRedirect, focus, onSubmit }: ColonizeProps) {
     const [inputValue, setInputValue] = useState('');
     const [methodValue, setMethodValue] = useState('GET');
     const [baseURL, setBaseURL] = useState<string>('');
     const { classes, theme } = useStyles();
-    const inputRef = useRef<HTMLInputElement>(null);
+    const inputRef = useEventListener('keydown', handleInputChange);
     const [placeHolder, setPlaceHolder] = useState('');
 
     useEffect(() => {
@@ -74,6 +76,19 @@ export function ColonizeForm({ setRedirect, focus, onSubmit }: ColonizeProps) {
     const form = useForm({
         initialValues: { url: '', method: '' },
     });
+
+    function handleInputChange(event) {
+        const TABKEY = 9;
+        if (event.keyCode === TABKEY) {
+            console.log('tab key pressed', inputValue.length);
+            if (inputValue.length === 0) {
+                event.preventDefault();
+                setInputValue(placeHolder);
+                return;
+            }
+        }
+        setInputValue(event.target.value);
+    }
 
     return (
         <form onSubmit={form.onSubmit((values) => {
@@ -99,7 +114,14 @@ export function ColonizeForm({ setRedirect, focus, onSubmit }: ColonizeProps) {
                     size="xs"
                     autoComplete="on"
                     value={inputValue}
-                    onChange={(event) => setInputValue(event.target.value)} ref={inputRef} />
+                    onChange={handleInputChange}
+                    ref={inputRef}
+                    rightSection={
+                        inputValue.length === 0 ?
+                        <Badge color="gray" variant="outline" size="xs" radius="xs" ml={-5} mr={5}>TAB</Badge> :
+                            <Badge color="gray" variant="outline" size="xs" radius="xs" pt={2}>↵</Badge>
+                    }
+                />
                 <Button size="xs" type="submit" variant="gradient" gradient={{ from: theme.colors.blue[10], to: theme.colors.grape[7] }}>
                     GO
                 </Button>

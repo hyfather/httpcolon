@@ -22,9 +22,9 @@ const useStyles = createStyles((theme, _params, getRef) => ({
     }));
 
 function ColonizeFormV2({ inputValue, method, onSubmit, isEditing, setIsEditing, setInputValue }) {
-    // const [inputValue, setInputValue] = useState(value);
     const { classes, theme } = useStyles();
     const InputRef = useRef<HTMLInputElement>(null);
+    const [originalValue, setOriginalValue] = useState(inputValue);
     const [methodValue, setMethodValue] = useState(method || 'GET');
     const form = useForm({initialValues: { url: '', method: '' }});
 
@@ -59,11 +59,16 @@ function ColonizeFormV2({ inputValue, method, onSubmit, isEditing, setIsEditing,
         return (
             <div>
                 <form onSubmit={form.onSubmit((values) => {
-                    console.log('reslugging', inputValue);
+                    // console.log('reslugging', inputValue);
                     const strippedUrl = inputValue.replace(/(^\w+:|^)\/\//, '').split('?')[0];
-                    setInputValue(strippedUrl);
-                    setIsEditing(false);
-                    onSubmit(strippedUrl, methodValue || method);
+                    if (strippedUrl !== '') {
+                        setInputValue(strippedUrl);
+                        setIsEditing(false);
+                        onSubmit(strippedUrl, methodValue || method);
+                    } else {
+                        setInputValue(originalValue);
+                        backOut();
+                    }
                 })}
                 >
                 <Group spacing="xs">

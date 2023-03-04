@@ -357,14 +357,20 @@ export default function HomePage(props) {
         if (slug1) {
             const encodedSlug = base64Encode(slug1.toString());
             makeAPICall(encodedSlug, router.query.method ? router.query.method.toString() : 'GET', refresh);
-            setEValue(slug1.toString());
             refreshNavBar();
         }
     }
 
     async function reSlugTo(slug: string, method: string) {
-        await router.push(`/${slug}${method ? `?method=${method}` : ''}`);
-        reSlug(true);
+        if (slug === '') {
+            return;
+        }
+        await router.push({
+            pathname: `/${slug}`,
+            query: method !== 'GET' ? { method } : {} });
+        setSlug(slug);
+        const encodedSlug = base64Encode(slug.toString());
+        makeAPICall(encodedSlug, method ? method.toString() : 'GET', true);
     }
 
     function refreshTable() {

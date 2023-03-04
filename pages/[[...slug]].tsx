@@ -351,12 +351,12 @@ export default function HomePage(props) {
         slug ? reSlug() : null;
     }, [router.query.slug]);
 
-    function reSlug() {
+    function reSlug(refresh: boolean = false) {
         const slug1 = router.query.slug;
         setSlug(slug1);
         if (slug1) {
             const encodedSlug = base64Encode(slug1.toString());
-            makeAPICall(encodedSlug, router.query.method ? router.query.method.toString() : 'GET', true);
+            makeAPICall(encodedSlug, router.query.method ? router.query.method.toString() : 'GET', refresh);
             setEValue(slug1.toString());
             refreshNavBar();
         }
@@ -364,12 +364,12 @@ export default function HomePage(props) {
 
     async function reSlugTo(slug: string, method: string) {
         await router.push(`/${slug}${method ? `?method=${method}` : ''}`);
-        reSlug();
+        reSlug(true);
     }
 
     function refreshTable() {
         console.log('refresh table');
-        reSlug();
+        reSlug(true);
     }
 
     function refreshNavBar() {
@@ -541,8 +541,7 @@ export default function HomePage(props) {
                 <Analytics />
 
                 {slug ? <Group position="apart" mt={10}>
-                    <Group
-                    >
+                    <Group>
                         {!navOpened && <Button
                           leftIcon={<IconHistory size={18} stroke={2} />}
                           variant="outline"
@@ -565,7 +564,7 @@ export default function HomePage(props) {
                         >
                             New URL
                         </Button>
-                        <Button
+                        {!drawerOpened && <Button
                           leftIcon={drawerOpened ? <IconX size={18} stroke={2} /> : <IconBook size={18} stroke={2} />}
                           variant="outline"
                           color={drawerOpened ? 'gray' : 'grape'}
@@ -574,7 +573,7 @@ export default function HomePage(props) {
                           onClick={() => toggleDocs()}
                         >
                             Docs
-                        </Button>
+                        </Button>}
                     </Group>
                         </Group> : <Group position="apart"> </Group>}
 

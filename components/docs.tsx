@@ -177,17 +177,6 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
                     >
                         <IconPin size={10} />
                     </ActionIcon>
-                    <ActionIcon
-                        variant="filled"
-                        size="xs"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            setDrawerOpened(false);
-                        }}
-                    >
-                        <IconX size={10} />
-                    </ActionIcon>
-
                 </Group>
                        </Container>;
             });
@@ -246,6 +235,25 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
     }, [focus]);
 
     return (<ScrollArea>
+            <Container
+              sx={{
+                    position: 'fixed',
+                }}
+              ml={-25}
+              mt={-10}
+            >
+                <ActionIcon
+                    variant="filled"
+                    size="lg"
+                    color="gray"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        setDrawerOpened(false);
+                    }}
+                >
+                    <IconX size={20} />
+                </ActionIcon>
+            </Container>
             {rows}
             </ScrollArea>);
 }

@@ -10,9 +10,19 @@ import {
     TextInput,
     Mark,
     Tooltip,
-    Code, Alert, Space, Container, Divider, ActionIcon, Title, Badge,
+    Code, Alert, Space, Container, Divider, ActionIcon, Title, Badge, Stack,
 } from '@mantine/core';
-import {IconCross, IconEdit, IconPin, IconRefresh, IconUpload, IconX} from '@tabler/icons';
+import {
+    IconArrowBigTop,
+    IconArrowBigUpLine,
+    IconArrowUp,
+    IconCross,
+    IconEdit,
+    IconPin,
+    IconRefresh, IconSquareArrowUp,
+    IconUpload,
+    IconX
+} from '@tabler/icons';
 import { directive } from '@babel/types';
 import {all} from "deepmerge";
 
@@ -77,103 +87,102 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
     const { classes, theme } = useStyles();
     const [lastFocus, setLastFocus] = useState('');
     const refs = useRef({});
+    const viewport = useRef<HTMLDivElement>(null);
 
     const makeRows = () => {
-        console.log('makeDocs', headerMetaData);
         if (headerMetaData == null) {
             setRows([]);
             return;
         }
-        const headerDB = headerMetaData;
-
-        if (headerDB != null) {
-            const rows_ = headerDB.map((header) => {
-                const responseDirectives = header['response-directives'];
-                const toFocus = focus;
-                const focusHeader = focus.toLowerCase().split('$')[0];
-                const focusDirective = toFocus.toLowerCase().split('$')[1];
-
-                return <Container
-                    ref={(el) => (refs.current[header.header.toLowerCase()] = el)}
-                  className={classes.inactiveHeader}
-                > <div
-                  key={header.header}
-                >
-                    <Group position="right" mt="md" mb="sm">
-                    </Group>
-                    <div
-                      key={header.header}
-                      onClick={(e) => {
-                            e.preventDefault();
-                            setFocus(`${header.header}$}`);
-                        }}
-                    >
-
-                    <Title size={24}> {header.header} </Title>
-                    <Space h="xs" />
-                    </div>
-
-                    <Text size="sm"> {header.description} </Text>
-                    <Space h="sm" />
-                  </div>
-                {responseDirectives.length > 0 ?
-                    <div>
-                    <Title size="sm" gradient={{ from: theme.colors.gray[5], to: theme.colors.gray[9] }}> Response Directives </Title>
-                        <Space h="xs" />
-                    <div>
-                        {responseDirectives.map((directive) => {
-                            if (directive == null || directive.directive == null) {
-                                return <div />;
-                            }
-                             const inFocusDirective = directive.directive.toLowerCase() === focusDirective;
-                            return <div
-                               key={directive.directive}
-                               ref={(el) => (refs.current[[header.header.toLowerCase(), directive.directive.toLowerCase()].join('$')] = el)}
-                               className={classes.inactiveDirective}
-                               onClick={(e) => {
-                                   e.preventDefault();
-                                   if (directive != null && directive.directive != null) {
-                                       setFocus(`${header.header.toLowerCase()}$${directive.directive.toLowerCase()}`);
-                                   }
-                                 }}
-                             >
-                                 <Badge
-                                     color="blue"
-                                     variant="filled"
-                                     radius="sm"
-                                 >{directive.directive}</Badge>
-                                <Space h="xs" />
-                                <Text size="xs"> {directive.description} </Text>
-                                <Text size="xs"> {directive.details} </Text>
-                                    </div>;
-                            }
-                        )}
-                    </div>
-                    </div>
-                : ''}
-                <Divider size="xs" />
-                <Group position="right" mt="md" mb="sm" spacing="xs">
-                    <ActionIcon
-                      variant="filled"
-                      size="xs"
-                      onClick={(e) => {
-                          e.preventDefault();
-                        setFocus(`${header.header.toLowerCase()}$`);
-                    }}
-                    >
-                        <IconPin size={10} />
-                    </ActionIcon>
+        const rowsBody = headerMetaData.map((header) => {
+            const responseDirectives = header['response-directives'];
+            return <Container
+                ref={(el) => (refs.current[header.header.toLowerCase()] = el)}
+              className={classes.inactiveHeader}
+            > <div
+              key={header.header}
+            >
+                <Group position="right" mt="md" mb="sm">
                 </Group>
-                       </Container>;
-            });
-            console.log('rows_', rows_);
-            setRows(rows_);
-            // focusAndScroll();
-        }
+                <div
+                  key={header.header}
+                  onClick={(e) => {
+                        e.preventDefault();
+                        setFocus(`${header.header}$}`);
+                    }}
+                >
+
+                <Title size={24}> {header.header} </Title>
+                <Space h="xs" />
+                </div>
+
+                <Text size="sm"> {header.description} </Text>
+                <Space h="sm" />
+              </div>
+            {responseDirectives.length > 0 ?
+                <div>
+                <Title size="sm" gradient={{ from: theme.colors.gray[5], to: theme.colors.gray[9] }}> Response Directives </Title>
+                    <Space h="xs" />
+                <div>
+                    {responseDirectives.map((directive) => {
+                        if (directive == null || directive.directive == null) {
+                            return <div />;
+                        }
+                        return <div
+                           key={directive.directive}
+                           ref={(el) => (refs.current[[header.header.toLowerCase(), directive.directive.toLowerCase()].join('$')] = el)}
+                           className={classes.inactiveDirective}
+                           onClick={(e) => {
+                               e.preventDefault();
+                               if (directive != null && directive.directive != null) {
+                                   setFocus(`${header.header.toLowerCase()}$${directive.directive.toLowerCase()}`);
+                               }
+                             }}
+                         >
+                             <Badge
+                                 color="blue"
+                                 variant="filled"
+                                 radius="sm"
+                             >{directive.directive}</Badge>
+                            <Space h="xs" />
+                            <Text size="xs"> {directive.description} </Text>
+                            <Text size="xs"> {directive.details} </Text>
+                                </div>;
+                        }
+                    )}
+                </div>
+                </div>
+            : ''}
+            <Divider size="xs" />
+            <Group position="right" mt="md" mb="sm" spacing="xs">
+                <ActionIcon
+                  variant="filled"
+                  size="xs"
+                  onClick={(e) => {
+                      e.preventDefault();
+                    setFocus(`${header.header.toLowerCase()}$`);
+                }}
+                >
+                    <IconPin size={10} />
+                </ActionIcon>
+                <ActionIcon
+                    variant="filled"
+                    size="xs"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        setFocus('');
+                        viewport.current.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                >
+                    <IconArrowBigTop size={10} />
+                </ActionIcon>
+            </Group>
+                   </Container>;
+        });
+        setRows(rowsBody);
     };
 
     useEffect(() => {
-        console.log('updating docs');
         makeRows();
     }, [headerMetaData]);
 
@@ -223,26 +232,39 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
         focusAndScroll();
     }, [rows]);
 
-    return (<ScrollArea>
-            <Container
-              sx={{
-                    position: 'fixed',
-                }}
-              ml={-25}
-              mt={-10}
-            >
+    return (
+        <ScrollArea type="scroll" viewportRef={viewport}>
+            <Group spacing="xs" position="apart">
+                <Text
+                    size={30}
+                    sx={{
+                        fontFamily: 'Monaco, monospace',
+                        fontWeight: 600,
+                    }}
+                    variant="gradient"
+                    gradient={{ from: 'grape', to: 'blue', deg: 200 }}
+                >
+                    <span user-select="none">
+                    HTTP:DOCS
+                    </span>
+                </Text>
                 <ActionIcon
+                    mr={10}
                     variant="filled"
-                    size="lg"
+                    size="sm"
                     color="gray"
                     onClick={(e) => {
                         e.preventDefault();
+                        setFocus('');
                         setDrawerOpened(false);
                     }}
                 >
                     <IconX size={20} />
                 </ActionIcon>
-            </Container>
+
+            </Group>
+            <Divider size="xs" mt={10} mb={30} color="gray" />
             {rows}
-            </ScrollArea>);
+        </ScrollArea>
+    );
 }

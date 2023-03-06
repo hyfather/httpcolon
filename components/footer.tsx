@@ -204,7 +204,7 @@ export function FooterLinks({ setDrawerOpened, setDrawerFocus }: FooterLinksProp
               component="a"
               onClick={() => {
                   setDrawerOpened(true);
-                  setDrawerFocus(link.label);
+                  setDrawerFocus(link.label + '$');
               }}
             >
                 {link.label}

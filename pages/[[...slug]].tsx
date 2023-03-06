@@ -297,7 +297,12 @@ export default function HomePage(props) {
         if (navOpened && !drawerOpened) {
             setNavOpened(false);
         }
-        setDrawerOpened(!drawerOpened);
+        if (drawerOpened) {
+            setDrawerOpened(false);
+        } else {
+            setDrawerOpened(true);
+            setDrawerFocus('');
+        }
     }
 
     function toggleNav() {
@@ -449,7 +454,6 @@ export default function HomePage(props) {
         setCopyURL('');
         setSlug('');
         inputRef.current?.focus();
-        // copyButtonRef.current?.disabled = false;
     }
 
     function ThemeSwitch() {

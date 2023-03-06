@@ -76,18 +76,7 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
     const [rows, setRows] = useState([]);
     const { classes, theme } = useStyles();
     const [lastFocus, setLastFocus] = useState('');
-    const allRefs = {};
-
-    if (headerMetaData != null && headerMetaData.length > 0) {
-        if (headerMetaData.length !== Object.keys(allRefs).length) {
-            headerMetaData.forEach((header) => {
-                allRefs[header.header.toLowerCase()] = useRef<HTMLElement>(null);
-                header['response-directives'].forEach((directive) => {
-                    allRefs[`${header.header.toLowerCase()}$${directive.directive.toLowerCase()}`] = useRef<HTMLElement>(null);
-                });
-            });
-        }
-    }
+    const refs = useRef({});
 
     const makeRows = () => {
         console.log('makeDocs', headerMetaData);
@@ -105,15 +94,13 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
                 const focusDirective = toFocus.toLowerCase().split('$')[1];
 
                 return <Container
-                  ref={allRefs[header.header]}
+                    ref={(el) => (refs.current[header.header.toLowerCase()] = el)}
                   className={classes.inactiveHeader}
                 > <div
                   key={header.header}
                 >
                     <Group position="right" mt="md" mb="sm">
-
                     </Group>
-
                     <div
                       key={header.header}
                       onClick={(e) => {
@@ -139,13 +126,12 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
                                 return <div />;
                             }
                              const inFocusDirective = directive.directive.toLowerCase() === focusDirective;
-                             return <div
+                            return <div
                                key={directive.directive}
-                               ref={allRefs[`${header.header.toLowerCase()}$${directive.directive.toLowerCase()}`]}
+                               ref={(el) => (refs.current[[header.header.toLowerCase(), directive.directive.toLowerCase()].join('$')] = el)}
                                className={classes.inactiveDirective}
                                onClick={(e) => {
                                    e.preventDefault();
-                                   // console.log('directive', directive, directive.directive.toLowerCase(), header, directive.directive.toLowerCase() === focusHeader[1]);
                                    if (directive != null && directive.directive != null) {
                                        setFocus(`${header.header.toLowerCase()}$${directive.directive.toLowerCase()}`);
                                    }
@@ -182,6 +168,7 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
             });
             console.log('rows_', rows_);
             setRows(rows_);
+            // focusAndScroll();
         }
     };
 
@@ -191,11 +178,9 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
     }, [headerMetaData]);
 
     function setClass(refString: string, className: string) {
-        console.log("setting class", refString, className, allRefs[refString.toLowerCase()]);
-
-        const ref = allRefs[refString?.toLowerCase()];
-        if (ref != null && ref.current != null) {
-            ref.current.className = className;
+        const ref = refs.current[refString?.toLowerCase()];
+        if (ref != null) {
+            ref.className = className;
         }
     }
 
@@ -203,22 +188,22 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
         const [header, directive] = focus.split('$');
         const [lastHeader, lastDirective] = lastFocus.split('$');
 
-        console.log('focusz', focus, header, directive, lastDirective);
         if (header != null && header !== '') {
             setClass(lastHeader, classes.inactiveHeader);
             setClass(header, classes.activeHeader);
-            const directiveRef = allRefs[focus];
-            if (directiveRef != null && directiveRef.current != null) {
-                directiveRef.current.scrollIntoView({
+            const directiveRef = refs.current[focus];
+            console.log("scrolling to directive ref", directiveRef);
+            if (directiveRef != null) {
+                directiveRef.scrollIntoView({
                     behavior: 'smooth',
                     block: 'center',
                 });
                 setClass(lastFocus, classes.inactiveDirective);
                 setClass(focus, classes.activeDirective);
             } else {
-                const headerRef = allRefs[header];
-                if (headerRef != null && headerRef.current != null) {
-                    headerRef.current.scrollIntoView({
+                const headerRef = refs.current[header];
+                if (headerRef != null) {
+                    headerRef.scrollIntoView({
                         behavior: 'smooth',
                         block: 'start',
                     });
@@ -233,6 +218,10 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
            focusAndScroll();
        }
     }, [focus]);
+
+    useEffect(() => {
+        focusAndScroll();
+    }, [rows]);
 
     return (<ScrollArea>
             <Container

@@ -14,13 +14,7 @@ import {
 } from '@mantine/core';
 import {
     IconArrowBigTop,
-    IconArrowBigUpLine,
-    IconArrowUp,
-    IconCross,
-    IconEdit,
     IconPin,
-    IconRefresh, IconSquareArrowUp,
-    IconUpload,
     IconX
 } from '@tabler/icons';
 import { directive } from '@babel/types';
@@ -170,8 +164,8 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
                     size="xs"
                     onClick={(e) => {
                         e.preventDefault();
-                        setFocus('');
                         viewport.current.scrollTo({ top: 0, behavior: 'smooth' });
+                        setFocus('');
                     }}
                 >
                     <IconArrowBigTop size={10} />

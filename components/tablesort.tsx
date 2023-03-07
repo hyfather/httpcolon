@@ -162,20 +162,15 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
   };
 
   const makeRows = () => {
-    // console.log("makeRows", data, sortedData);
     if (data == null) {
         setRows([]);
         return;
     }
     const sData = sortData(data, { sortBy: null, reversed: reverseSortDirection, search });
-      // console.log("makeRows2", data, sData);
 
     setSortedData(sData);
 
-    // console.log("makeRows3", sortedData);
     const headerDB = headerMetaData;
-    // console.log("headerDb", headerDB);
-
     if (sData != null && headerDB != null) {
       const rows_ = sData.map((row) => {
             let dInfo;
@@ -256,7 +251,16 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
                       </Tooltip>
                       </Code>
                   </td>
-                  <td><Code>{markedUp}</Code></td>
+                  <td>
+                    <div
+                        sx={{
+                           width: '400px',
+                            overflow: 'auto',
+                        }}
+                    >
+                      <Code>{markedUp}</Code>
+                    </div>
+                  </td>
                 </tr>);
           }
       );
@@ -279,6 +283,7 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
         value={search}
         className={classes.searchBar}
         onChange={handleSearchChange}
+        size="xs"
       />
       <Table
         horizontalSpacing="md"

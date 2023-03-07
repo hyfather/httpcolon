@@ -5,7 +5,7 @@ import {
     Button,
     Center,
     Container,
-    createStyles,
+    createStyles, Divider,
     Group,
     Navbar,
     Progress,
@@ -100,11 +100,9 @@ export function ColonNavbar({ themeSwich, data, setResponse, refreshActive, setR
     const [updateState, setUpdateState] = useState(true);
 
     useEffect(() => {
-        console.log('refresh navbar');
         if (data != null && data.instances != null) {
             setUpdateState(false);
             const instances = data.instances.slice().reverse();
-            console.log('setting active', instances[0].timestamp, instances);
 
             const _links = instances.map((item) => {
                 return <Anchor
@@ -162,25 +160,46 @@ export function ColonNavbar({ themeSwich, data, setResponse, refreshActive, setR
 
     return (<Navbar height="100%" width={{ sm: 300 }} p="md" className={classes.navbar}>
         <Navbar.Section grow>
+            <Group spacing="xs" position="right">
+                <Text
+                    size={24}
+                    sx={{
+                        fontFamily: 'Monaco, monospace',
+                        fontWeight: 600,
+                    }}
+                    variant="gradient"
+                    gradient={{ from: 'gray', to: 'gray', deg: 160 }}
+                >
+                    <span user-select="none">
+                    HISTORY
+                    </span>
+                </Text>
+                <ActionIcon
+                    mr={10}
+                    variant="filled"
+                    size="sm"
+                    color="gray"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        setNavOpened(false);
+                    }}
+                >
+                    <IconX size={20} />
+                </ActionIcon>
+            </Group>
+            <Divider size="xs" mt={10} mb={10} color="gray" />
+
             <Center>
-                <Container className={classes.linkTitle} mt={10}>
-                    <Badge
-                        radius="sm"
-                        size="sm"
-                        variant='outline'
-                        color='gray'
+                <Group className={classes.linkTitle} position="left">
+                    <Text
+                        className={classes.title}
+                        sx={{
+                            fontFamily: 'Monaco, monospace',
+                        }}
                     >
                         {data.destination}
-                    </Badge>
-                    <ActionIcon
-                        onClick={() => setNavOpened(false)}
-                        size="xs"
-                        variant="filled"
-                        ml={10}
-                        >
-                        <IconX size={14} stroke={2} />
-                    </ActionIcon>
-                </Container>
+                    </Text>
+                </Group>
             </Center>
             <Space h="sm" />
             {navLinks}

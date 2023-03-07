@@ -122,20 +122,21 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
                         if (directive == null || directive.directive == null) {
                             return <div />;
                         }
+                        const directiveKey = [header.header.toLowerCase(), directive.directive.toLowerCase()].join('$');
                         return <div
-                           key={directive.directive}
-                           ref={(el) => (refs.current[[header.header.toLowerCase(), directive.directive.toLowerCase()].join('$')] = el)}
+                           key={directiveKey}
+                           ref={(el) => (refs.current[directiveKey] = el)}
                            className={classes.inactiveDirective}
                            onClick={(e) => {
                                e.preventDefault();
-                               if (directive != null && directive.directive != null) {
-                                   setFocus(`${header.header.toLowerCase()}$${directive.directive.toLowerCase()}`);
+                               if (directiveKey) {
+                                   setFocus(directiveKey);
                                }
                              }}
                          >
                              <Badge
-                                 color="blue"
-                                 variant="filled"
+                                 color="gray"
+                                 variant="outline"
                                  radius="sm"
                              >{directive.directive}</Badge>
                             <Space h="xs" />
@@ -228,20 +229,7 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
 
     return (
         <ScrollArea type="scroll" viewportRef={viewport}>
-            <Group spacing="xs" position="apart">
-                <Text
-                    size={30}
-                    sx={{
-                        fontFamily: 'Monaco, monospace',
-                        fontWeight: 600,
-                    }}
-                    variant="gradient"
-                    gradient={{ from: 'grape', to: 'blue', deg: 200 }}
-                >
-                    <span user-select="none">
-                    HTTP:DOCS
-                    </span>
-                </Text>
+            <Group spacing="xs" position="left">
                 <ActionIcon
                     mr={10}
                     variant="filled"
@@ -255,6 +243,20 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
                 >
                     <IconX size={20} />
                 </ActionIcon>
+
+                <Text
+                    size={24}
+                    sx={{
+                        fontFamily: 'Monaco, monospace',
+                        fontWeight: 600,
+                    }}
+                    variant="gradient"
+                    gradient={{ from: 'gray', to: 'gray', deg: 160 }}
+                >
+                    <span user-select="none">
+                    HTTP:DOCS
+                    </span>
+                </Text>
 
             </Group>
             <Divider size="xs" mt={10} mb={30} color="gray" />

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
     createStyles,
     Table,
@@ -10,10 +10,10 @@ import {
     TextInput,
     Mark,
     Tooltip,
-    Code, Alert, Space,
+    Code, Alert, Space, Container, Badge, Stack, ActionIcon,
 } from '@mantine/core';
 import { keys } from '@mantine/utils';
-import { IconSelector, IconChevronDown, IconChevronUp, IconSearch } from '@tabler/icons';
+import {IconSelector, IconChevronDown, IconChevronUp, IconSearch, IconCopy, IconX, IconArrowUp} from '@tabler/icons';
 
 const useStyles = createStyles((theme) => ({
   th: {
@@ -33,6 +33,21 @@ const useStyles = createStyles((theme) => ({
     marginLeft: 100,
     marginRight: 100,
   },
+
+sticky: {
+        position: 'fixed',
+        top: '40px',
+        left: 0,
+        right: 0,
+        width: 700,
+        zIndex: 999,
+        padding: '10px 0',
+        backgroundColor: '#fff',
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+        transition: 'all 0.1s ease-in-out',
+        borderRadius: '5px',
+        background: theme.colors.gray[0],
+},
 
   directiveMark: {
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.grape[8] : theme.colors.grape[1],
@@ -139,8 +154,12 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
   const [sortBy, setSortBy] = useState<keyof RowData | null>(sortField);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
   const [rows, setRows] = useState([]);
-  // const [headerMetaData, setHeaderMetaData] = useState(headerData);
   const { classes } = useStyles();
+    const [isSticky, setIsSticky] = useState(false);
+    const [isStickyHidden, setIsStickyHidden] = useState(false);
+
+    const headerRef = useRef(null);
+
 
 //   const [refreshTable, setRefreshTable] = useState("");
 
@@ -273,18 +292,58 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
     makeRows();
   }, [data, updateTable, headerMetaData]);
 
-  return (
+    useEffect(() => {
+        const handleScroll = () => {
+            const headerHeight = headerRef.current.offsetHeight;
+            const scrollPosition = window.scrollY;
+
+            setIsSticky(scrollPosition > headerHeight + 300);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    return (
     <ScrollArea>
-        <Space h={20} />
-      <TextInput
-        placeholder="Search headers"
-        mb="md"
-        icon={<IconSearch size={14} stroke={1.5} />}
-        value={search}
-        className={classes.searchBar}
-        onChange={handleSearchChange}
-        size="xs"
-      />
+        <Container
+            className={isSticky && !isStickyHidden ? classes.sticky : ''}
+            ref={headerRef}
+        >
+            <Stack>
+                {isSticky ? <Group position="apart">
+                    <Badge
+                        variant="dot"
+                        color="green"
+                        size="md"
+                        radius="sm"
+                        ml={20}
+                        >
+                        GET www.facebook.com
+                    </Badge>
+                <Group spacing="xs">
+                    <ActionIcon onClick={() => {window.scroll(0, 0)}} variant="filled" size="xs">
+                        <IconArrowUp size={14} stroke={1.5} />
+                    </ActionIcon>
+                    <ActionIcon onClick={() => {setIsStickyHidden(true)}} mr={20} variant="filled" size="xs">
+                        <IconX size={14} stroke={1.5} />
+                    </ActionIcon>
+                </Group>
+                </Group> : null}
+
+                <TextInput
+            placeholder="Search headers"
+            mb="md"
+            icon={<IconSearch size={14} stroke={1.5} />}
+            value={search}
+            className={classes.searchBar}
+            onChange={handleSearchChange}
+            size="xs"
+          />
+            </Stack>
+
+        </Container>
       <Table
         horizontalSpacing="md"
         verticalSpacing="xs"

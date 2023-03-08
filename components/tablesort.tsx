@@ -44,7 +44,7 @@ sticky: {
         padding: '10px 0',
         backgroundColor: '#fff',
         boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-        transition: 'all 0.1s ease-in-out',
+        // transition: 'all 0.1s ease-in-out',
         borderRadius: '5px',
         background: theme.colors.gray[0],
 },

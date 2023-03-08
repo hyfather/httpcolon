@@ -313,11 +313,11 @@ export default function HomePage(props) {
     }
 
     const makeAPICall = (encodedSlug: string, decodedMethod: string, refresh: boolean) => {
+        setLoading(true);
         const dbURL = `${baseURL}/api/v1/database`;
         const slugURL = `${baseURL}/api/v1/colon?slug=${encodedSlug}&method=${decodedMethod}${refresh ? '&refresh=true' : ''}`;
         console.log('make api call to', slugURL);
 
-        setLoading(true);
         // TODO if (headerData.length === 0)
         fetch(dbURL)
             .then(response => response.json())
@@ -644,8 +644,7 @@ export default function HomePage(props) {
                                           color={response.latency < 200 ? 'green' : response.latency < 600 ? 'yellow' : 'red'}
                                           radius="sm"
                                           size="md"
-                                          variant="dot"
-                                        >
+                                          variant="dot">
                                             {response.latency ? (response.latency > 1000 ? `${response.latency / 1000} sec` : `${response.latency} ms`) : 'N/A'}
                                         </Badge>
                                     </td>
@@ -695,9 +694,9 @@ export default function HomePage(props) {
                         {!slug ? <Group position="center" /> : null}
                         <Space h="md" />
                     </div>
-                        <div id="headers">
+                    {loading ? <Center> <Loader size="md" color="gray" /> </Center>: <div id="headers">
                             {!!response.payload && <TableSort data={response.payload} headerMetaData={headerData} setHeaderMetadata={setHeaderData} updateTable={updateTable} setDrawerFocus={setDrawerFocus} setDrawerOpened={setDrawerOpened} />}
-                        </div>
+                        </div>}
                          </Container> : <Container>
                     <Space h="xl" />
                     <Space h="xl" />

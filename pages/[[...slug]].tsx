@@ -543,7 +543,7 @@ export default function HomePage(props) {
                                     </Group>
                                     {slug &&
                                         <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
-                                            <Group position="right" mt={-25}>
+                                            <Group position="right" mt={-5}>
                                                 <ColonizeForm setRedirect={setRedirect} focus={false} onSubmit={reSlugTo} />
                                             </Group>
                                         </MediaQuery>

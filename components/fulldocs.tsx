@@ -3,27 +3,18 @@ import { useRouter } from 'next/router';
 
 import {
     createStyles,
-    Table,
     ScrollArea,
-    UnstyledButton,
     Group,
     Text,
     Center,
-    TextInput,
-    Mark,
-    Tooltip,
-    Code, Alert, Space, Container, Divider, ActionIcon, Title, Badge, Stack, Select, Box,
+    Space, Container, Divider, ActionIcon, Title, Badge, Select,
 } from '@mantine/core';
 import {
     IconArrowBigTop, IconLink,
     IconPin, IconSearch,
-    IconX
 } from '@tabler/icons';
-import { directive } from '@babel/types';
-import {all} from "deepmerge";
 
 const useStyles = createStyles((theme) => ({
-
     inactiveHeader: {
         padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
         '&:hover': {
@@ -112,12 +103,35 @@ export function FullDocs({ focus, setFocus }: FullDocsProps) {
                   key={header.header}
                   onClick={(e) => {
                         e.preventDefault();
-                        setFocus(`${header.header}$}`);
+                        setFocus(`${header.header}$`);
                     }}
+                  sx={{
+                      button: {
+                          visibility: 'hidden',
+                      },
+                      '&:hover': {
+                          button: {
+                              visibility: 'visible',
+                          },
+                      },
+                  }}
                 >
 
-                <Title size={24}> {header.header} </Title>
-                <Space h="xs" />
+                        <Group spacing="xs">
+                        <Title size={24}> {header.header} </Title>
+                            <ActionIcon variant="outline"
+                                        color="blue"
+                                        size="sm"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            setFocus(`${header.header}$`);
+                                            router.push(`#${header.header}`, `#${header.header}`, { shallow: false, scroll: false });
+                                        }}
+                                        >
+                                <IconLink size={16} />
+                            </ActionIcon>
+                        </Group>
+                    <Space h="xs" />
                 </div>
 
                 <Text size="sm"> {header.description} </Text>
@@ -291,7 +305,6 @@ export function FullDocs({ focus, setFocus }: FullDocsProps) {
                 <p>
                         HTTP headers are a fundamental component of the HTTP protocol, which is the backbone of the internet. These headers contain important information about the request and response, such as content type, caching instructions, authentication tokens, and more. By understanding how to read and manipulate HTTP headers, developers can optimize their web applications for performance, security, and functionality. Moreover, HTTP headers play a critical role in API integrations, allowing developers to communicate with external services and systems. In short, HTTP headers are an essential tool in the web developer's arsenal, and any developer serious about building high-quality web applications should invest the time to learn and master them.
                     </p>
-                <Divider size="xs" color="gray" />
                 <Space h="xl" />
 
                 <Center>

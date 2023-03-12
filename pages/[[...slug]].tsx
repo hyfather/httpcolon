@@ -714,14 +714,22 @@ export default function HomePage(props) {
                     <Space h="xl" />
                     <Center>{ThemeSwitch()}</Center>
                                         </Container> }
+                <Space h="xl" />
 
-                <Group position="apart"
+                {!slug && <Group position="apart"
                     sx={{
-                        background: theme.fn.gradient({ from: theme.colors.gray[0], to: theme.colors.grape[2], deg: 0 }),
-                        width: '100vw',
+                        background: theme.fn.gradient({ from: theme.colors.gray[0], to: theme.colors.grape[0], deg: 1 }),
+                        width: '100%',
+                        height: '200px',
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        padding: '15px',
+                        position: 'absolute',
+                        left: 0,
                     }}
+                   mt={20}
                 >
-                        <Stack ml="20px">
+                        <Stack>
                             <Text variant="gradient" gradient={{ from: 'grape', to: 'blue', deg: 200 }} size={10}>
                                 © 2023 HTTP:COLON // All rights reserved
                             </Text>
@@ -729,7 +737,7 @@ export default function HomePage(props) {
                                 ✨ Made in San Francisco
                             </Text>
                         </Stack>
-                        <Group spacing={10} className={classes.social} position="right" noWrap mr={25}>
+                        <Group spacing={10} className={classes.social} position="right" noWrap>
                             <Anchor href="https://twitter.com/nmungel" target="_blank">
                                 <IconBrandTwitter size={18} stroke={1.5} />
                             </Anchor>
@@ -737,9 +745,9 @@ export default function HomePage(props) {
                                 <IconBrandGithub size={18} stroke={1.5} />
                             </Anchor>
                         </Group>
-                </Group>
-                <FullDocs headerMetaData={headerData} focus={docsFocus} setFocus={setDocsFocus} setDrawerOpened={setDrawerOpened} />
+                </Group>}
 
+                {!slug && <FullDocs headerMetaData={headerData} focus={docsFocus} setFocus={setDocsFocus} setDrawerOpened={setDrawerOpened} />}
                 <FooterLinks setDrawerOpened={setDrawerOpened} setDrawerFocus={setDrawerFocus} />
 
             </AppShell>);

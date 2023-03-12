@@ -253,7 +253,7 @@ export function FullDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: F
 
     return (
         <ScrollArea type="scroll" viewportRef={viewport}>
-            <Container mt={50}
+            <Container mt={200}
                        sx={{
                            ':target:before': {
                                content: '""',
@@ -266,7 +266,7 @@ export function FullDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: F
                            },
                        }}>
                     <Text
-                        size={36}
+                        size={48}
                         sx={{
                             fontFamily: 'Monaco, monospace',
                             fontWeight: 600,
@@ -278,7 +278,7 @@ export function FullDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: F
                     HTTP:DOCS
                     </span>
                     </Text>
-                    <Space h="xs" />
+                    <Space h="xl" />
                     <Title size={24} color="blue"> What are HTTP Headers?</Title>
                 <p>
                         HTTP headers are a fundamental component of the HTTP protocol, which is the backbone of the internet. These headers contain important information about the request and response, such as content type, caching instructions, authentication tokens, and more. By understanding how to read and manipulate HTTP headers, developers can optimize their web applications for performance, security, and functionality. Moreover, HTTP headers play a critical role in API integrations, allowing developers to communicate with external services and systems. In short, HTTP headers are an essential tool in the web developer's arsenal, and any developer serious about building high-quality web applications should invest the time to learn and master them.

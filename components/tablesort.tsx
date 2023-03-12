@@ -309,7 +309,7 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
             }
         };
 
-        window.addEventListener('scroll', handleScroll);
+        // window.addEventListener('scroll', handleScroll);
 
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);

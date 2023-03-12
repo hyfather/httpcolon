@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Container, SimpleGrid, Space, Text, Transition } from '@mantine/core';
+import {Center, Container, Loader, SimpleGrid, Space, Text, Transition} from '@mantine/core';
 import { TaskCard } from './taskcard';
 
 function base64Encode(str) {
@@ -86,7 +86,7 @@ export function Explore() {
 
     return (
         <Container>
-            {exploreItems.length > 0 && <Text
+            {exploreItems.length > 0 ? <Text
                 size={28}
                 weight="bold"
                 variant="gradient"
@@ -96,9 +96,11 @@ export function Explore() {
                 }}
             >
                 ✨EXPLORE
-            </Text>}
+            </Text> : <Center> <Loader color="gray" /> </Center> }
             <Space h="xl" />
-            <Container>
+            <Container sx={{
+                minHeight: '600px'
+            }}>
                 <SimpleGrid
                   cols={3}
                   spacing="xl"

@@ -1,0 +1,21 @@
+{
+  "header": "cross-origin-opener-policy",
+  "description": "The Cross-Origin-Opener-Policy header controls whether a browsing context can be shared between different domains. This header is used to mitigate various cross-origin attacks such as Cross-Site Scripting (XSS) and Cross-Site History Manipulation (CSHM).",
+  "response-directives": [
+    {
+      "directive": "same-origin",
+      "description": "Specifies that the browsing context can only be accessed by pages from the same origin.",
+      "details": "When the Cross-Origin-Opener-Policy header contains the same-origin directive, the browsing context can only be accessed by pages from the same origin. This is the default behavior if the header is not specified."
+    },
+    {
+      "directive": "same-origin-allow-popups",
+      "description": "Specifies that the browsing context can be accessed by pages from the same origin and from pop-up windows.",
+      "details": "When the Cross-Origin-Opener-Policy header contains the same-origin-allow-popups directive, the browsing context can be accessed by pages from the same origin and from pop-up windows. This allows pop-ups to open a new browsing context that can be shared with the parent window."
+    },
+    {
+      "directive": "unsafe-none",
+      "description": "Specifies that there are no restrictions on the sharing of the browsing context.",
+      "details": "When the Cross-Origin-Opener-Policy header contains the unsafe-none directive, there are no restrictions on the sharing of the browsing context. This is not recommended as it can expose the browsing context to various cross-origin attacks."
+    }
+  ]
+}

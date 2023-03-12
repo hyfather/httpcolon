@@ -39,12 +39,11 @@ sticky: {
         top: '40px',
         left: 0,
         right: 0,
-        width: 700,
+        width: 400,
         zIndex: 999,
         padding: '10px 0',
         backgroundColor: '#fff',
         boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-        // transition: 'all 0.1s ease-in-out',
         borderRadius: '5px',
         background: theme.colors.gray[0],
 },
@@ -155,10 +154,11 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
   const [rows, setRows] = useState([]);
   const { classes } = useStyles();
-    const [isSticky, setIsSticky] = useState(false);
-    const [isStickyHidden, setIsStickyHidden] = useState(false);
+  const [isSticky, setIsSticky] = useState(false);
+  const [isStickyHidden, setIsStickyHidden] = useState(false);
+  const headerRef = useRef(null);
+  const tooltipRef = useRef(null);
 
-    const headerRef = useRef(null);
 
 
 //   const [refreshTable, setRefreshTable] = useState("");
@@ -213,7 +213,6 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
               let tooltip;
               responseDirectives?.forEach((d) => {
                 if (d.directive.length > 1 && d.directive.toLowerCase() === token.toLocaleLowerCase()) {
-                  // console.log('found', token, d);
                   tooltip =
                       <Tooltip
                         label={d.description}
@@ -221,13 +220,14 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
                         inline
                         multiline
                         color="grape"
+                        position="bottom"
                         width={250}
+                        ref={tooltipRef}
                       >
                         <Mark
                           className={classes.directiveMark}
                           onClick={(event) => {
                             event.preventDefault();
-                              console.log('--> foo', `${row.header.toLowerCase()}$${d.directive.toLowerCase()}`);
                               setDrawerOpened(true);
                               setDrawerFocus(`${row.header.toLowerCase()}$${d.directive.toLowerCase()}`);
                         }}
@@ -242,7 +242,6 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
               }
               return <span>{token}</span>;
             });
-            // console.log('markedUp', markedUp);
 
             return (
                 <tr key={row.header}>
@@ -297,7 +296,17 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
             const headerHeight = headerRef.current.offsetHeight;
             const scrollPosition = window.scrollY;
 
-            setIsSticky(scrollPosition > headerHeight + 300);
+            if (scrollPosition > headerHeight + 300) {
+                setIsSticky(true);
+                if (scrollPosition > headerHeight + 350) {
+                    console.log("zz", scrollPosition);
+                } else {
+                    window.scrollTo(0, headerHeight + 400);
+                }
+            } else {
+                setIsSticky(false);
+                window.scrollTo(0, 0);
+            }
         };
 
         window.addEventListener('scroll', handleScroll);
@@ -334,7 +343,6 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
 
                 <TextInput
             placeholder="Search headers"
-            mb="md"
             icon={<IconSearch size={14} stroke={1.5} />}
             value={search}
             className={classes.searchBar}

@@ -12,11 +12,11 @@ import {
     TextInput,
     Mark,
     Tooltip,
-    Code, Alert, Space, Container, Divider, ActionIcon, Title, Badge, Stack,
+    Code, Alert, Space, Container, Divider, ActionIcon, Title, Badge, Stack, Select, Box,
 } from '@mantine/core';
 import {
     IconArrowBigTop, IconLink,
-    IconPin,
+    IconPin, IconSearch,
     IconX
 } from '@tabler/icons';
 import { directive } from '@babel/types';
@@ -47,15 +47,9 @@ const useStyles = createStyles((theme) => ({
         },
 
         '&:hover': {
-            border: `1px solid ${theme.colors.gray[5]}`,
-            borderRadius: 5,
             button: {
                 visibility: 'visible',
-                backgroundColor: theme.colorScheme === 'dark' ? theme.colors.gray[8] : theme.colors.gray[7],
-                color: theme.colorScheme === 'dark' ? theme.colors.blue[1] : theme.colors.gray[1],
             },
-
-            // backgroundImage: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.grape[9], to: theme.colors.blue[9], deg: 20 }) : theme.fn.gradient({ from: theme.colors.gray[2], to: theme.colors.gray[1], deg: 225 }),
         },
     },
 
@@ -98,6 +92,7 @@ export function FullDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: F
     const refs = useRef({});
     const viewport = useRef<HTMLDivElement>(null);
     const router = useRouter();
+    const [searchValue, onSearchChange] = useState('');
 
     const makeRows = () => {
         if (headerMetaData == null) {
@@ -108,7 +103,7 @@ export function FullDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: F
             const responseDirectives = header['response-directives'];
             return <Container
                 ref={(el) => (refs.current[header.header.toLowerCase()] = el)}
-              className={classes.inactiveHeader}
+                className={classes.inactiveHeader}
             > <div
               key={header.header}
             >
@@ -152,14 +147,14 @@ export function FullDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: F
                                     radius="sm"
                                     class="badge"
                                 >{directive.directive}</Badge>
-                                <ActionIcon variant="outline" size="xs" onClick={(e) => {
+                                <ActionIcon variant="outline" color="blue" size="xs" onClick={(e) => {
                                     e.preventDefault();
                                     if (directiveKey) {
                                         setFocus(directiveKey);
                                         router.push(`#${directiveKey}`, `#${directiveKey}`, { shallow: false, scroll: false });
                                     }
                                 }}>
-                                    <IconLink size={12} />
+                                    <IconLink size={14} />
                                 </ActionIcon>
                             </Group>
 
@@ -189,7 +184,10 @@ export function FullDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: F
                     size="xs"
                     onClick={(e) => {
                         e.preventDefault();
-                        viewport.current.scrollTo({ top: 0, behavior: 'smooth' });
+                        viewport.current.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start',
+                        });
                         setFocus('');
                     }}
                 >
@@ -231,10 +229,8 @@ export function FullDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: F
             } else {
                 const headerRef = refs.current[header];
                 if (headerRef != null) {
-                    headerRef.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start',
-                    });
+                    const y = headerRef.getBoundingClientRect().top + window.scrollY - 55;
+                    window.scrollTo({ top: y, behavior: 'smooth' });
                 }
             }
             setLastFocus(focus);
@@ -252,7 +248,8 @@ export function FullDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: F
     }, [rows]);
 
     return (
-        <ScrollArea type="scroll" viewportRef={viewport}>
+        <ScrollArea type="scroll" ref={viewport}
+        >
             <Container mt={200}
                        sx={{
                            ':target:before': {
@@ -265,24 +262,48 @@ export function FullDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: F
                                scrollBehavior: 'smooth',
                            },
                        }}>
-                    <Text
-                        size={48}
-                        sx={{
-                            fontFamily: 'Monaco, monospace',
-                            fontWeight: 600,
-                        }}
-                        variant="gradient"
-                        gradient={{ from: 'blue', to: 'grape', deg: 200 }}
-                    >
-                    <span>
-                    HTTP:DOCS
-                    </span>
-                    </Text>
+                    <Center>
+                        <Text
+                            size={48}
+                            sx={{
+                                fontFamily: 'Monaco, monospace',
+                                fontWeight: 600,
+                            }}
+                            variant="gradient"
+                            gradient={{ from: 'blue', to: 'grape', deg: 200 }}
+                        >
+                        HTTP:DOCS
+                        </Text>
+                    </Center>
                     <Space h="xl" />
-                    <Title size={24} color="blue"> What are HTTP Headers?</Title>
+                    <Title size={20} color="blue"> What are HTTP Headers?</Title>
                 <p>
                         HTTP headers are a fundamental component of the HTTP protocol, which is the backbone of the internet. These headers contain important information about the request and response, such as content type, caching instructions, authentication tokens, and more. By understanding how to read and manipulate HTTP headers, developers can optimize their web applications for performance, security, and functionality. Moreover, HTTP headers play a critical role in API integrations, allowing developers to communicate with external services and systems. In short, HTTP headers are an essential tool in the web developer's arsenal, and any developer serious about building high-quality web applications should invest the time to learn and master them.
                     </p>
+                <Divider size="xs" color="gray" />
+                <Space h="xl" />
+
+                <Center>
+                    <Select
+                        placeholder="Jump to header"
+                        searchable
+                        clearable
+                        onSearchChange={onSearchChange}
+                        searchValue={searchValue}
+                        nothingFound="No options"
+                        icon={<IconSearch size="1rem" />}
+                        onChange={(value) => {
+                            if (value != null) {
+                                setFocus(`${value.toLowerCase()}$`);
+                                onSearchChange('');
+                            }
+                        }}
+                        data={headerMetaData.map((header) => header.header)}
+                        sx={{
+                          width: '50%',
+                        }}
+                    />
+                    </Center>
                 <Space h="sm" />
                 {rows}
             </Container>

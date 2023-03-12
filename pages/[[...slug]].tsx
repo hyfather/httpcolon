@@ -11,7 +11,7 @@ import {
     IconHistory,
     IconX,
     IconRefresh,
-    IconCodeCircle,
+    IconCodeCircle, IconBrandTwitter, IconBrandGithub,
 } from '@tabler/icons';
 import { Analytics } from '@vercel/analytics/react';
 
@@ -28,7 +28,7 @@ import {
     Container,
     Space,
     useMantineTheme,
-    Drawer, MediaQuery, Badge, TextInput, ActionIcon, Aside, Transition, Tooltip, Loader, Select,
+    Drawer, MediaQuery, Badge, TextInput, ActionIcon, Aside, Transition, Tooltip, Loader, Select, Stack, Anchor,
 } from '@mantine/core';
 import { format } from 'timeago.js';
 
@@ -42,6 +42,7 @@ import { ColonizeForm } from '../components/colonize';
 import { ColonNavbar } from '../components/navbar';
 import { ColonDocs } from '../components/docs';
 import ColonizeFormV2, { ColonizeMethodForm } from '../components/masthead';
+import {FullDocs} from "../components/fulldocs";
 
 const useStyles = createStyles((theme, _params, getRef) => {
     const icon = getRef('icon');
@@ -275,6 +276,7 @@ export default function HomePage(props) {
     const [slug, setSlug] = useState(router.query.slug);
     const [drawerOpened, setDrawerOpened] = useState(false);
     const [drawerFocus, setDrawerFocus] = useState('');
+    const [docsFocus, setDocsFocus] = useState('');
     const [eValue, setEValue] = useState('');
     const [colonizeFormEditable, setColonizeFormEditable] = useState(false);
     const [navOpened, setNavOpened] = useState(false);
@@ -505,13 +507,14 @@ export default function HomePage(props) {
                           </Aside> }
                      </Transition>}
               header={<Header height={50} p="xs" className={classes.header}>
-                                <Group spacing="sm" position="apart" >
-                                    <Group spacing="sm" align="vertical">
+                                <Group spacing="sm" position="apart" mt={1}>
+                                    <Group spacing="sm" align="vertical" mt={-2}>
                                             <Avatar
                                               className={classes.logo}
                                               src="/httpcolon3.png"
                                               alt="it's me, http:colon"
-                                              size="lg"
+                                              size="sm"
+                                              mt={3}
                                               radius={0}
                                               onClick={goHome}
                                             />
@@ -522,6 +525,7 @@ export default function HomePage(props) {
                                                 fontWeight: 600,
                                             }}
                                           variant="gradient"
+                                          mt={-2}
                                           gradient={{ from: 'grape', to: 'blue', deg: 200 }}
                                         >
                                             <span user-select="none">
@@ -533,7 +537,7 @@ export default function HomePage(props) {
                                             variant="outline"
                                             size="xs"
                                             radius="sm"
-                                            mt={11}
+                                            mt={8}
                                         >BETA</Badge>
 
                                     </Group>
@@ -710,6 +714,31 @@ export default function HomePage(props) {
                     <Space h="xl" />
                     <Center>{ThemeSwitch()}</Center>
                                         </Container> }
+
+                <Group position="apart"
+                    sx={{
+                        background: theme.fn.gradient({ from: theme.colors.gray[0], to: theme.colors.grape[2], deg: 0 }),
+                        width: '100vw',
+                    }}
+                >
+                        <Stack ml="20px">
+                            <Text variant="gradient" gradient={{ from: 'grape', to: 'blue', deg: 200 }} size={10}>
+                                © 2023 HTTP:COLON // All rights reserved
+                            </Text>
+                            <Text variant="gradient" gradient={{ from: 'grape', to: 'blue', deg: 200 }} size={10} mt={-15} ml={40}>
+                                ✨ Made in San Francisco
+                            </Text>
+                        </Stack>
+                        <Group spacing={10} className={classes.social} position="right" noWrap mr={25}>
+                            <Anchor href="https://twitter.com/nmungel" target="_blank">
+                                <IconBrandTwitter size={18} stroke={1.5} />
+                            </Anchor>
+                            <Anchor href="https://github.com/hyfather/httpcolon" target="_blank">
+                                <IconBrandGithub size={18} stroke={1.5} />
+                            </Anchor>
+                        </Group>
+                </Group>
+                <FullDocs headerMetaData={headerData} focus={docsFocus} setFocus={setDocsFocus} setDrawerOpened={setDrawerOpened} />
 
                 <FooterLinks setDrawerOpened={setDrawerOpened} setDrawerFocus={setDrawerFocus} />
 

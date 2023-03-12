@@ -747,7 +747,7 @@ export default function HomePage(props) {
                         </Group>
                 </Group>}
 
-                {!slug && <FullDocs headerMetaData={headerData} focus={docsFocus} setFocus={setDocsFocus} setDrawerOpened={setDrawerOpened} />}
+                {!slug && <FullDocs focus={docsFocus} setFocus={setDocsFocus} />}
                 <FooterLinks setDrawerOpened={setDrawerOpened} setDrawerFocus={setDrawerFocus} />
 
             </AppShell>);

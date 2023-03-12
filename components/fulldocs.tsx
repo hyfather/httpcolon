@@ -78,14 +78,12 @@ interface ResponseDirective {
 }
 
 interface FullDocsProps {
-    headerMetaData: HeaderData[];
     focus: string;
 
     setFocus: Function;
-    setDrawerOpened: Function;
 }
 
-export function FullDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: FullDocsProps) {
+export function FullDocs({ focus, setFocus }: FullDocsProps) {
     const [rows, setRows] = useState([]);
     const { classes, theme } = useStyles();
     const [lastFocus, setLastFocus] = useState('');
@@ -93,13 +91,14 @@ export function FullDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: F
     const viewport = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const [searchValue, onSearchChange] = useState('');
+    const [headerData, setHeaderData] = useState([]);
 
     const makeRows = () => {
-        if (headerMetaData == null) {
+        if (headerData == null) {
             setRows([]);
             return;
         }
-        const rowsBody = headerMetaData.map((header) => {
+        const rowsBody = headerData.map((header) => {
             const responseDirectives = header['response-directives'];
             return <Container
                 ref={(el) => (refs.current[header.header.toLowerCase()] = el)}
@@ -200,8 +199,20 @@ export function FullDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: F
     };
 
     useEffect(() => {
+        const dbURL = `${window.location.origin}/api/v1/database`;
+        fetch(dbURL)
+            .then(response => response.json())
+            .then(data => {
+                console.log('headerData fetch', data);
+                setHeaderData(data);
+            }).catch((error) => {
+            console.error('Error:', error);
+        });
+    }, []);
+
+    useEffect(() => {
         makeRows();
-    }, [headerMetaData]);
+    }, [headerData]);
 
     function setClass(refString: string, className: string) {
         const ref = refs.current[refString?.toLowerCase()];
@@ -298,7 +309,7 @@ export function FullDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: F
                                 onSearchChange('');
                             }
                         }}
-                        data={headerMetaData.map((header) => header.header)}
+                        data={headerData.map((header) => header.header)}
                         sx={{
                           width: '50%',
                         }}

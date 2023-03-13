@@ -146,7 +146,6 @@ export function ColonNavbar({ themeSwich, data, setResponse, refreshActive, setR
                     </Group>
                  </Anchor>;
             });
-            console.log('ilinks', _links);
             setNavLinks(_links);
             if (active === '') {
                 setActive(instances[0].timestamp);

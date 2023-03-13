@@ -196,7 +196,7 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
             setClass(lastHeader, classes.inactiveHeader);
             setClass(header, classes.activeHeader);
             const directiveRef = refs.current[focus];
-            console.log("scrolling to directive ref", directiveRef);
+            // console.log("scrolling to directive ref", directiveRef);
             if (directiveRef != null) {
                 directiveRef.scrollIntoView({
                     behavior: 'smooth',

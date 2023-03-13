@@ -12,7 +12,7 @@ export function Explore() {
     const [baseURL, setBaseURL] = useState<string>('');
     const [mounted, setMounted] = useState(false);
 
-    console.log('explore');
+    // console.log('explore');
     const inventory = [
         {
             url: 'https://www.google.com',
@@ -61,7 +61,7 @@ export function Explore() {
                 const response = await fetch(slugURL);
                 const data = await response.json();
                 const instance = data.instances[data.instances.length - 1];
-                console.log('pushing', data.destination, data.instances[0].method, data.instances[0].latency, data.instances[0].status, data.instances[0].timestamp);
+                // console.log('pushing', data.destination, data.instances[0].method, data.instances[0].latency, data.instances[0].status, data.instances[0].timestamp);
                 // @ts-ignore
                 results.push(
                     <TaskCard

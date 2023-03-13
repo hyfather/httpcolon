@@ -174,8 +174,6 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget;
     setSearch(value);
-  console.log('disabled');
-      // setSortedData(sortData(data, { sortBy, reversed: reverseSortDirection, search: value }));
     makeRows();
   };
 
@@ -261,7 +259,6 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
                             className={classes.headerMark}
                             onClick={(event) => {
                                   event.preventDefault();
-                                  console.log('--> foo', `${row.header.toLowerCase()}$`);
                                   setDrawerOpened(true);
                                   setDrawerFocus(`${row.header.toLowerCase()}$`);
                               }}
@@ -290,7 +287,7 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
 
   useEffect(() => {
       if (tooltipRef.current) {
-          console.log('tooltipRef.current', tooltipRef.current);
+          // console.log('tooltipRef.current', tooltipRef.current);
           tooltipRef.current.opened = true;
       }
   }, [tooltipRef]);
@@ -308,7 +305,7 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
             if (scrollPosition > headerHeight + 300) {
                 setIsSticky(true);
                 if (scrollPosition > headerHeight + 350) {
-                    console.log("zz", scrollPosition);
+                    // console.log("zz", scrollPosition);
                 } else {
                     window.scrollTo(0, headerHeight + 400);
                 }

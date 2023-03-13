@@ -7,7 +7,7 @@ import {
     Group,
     Text,
     Center,
-    Space, Container, Divider, ActionIcon, Title, Badge, Select,
+    Space, Container, Divider, ActionIcon, Title, Badge, Select, Box, Stack,
 } from '@mantine/core';
 import {
     IconArrowBigTop, IconLink,
@@ -18,7 +18,7 @@ const useStyles = createStyles((theme) => ({
     inactiveHeader: {
         padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
         '&:hover': {
-            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[0],
         },
     },
 
@@ -38,6 +38,7 @@ const useStyles = createStyles((theme) => ({
         },
 
         '&:hover': {
+            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[1],
             button: {
                 visibility: 'visible',
             },
@@ -74,14 +75,16 @@ interface FullDocsProps {
     setFocus: Function;
 
     embedded: boolean;
+    updateTable: string;
 }
 
-export function FullDocs({ focus, setFocus, embedded }: FullDocsProps) {
+export function FullDocs({ focus, setFocus, embedded, updateTable }: FullDocsProps) {
     const [rows, setRows] = useState([]);
     const { classes, theme } = useStyles();
     const [lastFocus, setLastFocus] = useState('');
     const refs = useRef({});
     const viewport = useRef<HTMLDivElement>(null);
+    const titleRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const [searchValue, onSearchChange] = useState('');
     const [headerData, setHeaderData] = useState([]);
@@ -93,9 +96,10 @@ export function FullDocs({ focus, setFocus, embedded }: FullDocsProps) {
         }
         const rowsBody = headerData.map((header) => {
             const responseDirectives = header['response-directives'];
-            return <Container
+            return <Box
                 ref={(el) => (refs.current[header.header.toLowerCase()] = el)}
                 className={classes.inactiveHeader}
+                key={header.header}
             > <div
               key={header.header}
             >
@@ -189,7 +193,7 @@ export function FullDocs({ focus, setFocus, embedded }: FullDocsProps) {
                   size="xs"
                   onClick={(e) => {
                       e.preventDefault();
-                    setFocus(`${header.header.toLowerCase()}$`);
+                      setFocus(`${header.header.toLowerCase()}$`);
                 }}
                 >
                     <IconPin size={10} />
@@ -199,17 +203,24 @@ export function FullDocs({ focus, setFocus, embedded }: FullDocsProps) {
                     size="xs"
                     onClick={(e) => {
                         e.preventDefault();
-                        viewport.current.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start',
-                        });
                         setFocus('');
+                        if (embedded) {
+                            titleRef.current.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start',
+                            });
+                        } else {
+                            viewport.current.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start',
+                            });
+                        }
                     }}
                 >
                     <IconArrowBigTop size={10} />
                 </ActionIcon>
             </Group>
-                   </Container>;
+                   </Box>;
         });
         setRows(rowsBody);
     };
@@ -219,7 +230,7 @@ export function FullDocs({ focus, setFocus, embedded }: FullDocsProps) {
         fetch(dbURL)
             .then(response => response.json())
             .then(data => {
-                console.log('headerData fetch', data);
+                // console.log('headerData fetch', data);
                 setHeaderData(data);
             }).catch((error) => {
             console.error('Error:', error);
@@ -228,7 +239,7 @@ export function FullDocs({ focus, setFocus, embedded }: FullDocsProps) {
 
     useEffect(() => {
         makeRows();
-    }, [headerData]);
+    }, [headerData, updateTable]);
 
     function setClass(refString: string, className: string) {
         const ref = refs.current[refString?.toLowerCase()];
@@ -245,7 +256,7 @@ export function FullDocs({ focus, setFocus, embedded }: FullDocsProps) {
             setClass(lastHeader, classes.inactiveHeader);
             setClass(header, classes.activeHeader);
             const directiveRef = refs.current[focus];
-            console.log("scrolling to directive ref", directiveRef);
+            // console.log("scrolling to directive ref", directiveRef);
             if (directiveRef != null) {
                 directiveRef.scrollIntoView({
                     behavior: 'smooth',
@@ -272,6 +283,7 @@ export function FullDocs({ focus, setFocus, embedded }: FullDocsProps) {
     }
 
     useEffect(() => {
+        // console.log("focus changed", focus, lastFocus);
        if (focus !== lastFocus) {
            focusAndScroll();
        }
@@ -282,7 +294,8 @@ export function FullDocs({ focus, setFocus, embedded }: FullDocsProps) {
     }, [rows]);
 
     return (
-        <ScrollArea type="scroll" ref={viewport} viewportRef={viewport}>
+        <ScrollArea type="auto" h={200} ref={viewport} viewportRef={viewport}>
+        <Stack>
             { embedded ? <div /> : <Space h="xl" mt={200} /> }
             <Container>
                 <Center>
@@ -294,17 +307,18 @@ export function FullDocs({ focus, setFocus, embedded }: FullDocsProps) {
                         }}
                         variant="gradient"
                         gradient={{ from: 'blue', to: 'grape', deg: 200 }}
+                        ref={titleRef}
                     >
                         HTTP:DOCS
                     </Text>
                 </Center>
                 <Space h="xl" />
                 {!embedded && <Container>
-                    <Title size={20} color="blue"> What are HTTP Headers?</Title>
-                    <p>
-                        HTTP headers are a fundamental component of the HTTP protocol, which is the backbone of the internet. These headers contain important information about the request and response, such as content type, caching instructions, authentication tokens, and more. By understanding how to read and manipulate HTTP headers, developers can optimize their web applications for performance, security, and functionality. Moreover, HTTP headers play a critical role in API integrations, allowing developers to communicate with external services and systems. In short, HTTP headers are an essential tool in the web developer's arsenal, and any developer serious about building high-quality web applications should invest the time to learn and master them.
-                    </p>
-                </Container>}
+                                <Title size={20} color="blue"> What are HTTP Headers?</Title>
+                                <p>
+                                    HTTP headers are a fundamental component of the HTTP protocol, which is the backbone of the internet. These headers contain important information about the request and response, such as content type, caching instructions, authentication tokens, and more. By understanding how to read and manipulate HTTP headers, developers can optimize their web applications for performance, security, and functionality. Moreover, HTTP headers play a critical role in API integrations, allowing developers to communicate with external services and systems. In short, HTTP headers are an essential tool in the web developer's arsenal, and any developer serious about building high-quality web applications should invest the time to learn and master them.
+                                </p>
+                              </Container>}
                 <Space h="xl" />
                 <Center>
                     <Select
@@ -323,15 +337,17 @@ export function FullDocs({ focus, setFocus, embedded }: FullDocsProps) {
                         }}
                         data={headerData.map((header) => header.header)}
                         sx={{
-                          width: '50%',
+                          width: '260px',
                         }}
                     />
                 </Center>
                 <Space h="sm" />
-
-
-                {rows}
             </Container>
-        </ScrollArea>
-    );
+            <Container>
+                    {rows}
+            </Container>
+        </Stack>
+    </ScrollArea>
+
+);
 }

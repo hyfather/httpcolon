@@ -63,7 +63,6 @@ const useStyles = createStyles((theme, _params, getRef) => {
             paddingTop: theme.spacing.md,
             marginBottom: 80,
             marginTop: theme.spacing.md,
-            // height: 500,
             borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2]
                 }`,
         },
@@ -400,7 +399,7 @@ export default function HomePage(props) {
                         setUpdateTable(item.timestamp);
                         setActive(item.timestamp);
                         setLoading(false);
-                        console.log('updatetable', updateTable);
+                        // console.log('updatetable', updateTable);
                     }}
                 >
                     <span> <IconClock size={16} stroke={1} /> {timestamp.toLocaleString()}</span>
@@ -505,8 +504,7 @@ export default function HomePage(props) {
               aside={<Transition mounted={drawerOpened} transition="slide-left" duration={0} timingFunction="ease">
                           {(styles) =>
                           <Aside style={styles} p="md" hiddenBreakpoint="sm" hidden={!drawerOpened} width={{ sm: 300, lg: 400 }}>
-                              {/*<ColonDocs headerMetaData={headerData} focus={drawerFocus} setFocus={setDrawerFocus} setDrawerOpened={setDrawerOpened} />*/}
-                              <FullDocs focus={drawerFocus} setFocus={setDrawerFocus} embedded />
+                              <FullDocs focus={drawerFocus} setFocus={setDrawerFocus} embedded updateTable={updateTable} />
                           </Aside> }
                      </Transition>}
               header={<Header height={50} p="xs" className={classes.header}>
@@ -727,7 +725,7 @@ export default function HomePage(props) {
 
                 {!slug && <Group position="apart"
                     sx={{
-                        background: theme.fn.gradient({ from: theme.colors.gray[0], to: theme.colors.grape[0], deg: 1 }),
+                        background: theme.colorScheme === 'dark' ? theme.fn.gradient({ from: theme.colors.dark[8], to: theme.colors.dark[8], deg: 1 }) : theme.fn.gradient({ from: theme.colors.gray[0], to: theme.colors.grape[0], deg: 1 }),
                         width: '100%',
                         height: '200px',
                         display: 'flex',
@@ -735,6 +733,7 @@ export default function HomePage(props) {
                         padding: '15px',
                         position: 'absolute',
                         left: 0,
+                        borderTop: theme.colorScheme === 'dark' ? '1px solid #555' : '1px solid #eaeaea',
                     }}
                    mt={20}
                 >
@@ -756,7 +755,7 @@ export default function HomePage(props) {
                         </Group>
                 </Group>}
 
-                {!slug && <FullDocs focus={docsFocus} setFocus={setDocsFocus} />}
+                {!slug && <FullDocs focus={docsFocus} setFocus={setDocsFocus} embedded={false} updateTable={updateTable} />}
                 <FooterLinks setDrawerOpened={setDrawerOpened} setDrawerFocus={setDrawerFocus} />
 
             </AppShell>);

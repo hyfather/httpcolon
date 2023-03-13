@@ -80,7 +80,7 @@ export function ColonizeForm({ setRedirect, focus, onSubmit }: ColonizeProps) {
     function handleInputChange(event) {
         const TABKEY = 9;
         if (event.keyCode === TABKEY) {
-            console.log('tab key pressed', inputValue.length);
+            // console.log('tab key pressed', inputValue.length);
             if (inputValue.length === 0) {
                 event.preventDefault();
                 setInputValue(placeHolder);
@@ -92,14 +92,14 @@ export function ColonizeForm({ setRedirect, focus, onSubmit }: ColonizeProps) {
 
     return (
         <form onSubmit={form.onSubmit((values) => {
-            console.log('redirecting', inputValue);
+            // console.log('redirecting', inputValue);
             const strippedUrl = inputValue.replace(/(^\w+:|^)\/\//, '').split('?')[0];
             if (onSubmit != null) {
                 setInputValue(strippedUrl);
                 onSubmit(strippedUrl, methodValue);
             } else {
                 const redirectUrl = methodValue === 'GET' ? (`${baseURL}/${strippedUrl}`) : (`${baseURL}/${strippedUrl}?method=${methodValue}`);
-                console.log(`redirectUrl: ${redirectUrl}/${methodValue}`);
+                // console.log(`redirectUrl: ${redirectUrl}/${methodValue}`);
                 setRedirect(redirectUrl);
             }
         })}

@@ -455,6 +455,8 @@ export default function HomePage(props) {
         setUpdateTable('');
         setCopyURL('');
         setSlug('');
+        setDrawerOpened(false);
+        setNavOpened(false);
         inputRef.current?.focus();
     }
 
@@ -503,7 +505,8 @@ export default function HomePage(props) {
               aside={<Transition mounted={drawerOpened} transition="slide-left" duration={0} timingFunction="ease">
                           {(styles) =>
                           <Aside style={styles} p="md" hiddenBreakpoint="sm" hidden={!drawerOpened} width={{ sm: 300, lg: 400 }}>
-                              <ColonDocs headerMetaData={headerData} focus={drawerFocus} setFocus={setDrawerFocus} setDrawerOpened={setDrawerOpened} />
+                              {/*<ColonDocs headerMetaData={headerData} focus={drawerFocus} setFocus={setDrawerFocus} setDrawerOpened={setDrawerOpened} />*/}
+                              <FullDocs focus={drawerFocus} setFocus={setDrawerFocus} embedded />
                           </Aside> }
                      </Transition>}
               header={<Header height={50} p="xs" className={classes.header}>
@@ -672,7 +675,13 @@ export default function HomePage(props) {
                                                 { format(response.timestamp) }
                                             </Badge>
                                         </Tooltip>
-                                        <ActionIcon onClick={() => refreshTable()} color="green" variant="outline" size="xs">
+                                        <ActionIcon onClick={() => {
+                                                        openNav();
+                                                        refreshTable();
+                                                    }}
+                                                    color="green"
+                                                    variant="outline"
+                                                    size="xs">
                                             <IconRefresh size={12} stroke={2} />
                                         </ActionIcon>
                                         </Group>

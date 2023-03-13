@@ -72,9 +72,11 @@ interface FullDocsProps {
     focus: string;
 
     setFocus: Function;
+
+    embedded: boolean;
 }
 
-export function FullDocs({ focus, setFocus }: FullDocsProps) {
+export function FullDocs({ focus, setFocus, embedded }: FullDocsProps) {
     const [rows, setRows] = useState([]);
     const { classes, theme } = useStyles();
     const [lastFocus, setLastFocus] = useState('');
@@ -254,8 +256,15 @@ export function FullDocs({ focus, setFocus }: FullDocsProps) {
             } else {
                 const headerRef = refs.current[header];
                 if (headerRef != null) {
-                    const y = headerRef.getBoundingClientRect().top + window.scrollY - 55;
-                    window.scrollTo({ top: y, behavior: 'smooth' });
+                    if (embedded) {
+                        headerRef.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start',
+                        });
+                    } else {
+                        const y = headerRef.getBoundingClientRect().top + window.scrollY - 55;
+                        window.scrollTo({ top: y, behavior: 'smooth' });
+                    }
                 }
             }
             setLastFocus(focus);
@@ -273,40 +282,30 @@ export function FullDocs({ focus, setFocus }: FullDocsProps) {
     }, [rows]);
 
     return (
-        <ScrollArea type="scroll" ref={viewport}
-        >
-            <Container mt={200}
-                       sx={{
-                           ':target:before': {
-                               content: '""',
-                               display: 'block',
-                               height: '100px',
-                               marginTop: '-100px',
-                           },
-                           html: {
-                               scrollBehavior: 'smooth',
-                           },
-                       }}>
-                    <Center>
-                        <Text
-                            size={48}
-                            sx={{
-                                fontFamily: 'Monaco, monospace',
-                                fontWeight: 600,
-                            }}
-                            variant="gradient"
-                            gradient={{ from: 'blue', to: 'grape', deg: 200 }}
-                        >
+        <ScrollArea type="scroll" ref={viewport} viewportRef={viewport}>
+            { embedded ? <div /> : <Space h="xl" mt={200} /> }
+            <Container>
+                <Center>
+                    <Text
+                        size={embedded ? 36 : 48}
+                        sx={{
+                            fontFamily: 'Monaco, monospace',
+                            fontWeight: 600,
+                        }}
+                        variant="gradient"
+                        gradient={{ from: 'blue', to: 'grape', deg: 200 }}
+                    >
                         HTTP:DOCS
-                        </Text>
-                    </Center>
-                    <Space h="xl" />
+                    </Text>
+                </Center>
+                <Space h="xl" />
+                {!embedded && <Container>
                     <Title size={20} color="blue"> What are HTTP Headers?</Title>
-                <p>
+                    <p>
                         HTTP headers are a fundamental component of the HTTP protocol, which is the backbone of the internet. These headers contain important information about the request and response, such as content type, caching instructions, authentication tokens, and more. By understanding how to read and manipulate HTTP headers, developers can optimize their web applications for performance, security, and functionality. Moreover, HTTP headers play a critical role in API integrations, allowing developers to communicate with external services and systems. In short, HTTP headers are an essential tool in the web developer's arsenal, and any developer serious about building high-quality web applications should invest the time to learn and master them.
                     </p>
+                </Container>}
                 <Space h="xl" />
-
                 <Center>
                     <Select
                         placeholder="Jump to header"
@@ -327,8 +326,10 @@ export function FullDocs({ focus, setFocus }: FullDocsProps) {
                           width: '50%',
                         }}
                     />
-                    </Center>
+                </Center>
                 <Space h="sm" />
+
+
                 {rows}
             </Container>
         </ScrollArea>

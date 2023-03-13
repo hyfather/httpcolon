@@ -157,9 +157,8 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
   const [isSticky, setIsSticky] = useState(false);
   const [isStickyHidden, setIsStickyHidden] = useState(false);
   const headerRef = useRef(null);
-  const tooltipRef = useRef(null);
-
-
+  const tooltipRef = useRef(Tooltip);
+  const [tooltipRefAssigned, setTooltipRefAssigned] = useState(false);
 
 //   const [refreshTable, setRefreshTable] = useState("");
 
@@ -222,7 +221,7 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
                         color="grape"
                         position="bottom"
                         width={250}
-                        ref={tooltipRef}
+                        ref={tooltipRefAssigned ? null : tooltipRef}
                       >
                         <Mark
                           className={classes.directiveMark}
@@ -237,6 +236,9 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
                       </Tooltip>;
                 }
               });
+              if (!tooltipRefAssigned) {
+                setTooltipRefAssigned(true);
+              }
               if (tooltip) {
                 return tooltip;
               }
@@ -285,6 +287,13 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
       setRows(rows_);
     }
   };
+
+  useEffect(() => {
+      if (tooltipRef.current) {
+          console.log('tooltipRef.current', tooltipRef.current);
+          tooltipRef.current.opened = true;
+      }
+  }, [tooltipRef]);
 
   useEffect(() => {
     console.log('updating table');

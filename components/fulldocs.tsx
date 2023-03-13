@@ -10,7 +10,7 @@ import {
     Space, Container, Divider, ActionIcon, Title, Badge, Select, Box, Stack,
 } from '@mantine/core';
 import {
-    IconArrowBigTop, IconLink,
+    IconArrowBigTop, IconBrandGithub, IconLink,
     IconPin, IconSearch,
 } from '@tabler/icons';
 
@@ -189,15 +189,16 @@ export function FullDocs({ focus, setFocus, embedded, updateTable }: FullDocsPro
             <Divider size="xs" />
             <Group position="right" mt="md" mb="sm" spacing="xs">
                 <ActionIcon
-                  variant="filled"
-                  size="xs"
-                  onClick={(e) => {
-                      e.preventDefault();
-                      setFocus(`${header.header.toLowerCase()}$`);
-                }}
+                    variant="filled"
+                    size="xs"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        window.open("https://github.com/hyfather/httpcolon/blob/master/json/" + header.header + ".json", '_blank').focus();
+                    }}
                 >
-                    <IconPin size={10} />
+                    <IconBrandGithub size={10} />
                 </ActionIcon>
+
                 <ActionIcon
                     variant="filled"
                     size="xs"

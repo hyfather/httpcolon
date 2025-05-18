@@ -1,19 +1,33 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-    createStyles,
-    Table,
-    ScrollArea,
-    UnstyledButton,
-    Group,
-    Text,
-    Center,
-    TextInput,
-    Mark,
-    Tooltip,
-    Code, Alert, Space, Container, Badge, Stack, ActionIcon,
+  createStyles,
+  Table,
+  ScrollArea,
+  UnstyledButton,
+  Group,
+  Text,
+  Center,
+  TextInput,
+  Mark,
+  Tooltip,
+  Code,
+  Alert,
+  Space,
+  Container,
+  Badge,
+  Stack,
+  ActionIcon,
 } from '@mantine/core';
 import { keys } from '@mantine/utils';
-import {IconSelector, IconChevronDown, IconChevronUp, IconSearch, IconCopy, IconX, IconArrowUp} from '@tabler/icons';
+import {
+  IconSelector,
+  IconChevronDown,
+  IconChevronUp,
+  IconSearch,
+  IconCopy,
+  IconX,
+  IconArrowUp,
+} from '@tabler/icons';
 
 const useStyles = createStyles((theme) => ({
   th: {
@@ -25,7 +39,10 @@ const useStyles = createStyles((theme) => ({
     padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
 
     '&:hover': {
-      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+      backgroundColor:
+        theme.colorScheme === 'dark'
+          ? theme.colors.dark[6]
+          : theme.colors.gray[0],
     },
   },
 
@@ -34,31 +51,43 @@ const useStyles = createStyles((theme) => ({
     marginRight: 100,
   },
 
-sticky: {
-        position: 'fixed',
-        top: '40px',
-        left: 0,
-        right: 0,
-        width: 400,
-        zIndex: 999,
-        padding: '10px 0',
-        backgroundColor: '#fff',
-        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-        borderRadius: '5px',
-        background: theme.colors.gray[0],
-},
-
-  directiveMark: {
-    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.grape[8] : theme.colors.grape[1],
-    color: theme.colorScheme === 'dark' ? theme.colors.gray[2] : theme.colors.gray[9],
+  sticky: {
+    position: 'fixed',
+    top: '40px',
+    left: 0,
+    right: 0,
+    width: 400,
+    zIndex: 999,
+    padding: '10px 0',
+    backgroundColor: '#fff',
+    boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+    borderRadius: '5px',
+    background: theme.colors.gray[0],
   },
 
-    headerMark: {
-        backgroundColor: theme.colorScheme === 'dark' ? theme.colors.blue[8] : theme.colors.blue[1],
-        color: theme.colorScheme === 'dark' ? theme.colors.gray[2] : theme.colors.gray[9],
-    },
+  directiveMark: {
+    backgroundColor:
+      theme.colorScheme === 'dark'
+        ? theme.colors.grape[8]
+        : theme.colors.grape[1],
+    color:
+      theme.colorScheme === 'dark'
+        ? theme.colors.gray[2]
+        : theme.colors.gray[9],
+  },
 
-    icon: {
+  headerMark: {
+    backgroundColor:
+      theme.colorScheme === 'dark'
+        ? theme.colors.blue[8]
+        : theme.colors.blue[1],
+    color:
+      theme.colorScheme === 'dark'
+        ? theme.colors.gray[2]
+        : theme.colors.gray[9],
+  },
+
+  icon: {
     width: 21,
     height: 21,
     borderRadius: 21,
@@ -78,9 +107,9 @@ interface HeaderData {
 }
 
 interface ResponseDirective {
-  directive: string,
-  description: string,
-  details: string
+  directive: string;
+  description: string;
+  details: string;
 }
 
 interface TableSortProps {
@@ -101,7 +130,11 @@ interface ThProps {
 
 function Th({ children, reversed, sorted, onSort }: ThProps) {
   const { classes } = useStyles();
-  const Icon = sorted ? (reversed ? IconChevronUp : IconChevronDown) : IconSelector;
+  const Icon = sorted
+    ? reversed
+      ? IconChevronUp
+      : IconChevronDown
+    : IconSelector;
   return (
     <th className={classes.th}>
       <UnstyledButton onClick={onSort} className={classes.control}>
@@ -147,7 +180,17 @@ function sortData(
   );
 }
 
-export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable, setDrawerOpened, setDrawerFocus }: TableSortProps, { sortField }: any) {
+export function TableSort(
+  {
+    data,
+    headerMetaData,
+    setHeaderMetadata,
+    updateTable,
+    setDrawerOpened,
+    setDrawerFocus,
+  }: TableSortProps,
+  { sortField }: any
+) {
   const [search, setSearch] = useState('');
   const [sortedData, setSortedData] = useState([]);
   const [sortBy, setSortBy] = useState<keyof RowData | null>(sortField);
@@ -160,7 +203,7 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
   const tooltipRef = useRef(Tooltip);
   const [tooltipRefAssigned, setTooltipRefAssigned] = useState(false);
 
-//   const [refreshTable, setRefreshTable] = useState("");
+  //   const [refreshTable, setRefreshTable] = useState("");
 
   const setSorting = (field: keyof RowData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
@@ -179,117 +222,133 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
 
   const makeRows = () => {
     if (data == null) {
-        setRows([]);
-        return;
+      setRows([]);
+      return;
     }
-    const sData = sortData(data, { sortBy: null, reversed: reverseSortDirection, search });
+    const sData = sortData(data, {
+      sortBy: null,
+      reversed: reverseSortDirection,
+      search,
+    });
 
     setSortedData(sData);
 
     const headerDB = headerMetaData;
     if (sData != null && headerDB != null) {
       const rows_ = sData.map((row) => {
-            let dInfo;
-            headerDB.forEach((d) => {
-              if (d.header.toLowerCase() === row.header.toLowerCase()) {
-                dInfo = d;
-              }
-            });
-            if (dInfo == null || dInfo['response-directives'] == null) {
-              return (
-                  <tr key={row.header}>
-                    <td><Code>{row.header}</Code></td>
-                    <td><Code>{row.value}</Code></td>
-                  </tr>);
-            }
-
-            const responseDirectives = dInfo['response-directives'];
-            const tokens = row.value.split(/([\s,=";]+)/);
-            const markedUp = tokens.map((token) => {
-              // console.log('token', token);
-              let tooltip;
-              responseDirectives?.forEach((d) => {
-                if (d.directive.length > 1 && d.directive.toLowerCase() === token.toLocaleLowerCase()) {
-                  tooltip =
-                      <Tooltip
-                        label={d.description}
-                        withArrow
-                        inline
-                        multiline
-                        color="grape"
-                        position="bottom"
-                        width={250}
-                        ref={tooltipRefAssigned ? null : tooltipRef}
-                      >
-                        <Mark
-                          className={classes.directiveMark}
-                          onClick={(event) => {
-                            event.preventDefault();
-                              setDrawerOpened(true);
-                              setDrawerFocus(`${row.header.toLowerCase()}$${d.directive.toLowerCase()}`);
-                        }}
-                        >
-                            {token}
-                        </Mark>
-                      </Tooltip>;
-                }
-              });
-              if (!tooltipRefAssigned) {
-                setTooltipRefAssigned(true);
-              }
-              if (tooltip) {
-                return tooltip;
-              }
-              return <span>{token}</span>;
-            });
-
-            return (
-                <tr key={row.header}>
-                  <td><Code>
-                      <Tooltip
-                        label={dInfo.description}
-                        withArrow
-                        inline
-                        multiline
-                        color="blue"
-                        position="right"
-                        width={250}
-                      >
-                          <Mark
-                            className={classes.headerMark}
-                            onClick={(event) => {
-                                  event.preventDefault();
-                                  setDrawerOpened(true);
-                                  setDrawerFocus(`${row.header.toLowerCase()}$`);
-                              }}
-                          >
-                                {row.header}
-                          </Mark>
-                      </Tooltip>
-                      </Code>
-                  </td>
-                  <td>
-                    <div
-                        sx={{
-                           width: '400px',
-                            overflow: 'auto',
-                        }}
-                    >
-                      <Code>{markedUp}</Code>
-                    </div>
-                  </td>
-                </tr>);
+        let dInfo;
+        headerDB.forEach((d) => {
+          if (d.header.toLowerCase() === row.header.toLowerCase()) {
+            dInfo = d;
           }
-      );
+        });
+        if (dInfo == null || dInfo['response-directives'] == null) {
+          return (
+            <tr key={row.header}>
+              <td>
+                <Code>{row.header}</Code>
+              </td>
+              <td>
+                <Code>{row.value}</Code>
+              </td>
+            </tr>
+          );
+        }
+
+        const responseDirectives = dInfo['response-directives'];
+        const tokens = row.value.split(/([\s,=";]+)/);
+        const markedUp = tokens.map((token) => {
+          // console.log('token', token);
+          let tooltip;
+          responseDirectives?.forEach((d) => {
+            if (
+              d.directive.length > 1 &&
+              d.directive.toLowerCase() === token.toLocaleLowerCase()
+            ) {
+              tooltip = (
+                <Tooltip
+                  label={d.description}
+                  withArrow
+                  inline
+                  multiline
+                  color="grape"
+                  position="bottom"
+                  width={250}
+                  ref={tooltipRefAssigned ? null : tooltipRef}
+                >
+                  <Mark
+                    className={classes.directiveMark}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      setDrawerOpened(true);
+                      setDrawerFocus(
+                        `${row.header.toLowerCase()}$${d.directive.toLowerCase()}`
+                      );
+                    }}
+                  >
+                    {token}
+                  </Mark>
+                </Tooltip>
+              );
+            }
+          });
+          if (!tooltipRefAssigned) {
+            setTooltipRefAssigned(true);
+          }
+          if (tooltip) {
+            return tooltip;
+          }
+          return <span>{token}</span>;
+        });
+
+        return (
+          <tr key={row.header}>
+            <td>
+              <Code>
+                <Tooltip
+                  label={dInfo.description}
+                  withArrow
+                  inline
+                  multiline
+                  color="blue"
+                  position="right"
+                  width={250}
+                >
+                  <Mark
+                    className={classes.headerMark}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      setDrawerOpened(true);
+                      setDrawerFocus(`${row.header.toLowerCase()}$`);
+                    }}
+                  >
+                    {row.header}
+                  </Mark>
+                </Tooltip>
+              </Code>
+            </td>
+            <td>
+              <div
+                sx={{
+                  width: '400px',
+                  overflow: 'auto',
+                }}
+              >
+                <Code>{markedUp}</Code>
+              </div>
+            </td>
+          </tr>
+        );
+      });
       setRows(rows_);
     }
   };
 
   useEffect(() => {
-      if (tooltipRef.current) {
-          // console.log('tooltipRef.current', tooltipRef.current);
-          tooltipRef.current.opened = true;
-      }
+    if (tooltipRef.current) {
+      // console.log('tooltipRef.current', tooltipRef.current);
+      tooltipRef.current.opened = true;
+    }
   }, [tooltipRef]);
 
   useEffect(() => {
@@ -297,57 +356,66 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
     makeRows();
   }, [data, updateTable, headerMetaData]);
 
-    useEffect(() => {
-        const handleScroll = () => {
-            const headerHeight = headerRef.current.offsetHeight;
-            const scrollPosition = window.scrollY;
+  useEffect(() => {
+    const handleScroll = () => {
+      const headerHeight = headerRef.current.offsetHeight;
+      const scrollPosition = window.scrollY;
 
-            if (scrollPosition > headerHeight + 300) {
-                setIsSticky(true);
-                if (scrollPosition > headerHeight + 350) {
-                    // console.log("zz", scrollPosition);
-                } else {
-                    window.scrollTo(0, headerHeight + 400);
-                }
-            } else {
-                setIsSticky(false);
-                window.scrollTo(0, 0);
-            }
-        };
+      if (scrollPosition > headerHeight + 300) {
+        setIsSticky(true);
+        if (scrollPosition > headerHeight + 350) {
+          // console.log("zz", scrollPosition);
+        } else {
+          window.scrollTo(0, headerHeight + 400);
+        }
+      } else {
+        setIsSticky(false);
+        window.scrollTo(0, 0);
+      }
+    };
 
-        // window.addEventListener('scroll', handleScroll);
+    // window.addEventListener('scroll', handleScroll);
 
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-    return (
+  return (
     <ScrollArea>
-        <Container
-            className={isSticky && !isStickyHidden ? classes.sticky : ''}
-            ref={headerRef}
-        >
-            <Stack>
-                {isSticky ? <Group position="apart">
-                    <Badge
-                        variant="dot"
-                        color="green"
-                        size="md"
-                        radius="sm"
-                        ml={20}
-                        >
-                        GET www.facebook.com
-                    </Badge>
-                <Group spacing="xs">
-                    <ActionIcon onClick={() => {window.scroll(0, 0)}} variant="filled" size="xs">
-                        <IconArrowUp size={14} stroke={1.5} />
-                    </ActionIcon>
-                    <ActionIcon onClick={() => {setIsStickyHidden(true)}} mr={20} variant="filled" size="xs">
-                        <IconX size={14} stroke={1.5} />
-                    </ActionIcon>
-                </Group>
-                </Group> : null}
+      <Container
+        className={isSticky && !isStickyHidden ? classes.sticky : ''}
+        ref={headerRef}
+      >
+        <Stack>
+          {isSticky ? (
+            <Group position="apart">
+              <Badge variant="dot" color="green" size="md" radius="sm" ml={20}>
+                GET www.facebook.com
+              </Badge>
+              <Group spacing="xs">
+                <ActionIcon
+                  onClick={() => {
+                    window.scroll(0, 0);
+                  }}
+                  variant="filled"
+                  size="xs"
+                >
+                  <IconArrowUp size={14} stroke={1.5} />
+                </ActionIcon>
+                <ActionIcon
+                  onClick={() => {
+                    setIsStickyHidden(true);
+                  }}
+                  mr={20}
+                  variant="filled"
+                  size="xs"
+                >
+                  <IconX size={14} stroke={1.5} />
+                </ActionIcon>
+              </Group>
+            </Group>
+          ) : null}
 
-                <TextInput
+          <TextInput
             placeholder="Search headers"
             icon={<IconSearch size={14} stroke={1.5} />}
             value={search}
@@ -355,9 +423,8 @@ export function TableSort({ data, headerMetaData, setHeaderMetadata, updateTable
             onChange={handleSearchChange}
             size="xs"
           />
-            </Stack>
-
-        </Container>
+        </Stack>
+      </Container>
       <Table
         horizontalSpacing="md"
         verticalSpacing="xs"

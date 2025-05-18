@@ -102,7 +102,7 @@ export function ColonDocs({ headerMetaData, focus, setFocus, setDrawerOpened }: 
                   key={header.header}
                   onClick={(e) => {
                         e.preventDefault();
-                        setFocus(`${header.header}$}`);
+                        setFocus(`${header.header}$`);
                     }}
                 >
 

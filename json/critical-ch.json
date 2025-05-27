@@ -1,0 +1,22 @@
+{
+  "header": "critical-ch",
+  "description": "The Critical-CH header lists Client Hints that are critical for rendering the response. If these hints were missing from the request, the user agent should retry the request including them.",
+  "response-directives": [
+    {
+      "directive": "sec-ch-ua",
+      "description": "User agent brand and version information."
+    },
+    {
+      "directive": "sec-ch-ua-platform",
+      "description": "Indicates the platform the user agent is running on."
+    },
+    {
+      "directive": "viewport-width",
+      "description": "Reports the layout viewport width in CSS pixels."
+    },
+    {
+      "directive": "width",
+      "description": "Indicates the desired resource width in physical pixels."
+    }
+  ]
+}

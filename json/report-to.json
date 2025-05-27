@@ -1,0 +1,22 @@
+{
+  "header": "report-to",
+  "description": "The Report-To header defines a reporting group for the Reporting API. It provides the browser with one or more endpoints where reports should be sent.",
+  "response-directives": [
+    {
+      "directive": "group",
+      "description": "Name of the reporting group."
+    },
+    {
+      "directive": "max_age",
+      "description": "Time in seconds that the browser should remember this reporting configuration."
+    },
+    {
+      "directive": "endpoints",
+      "description": "List of endpoint objects. Each object contains a URL and optional priority or weight values."
+    },
+    {
+      "directive": "include_subdomains",
+      "description": "Indicates whether reports should also be sent for subdomains."
+    }
+  ]
+}

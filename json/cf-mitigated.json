@@ -1,0 +1,22 @@
+{
+  "header": "cf-mitigated",
+  "description": "The cf-mitigated header appears in Cloudflare responses when a request triggers one of Cloudflare's security mitigations. The value describes the action taken, such as presenting a challenge or blocking the request.",
+  "response-directives": [
+    {
+      "directive": "challenge",
+      "description": "Cloudflare challenged the client, usually with a CAPTCHA or JavaScript challenge."
+    },
+    {
+      "directive": "managed_challenge",
+      "description": "Cloudflare issued a managed challenge that the client needed to solve before continuing."
+    },
+    {
+      "directive": "block",
+      "description": "The request was blocked due to firewall or DDoS protections."
+    },
+    {
+      "directive": "simulate",
+      "description": "Indicates that a mitigation would have been applied but Cloudflare was running in simulation mode."
+    }
+  ]
+}

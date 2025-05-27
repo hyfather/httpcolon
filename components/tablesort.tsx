@@ -197,6 +197,7 @@ export function TableSort(
   const [sortBy, setSortBy] = useState<keyof RowData | null>(sortField);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
   const [rows, setRows] = useState([]);
+  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
   const { classes } = useStyles();
   const [isSticky, setIsSticky] = useState(false);
   const [isStickyHidden, setIsStickyHidden] = useState(false);
@@ -244,6 +245,30 @@ export function TableSort(
           }
         });
         if (dInfo == null || dInfo['response-directives'] == null) {
+          const isExpanded = expandedRows[row.header];
+          const tooLong = row.value.length > 100;
+          const valueElement =
+            !tooLong || isExpanded ? (
+              <Code>{row.value}</Code>
+            ) : (
+              <Code>
+                {row.value.slice(0, 100)}...
+                <span
+                  style={{ textDecoration: 'underline', cursor: 'pointer' }}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    setExpandedRows((prev) => ({
+                      ...prev,
+                      [row.header]: true,
+                    }));
+                  }}
+                >
+                  more
+                </span>
+              </Code>
+            );
+
           return (
             <tr
               key={row.header}
@@ -255,59 +280,88 @@ export function TableSort(
               <td>
                 <Code>{row.header}</Code>
               </td>
-              <td>
-                <Code>{row.value}</Code>
-              </td>
+              <td>{valueElement}</td>
             </tr>
           );
         }
 
-        const responseDirectives = dInfo['response-directives'];
-        const tokens = row.value.split(/([\s,=";]+)/);
-        const markedUp = tokens.map((token) => {
-          // console.log('token', token);
-          let tooltip;
-          responseDirectives?.forEach((d) => {
-            if (
-              d.directive.length > 1 &&
-              d.directive.toLowerCase() === token.toLocaleLowerCase()
-            ) {
-              tooltip = (
-                <Tooltip
-                  label={d.description}
-                  withArrow
-                  inline
-                  multiline
-                  color="grape"
-                  position="bottom"
-                  width={250}
-                  ref={tooltipRefAssigned ? null : tooltipRef}
-                >
-                  <Mark
-                    className={classes.directiveMark}
-                    onClick={(event) => {
-                      event.preventDefault();
-                      event.stopPropagation();
-                      setDrawerOpened(true);
-                      setDrawerFocus(
-                        `${row.header.toLowerCase()}$${d.directive.toLowerCase()}`
-                      );
-                    }}
+        const isExpanded = expandedRows[row.header];
+        const tooLong = row.value.length > 100;
+        let valueElement;
+        if (!isExpanded && tooLong) {
+          valueElement = (
+            <Code>
+              {row.value.slice(0, 100)}...
+              <span
+                style={{ textDecoration: 'underline', cursor: 'pointer' }}
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  setExpandedRows((prev) => ({ ...prev, [row.header]: true }));
+                }}
+              >
+                more
+              </span>
+            </Code>
+          );
+        } else {
+          const responseDirectives = dInfo['response-directives'];
+          const tokens = row.value.split(/([\s,=";]+)/);
+          const markedUp = tokens.map((token) => {
+            let tooltip;
+            responseDirectives?.forEach((d) => {
+              if (
+                d.directive.length > 1 &&
+                d.directive.toLowerCase() === token.toLocaleLowerCase()
+              ) {
+                tooltip = (
+                  <Tooltip
+                    label={d.description}
+                    withArrow
+                    inline
+                    multiline
+                    color="grape"
+                    position="bottom"
+                    width={250}
+                    ref={tooltipRefAssigned ? null : tooltipRef}
                   >
-                    {token}
-                  </Mark>
-                </Tooltip>
-              );
+                    <Mark
+                      className={classes.directiveMark}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        setDrawerOpened(true);
+                        setDrawerFocus(
+                          `${row.header.toLowerCase()}$${d.directive.toLowerCase()}`
+                        );
+                      }}
+                    >
+                      {token}
+                    </Mark>
+                  </Tooltip>
+                );
+              }
+            });
+            if (!tooltipRefAssigned) {
+              setTooltipRefAssigned(true);
             }
+            if (tooltip) {
+              return tooltip;
+            }
+            return <span>{token}</span>;
           });
-          if (!tooltipRefAssigned) {
-            setTooltipRefAssigned(true);
-          }
-          if (tooltip) {
-            return tooltip;
-          }
-          return <span>{token}</span>;
-        });
+
+          valueElement = (
+            <div
+              sx={{
+                width: '400px',
+                overflow: 'auto',
+              }}
+            >
+              <Code>{markedUp}</Code>
+            </div>
+          );
+        }
 
         return (
           <tr
@@ -342,16 +396,7 @@ export function TableSort(
                 </Tooltip>
               </Code>
             </td>
-            <td>
-              <div
-                sx={{
-                  width: '400px',
-                  overflow: 'auto',
-                }}
-              >
-                <Code>{markedUp}</Code>
-              </div>
-            </td>
+            <td>{valueElement}</td>
           </tr>
         );
       });
@@ -370,6 +415,10 @@ export function TableSort(
     console.log('updating table');
     makeRows();
   }, [data, updateTable, headerMetaData]);
+
+  useEffect(() => {
+    makeRows();
+  }, [expandedRows]);
 
   useEffect(() => {
     const handleScroll = () => {

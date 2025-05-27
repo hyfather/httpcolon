@@ -1,0 +1,26 @@
+{
+  "header": "nel",
+  "description": "Network Error Logging (NEL) is used to instruct the browser to report network errors to a specified endpoint. The header contains a JSON object defining reporting parameters.",
+  "response-directives": [
+    {
+      "directive": "report_to",
+      "description": "Specifies the reporting group where network error reports should be sent."
+    },
+    {
+      "directive": "max_age",
+      "description": "Lifetime of the policy in seconds."
+    },
+    {
+      "directive": "include_subdomains",
+      "description": "Whether the policy applies to all subdomains of the origin."
+    },
+    {
+      "directive": "success_fraction",
+      "description": "Percentage of successful network requests that should be reported (0.0-1.0)."
+    },
+    {
+      "directive": "failure_fraction",
+      "description": "Percentage of failed network requests that should be reported (0.0-1.0)."
+    }
+  ]
+}

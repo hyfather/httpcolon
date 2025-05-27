@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { showNotification } from '@mantine/notifications';
 import {
   createStyles,
   Table,
@@ -244,7 +245,13 @@ export function TableSort(
         });
         if (dInfo == null || dInfo['response-directives'] == null) {
           return (
-            <tr key={row.header}>
+            <tr
+              key={row.header}
+              onClick={() => {
+                navigator.clipboard.writeText(`${row.header}: ${row.value}`);
+                showNotification({ message: 'Copied', autoClose: 2000 });
+              }}
+            >
               <td>
                 <Code>{row.header}</Code>
               </td>
@@ -280,6 +287,7 @@ export function TableSort(
                     className={classes.directiveMark}
                     onClick={(event) => {
                       event.preventDefault();
+                      event.stopPropagation();
                       setDrawerOpened(true);
                       setDrawerFocus(
                         `${row.header.toLowerCase()}$${d.directive.toLowerCase()}`
@@ -302,7 +310,13 @@ export function TableSort(
         });
 
         return (
-          <tr key={row.header}>
+          <tr
+            key={row.header}
+            onClick={() => {
+              navigator.clipboard.writeText(`${row.header}: ${row.value}`);
+              showNotification({ message: 'Copied', autoClose: 2000 });
+            }}
+          >
             <td>
               <Code>
                 <Tooltip
@@ -318,6 +332,7 @@ export function TableSort(
                     className={classes.headerMark}
                     onClick={(event) => {
                       event.preventDefault();
+                      event.stopPropagation();
                       setDrawerOpened(true);
                       setDrawerFocus(`${row.header.toLowerCase()}$`);
                     }}

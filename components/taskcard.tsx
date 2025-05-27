@@ -90,6 +90,13 @@ const useStyles = createStyles((theme) => ({
     paddingBottom: theme.spacing.md,
   },
 
+  sectionNoBorder: {
+    borderBottom: 'none',
+    paddingLeft: theme.spacing.md,
+    paddingRight: theme.spacing.md,
+    paddingBottom: theme.spacing.md,
+  },
+
   like: {
     color: theme.colors.red[6],
   },
@@ -161,7 +168,9 @@ export function TaskCard({
       </Card.Section>
 
       {!loading && (
-        <Card.Section className={classes.section}>
+        <Card.Section
+          className={clickable ? classes.sectionNoBorder : classes.section}
+        >
           <Space h="md" />
 
           <Group position="left" spacing={5}>
@@ -250,19 +259,21 @@ export function TaskCard({
           />
         </Card.Section>
       )}
-      {!loading && (
+      {!loading && !clickable && (
         <Card.Section className={classes.section}>
           <Group position="apart" mt="lg">
             <Group>
-              <Badge
-                radius="xs"
-                size="md"
-                variant={clickable ? 'outline' : 'filled'}
-                color="gray"
-                mt={4}
-              >
-                {format(timestamp_)}
-              </Badge>
+              {!clickable && (
+                <Badge
+                  radius="xs"
+                  size="md"
+                  variant={clickable ? 'outline' : 'filled'}
+                  color="gray"
+                  mt={4}
+                >
+                  {format(timestamp_)}
+                </Badge>
+              )}
               {!clickable && (
                 <Anchor href="#headers">
                   <Badge
